@@ -1,4 +1,8 @@
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 /*
@@ -34,8 +38,30 @@ public class EchoThread implements Runnable
         clientSocket = null;
     }
     
-    public void run()
+    /*
+    * JavaDoc here.
+    */
+    public void run() 
     {
+        try (
+        PrintWriter toClient 
+                = new PrintWriter( clientSocket.getOutputStream(), true);
+        BufferedReader fromClient 
+                = new BufferedReader( 
+                        new InputStreamReader( clientSocket.getInputStream() 
+                        ) 
+                )
+            )
+        {
+            char charFromClient;
+            
+            
+        }
+        catch( Exception e )
+        {
+            System.out.println( "Unknown exception occurred" );
+        }
+        
     }
     
 }
