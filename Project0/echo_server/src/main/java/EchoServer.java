@@ -13,20 +13,28 @@ public class EchoServer
 {
     public static void main(String[] args)
     {
+        
+        int port = 2080;
         if (args.length != 1) 
         {
-            System.out.println("Please give a port number as an argument");
-            System.exit(1);
+            System.out.println("No port given, setting to default: " + port);
+        }
+        else
+        {
+            port = Integer.parseInt(args[0]);
         }
         
-        int port = Integer.parseInt(args[0]);
+        
         
         try 
         {
             ServerSocket ss = new ServerSocket(port);
+            ss.setSoTimeout(100000);
+            System.out.println("Waiting for Client");
             Socket clientSocket = ss.accept();
-            EchoThread echoT = new Echothread(clientSocket);
+            EchoThread echoT = new EchoThread(clientSocket);
             echoT.run();
+            System.out.println("Echo is running.");
         }
         catch(IOException e)
         {
