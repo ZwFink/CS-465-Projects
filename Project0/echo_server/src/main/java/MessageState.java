@@ -12,6 +12,11 @@ public class MessageState
 {
     private String currentMessage;
     
+    public MessageState()
+    {
+        currentMessage = "";
+    }
+    
     public void processChar( char in )
     {
         
@@ -27,8 +32,13 @@ public class MessageState
         return true;
     }
     
-    public String getString() throws Exception
+    public String getString()
     {
         return currentMessage;
+    }
+    
+    public void clear()
+    {
+        currentMessage = "";
     }
 }
