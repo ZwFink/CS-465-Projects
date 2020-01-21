@@ -54,7 +54,21 @@ public class EchoThread implements Runnable
             )
         {
             char charFromClient;
+            MessageState message = new MessageState();
             
+            while( !message.quitReached() )
+            {
+                charFromClient = (char) fromClient.read();
+                
+                message.processChar( charFromClient );
+                
+                if( message.processedString() )
+                {
+                    String clientString = message.getString();
+                    toClient.println( clientString );
+                            
+                }
+            }
             
         }
         catch( Exception e )
