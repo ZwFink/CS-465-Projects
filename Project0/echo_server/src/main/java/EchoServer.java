@@ -24,22 +24,37 @@ public class EchoServer
             port = Integer.parseInt(args[0]);
         }
         
+        Boolean socketEstablished = false;
         
-        
-        try 
+        try
         {
             ServerSocket ss = new ServerSocket(port);
-            ss.setSoTimeout(100000);
-            System.out.println("Waiting for Client");
-            Socket clientSocket = ss.accept();
-            EchoThread echoT = new EchoThread(clientSocket);
-            echoT.run();
-            System.out.println("Echo is running.");
+            ss.setSoTimeout(60000); //Server Timeout after 1 minute
+            socketEstablished = true;
+            
+            while(!ss.isClosed())
+            {
+                System.out.println("Waiting for Client");
+                Socket clientSocket = ss.accept();
+                System.out.println("Client Found");
+                EchoThread echoT = new EchoThread(clientSocket);
+                echoT.run();
+                System.out.println("New Echo is running.");
+            }
+            System.out.println("Server Closed");
         }
         catch(IOException e)
         {
-            System.out.println("Bad port, try again");
-            System.exit(1);
+            if(socketEstablished)
+            {
+                System.out.println("Server Timeout");
+                System.exit(0);
+            }
+            else
+            {
+                System.out.println("Bad port, try again");
+                System.exit(1);
+            }
         }
     }
 }
