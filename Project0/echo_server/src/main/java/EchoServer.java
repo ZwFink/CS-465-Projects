@@ -7,7 +7,7 @@ import java.net.*;
 import java.io.*;
 /**
  *
- * @author zane, caleb johnson
+ * @author zane, caleb johnson, kenneth klawitter
  */
 public class EchoServer 
 {
