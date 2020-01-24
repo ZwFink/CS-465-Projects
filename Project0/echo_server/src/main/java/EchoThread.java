@@ -1,6 +1,5 @@
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -30,16 +29,36 @@ public class EchoThread implements Runnable
      */
     public EchoThread( Socket clientSocket )
     {
-        this.clientSocket = clientSocket;
+        this.setSocket( clientSocket );
     }
     
+    /**
+     * Default constructor, initializes 
+     * this object's client socket to null.
+     */
     public EchoThread()
     {
         clientSocket = null;
     }
     
+    /**
+     * Set the socket for this object.
+     * @param clientSocket The socket to set.
+     * @post this.clientSocket = clientSocket
+     */
+    public final void setSocket( Socket clientSocket )
+    {
+        this.clientSocket = clientSocket;
+    }
+    
     /*
-    * JavaDoc here.
+    * Run the thread, handling the client connection.
+    * @pre This has been initialized with a Socket connected
+    *      to a client.
+    * @post The client has been handled, according to the 
+    *       echoServer specification.
+    * @post The client connection is closed.
+    * @post The client socket of this is null.
     */
     public void run() 
     {
@@ -59,16 +78,18 @@ public class EchoThread implements Runnable
             while( !message.quitReached() )
             {
                 charFromClient = (char) fromClient.read();
-                
+               
                 message.processChar( charFromClient );
                 
-                if( message.processedString() )
+                if( message.charIsSendable( message.getLastChar() ) )
                 {
-                    String clientString = message.getString();
-                    toClient.println( clientString );
-                            
+                    toClient.print( charFromClient );
                 }
+                
             }
+            
+            this.clientSocket.close();
+            this.clientSocket = null;
             
         }
         catch( Exception e )
