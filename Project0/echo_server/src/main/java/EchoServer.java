@@ -42,18 +42,16 @@ public class EchoServer
             }
             System.out.println("Server Closed");
         }
+        catch( SocketTimeoutException e )
+        {
+            System.out.println("Server Timeout");
+            System.exit(0);
+        }
         catch(IOException e)
         {
-            if(socketEstablished)
-            {
-                System.out.println("Server Timeout");
-                System.exit(0);
-            }
-            else
-            {
-                System.out.println("Bad port, try again");
-                System.exit(1);
-            }
+            System.out.println("Bad port, try again");
+            System.exit(1);
+
         }
     }
 }
