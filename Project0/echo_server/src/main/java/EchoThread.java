@@ -1,6 +1,6 @@
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
@@ -63,13 +63,13 @@ public class EchoThread implements Runnable
     public void run() 
     {
         try (
-        PrintWriter toClient 
-                = new PrintWriter( clientSocket.getOutputStream(), true);
-        BufferedReader fromClient 
-                = new BufferedReader( 
-                        new InputStreamReader( clientSocket.getInputStream() 
+        DataOutputStream toClient 
+                = new DataOutputStream( clientSocket.getOutputStream() );
+        DataInputStream fromClient 
+                = new DataInputStream( 
+                        clientSocket.getInputStream() 
                         ) 
-                )
+                
             )
         {
             char charFromClient;
@@ -77,13 +77,13 @@ public class EchoThread implements Runnable
             
             while( !message.quitReached() )
             {
-                charFromClient = (char) fromClient.read();
+                charFromClient = (char) fromClient.readByte();
                
                 message.processChar( charFromClient );
                 
                 if( message.charIsSendable( message.getLastChar() ) )
                 {
-                    toClient.print( charFromClient );
+                    toClient.write( charFromClient );
                 }
                 
             }
