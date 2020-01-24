@@ -11,7 +11,17 @@
  */
 public class MessageState
 {
+    /**
+     * The last character that has been processed, regardless
+     * of whether that character can be sent to the client.
+     */
     private char lastChar;
+    
+    /**
+     * The current state of the client,
+     * where the state represents the progress of a message
+     * toward quit.
+     */
     private CurrentState state;
 
    /*
@@ -23,7 +33,8 @@ public class MessageState
       Q_REACHED,
       QU_REACHED,
       QUI_REACHED,
-      QUIT_REACHED
+      QUIT_REACHED,
+      FAIL_STATE
     };
 
    /*
@@ -40,6 +51,7 @@ public class MessageState
     * quit has been reached
     * @param in: The character to test
     * cycles though inputs until state reaches QUIT_REACHED
+    * @note when in == '\n', the state will be reset.
     */
     public void processChar( char in )
     {
@@ -64,11 +76,19 @@ public class MessageState
             }
             else
             {
-                state = CurrentState.START_STATE;
+                state = CurrentState.FAIL_STATE;
             }
-
-            lastChar = in;
         }
+        else if( in == '\n' )
+        {
+            this.clear();
+        }        
+        else if( Character.isUpperCase( in ) )
+        {
+            state = CurrentState.FAIL_STATE;
+        }
+        
+        lastChar = in;
     }
 
    /*
@@ -76,7 +96,7 @@ public class MessageState
     */
     public boolean quitReached()
     {
-        return true;
+        return state == CurrentState.QUIT_REACHED;
     }
 
    /*
@@ -88,11 +108,13 @@ public class MessageState
     }
 
    /*
-    * seperates each character for processing
+    * Reset the message state, clearing
+    * the last character and the state of the machine.
     */
     public void clear()
     {
         lastChar = '\0';
+        state = CurrentState.START_STATE;
     }
 
    /*
