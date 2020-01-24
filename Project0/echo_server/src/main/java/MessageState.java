@@ -10,35 +10,78 @@
  */
 public class MessageState 
 {
-    private String currentMessage;
+    private char lastChar;
+    private CurrentState state;
+    
+    private enum CurrentState
+    {
+      START_STATE,
+      Q_REACHED,
+      QU_REACHED,
+      QUI_REACHED,
+      QUIT_REACHED
+    };
     
     public MessageState()
     {
-        currentMessage = "";
+        lastChar = '\0';
+        state = CurrentState.START_STATE;
     }
     
     public void processChar( char in )
     {
-        
+        if( charIsSendable( in ) 
+             && Character.isLowerCase( in )
+          )
+        {
+
+            if( state == CurrentState.START_STATE && in == 'q'  )
+            {
+                state = CurrentState.Q_REACHED;
+            }            
+            else if( state == CurrentState.Q_REACHED && in == 'u'  )
+            {
+                state = CurrentState.QU_REACHED;
+            }
+            
+            
+            else
+            {
+                state = CurrentState.START_STATE;
+            }
+            
+            lastChar = in;
+        }
     }
     
     public boolean quitReached()
     {
         return true;
     }
-    
-    public boolean processedString()
+   
+    public char getLastChar()
     {
-        return true;
-    }
-    
-    public String getString()
-    {
-        return currentMessage;
+        return lastChar;
     }
     
     public void clear()
     {
-        currentMessage = "";
+        lastChar = '\0';
+    }
+    
+   /*
+    * Determine whether a character can be sent back to 
+    * the client. 
+    * @param test The character to test
+    * @returns true if test is an upper or lower-case 
+    *          letter of the English alphabet.
+    */
+    public boolean charIsSendable( char test )
+    {
+        int charInt = (int) test;
+        boolean sendable = ( charInt >= 'a' && charInt <= 'z' )  
+                || ( charInt >= 'A' && charInt <= 'Z' );
+        
+        return sendable;
     }
 }
