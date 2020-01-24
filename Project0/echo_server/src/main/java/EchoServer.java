@@ -37,8 +37,7 @@ public class EchoServer
                 System.out.println("Waiting for Client");
                 Socket clientSocket = ss.accept();
                 System.out.println("Client Found");
-                EchoThread echoT = new EchoThread(clientSocket);
-                echoT.run();
+                (new Thread(new EchoThread(clientSocket))).start();
                 System.out.println("New Echo is running.");
             }
             System.out.println("Server Closed");
