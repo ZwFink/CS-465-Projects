@@ -7,6 +7,7 @@ package com.cs465.distributed_chat;
 
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * The NodeInfo class tracks information that is necessary to connect to 
@@ -21,7 +22,7 @@ public class NodeInfo implements Serializable
 	/**
 	 * The IP address of the node. 
 	 */
-	private final InetAddress IpAddr;
+	private final InetAddress ipAddr;
 
 	/**
 	 * The port this node can be reached on.
@@ -45,10 +46,24 @@ public class NodeInfo implements Serializable
 		         String name 
 	               )
 	{
-		this.IpAddr      = ip;
+		this.ipAddr      = ip;
 		this.port        = port;
 		this.logicalName = name;
 
+	}
+
+	/**
+	 * Perform a deep copy of another NodeInfo object.
+	 * @param other the NodeInfo object to copy
+	 * @throws UnknownHostException in the event that 
+	 * 	   other.getAddress throws UnknownHostException
+	 */
+	public NodeInfo( final NodeInfo other ) throws UnknownHostException
+	{
+		this.ipAddr = InetAddress
+			      .getByAddress( other.ipAddr.getAddress() );	
+		this.port = other.port;
+		this.logicalName = other.logicalName;
 	}
 
 	/**
@@ -57,7 +72,7 @@ public class NodeInfo implements Serializable
 	 */
 	public InetAddress getIPAddress()
 	{
-		return this.IpAddr;
+		return this.ipAddr;
 	}
 
 	/**
