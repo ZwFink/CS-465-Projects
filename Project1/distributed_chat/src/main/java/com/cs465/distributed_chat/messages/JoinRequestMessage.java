@@ -43,4 +43,14 @@ public class JoinRequestMessage implements MessageType, Serializable
 	{
 		this.joiningNodeInfo = info;	
 	}
+
+	/**
+	 * Retrieve the information about the node that sent the
+	 * message.
+	 * @return NodeInfo about the node sending a message.
+	 */
+	public NodeInfo getInfo()
+	{
+		return this.joiningNodeInfo;	
+	}
 }

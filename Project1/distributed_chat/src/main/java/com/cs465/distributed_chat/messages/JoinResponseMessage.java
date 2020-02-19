@@ -76,5 +76,15 @@ public class JoinResponseMessage implements MessageType, Serializable
 			                        );	
 		}
 	}
+
+	/**
+	 * Retrieve the information about the node that sent the
+	 * message.
+	 * @return NodeInfo about the node sending a message.
+	 */
+	public NodeInfo getInfo()
+	{
+		return this.sendingNode;	
+	}
 		
 }
