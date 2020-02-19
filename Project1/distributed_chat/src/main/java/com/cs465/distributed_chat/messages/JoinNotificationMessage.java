@@ -7,15 +7,29 @@ package com.cs465.distributed_chat.messages;
 
 import com.cs465.distributed_chat.NodeInfo;
 import java.io.Serializable;
+import java.net.UnknownHostException;
 
 /**
- *
+ * A join notification is sent from a joining node to the other 
+ * nodes that are on a network, letting these nodes know that they should 
+ * add the node their membership list. 
  * @author zane
  */
 public class JoinNotificationMessage implements MessageType, Serializable
 {
+	/**
+	 * Information about the node that is joining the server.
+	 */
 	final NodeInfo joiningNodeInfo;
 
+	/**
+	 * Argument constructor, creates a JoinNotificationMessage from 
+	 * information about the node that will be joining the network.
+	 * @param joiningNode Information about the node that will be joining 
+	 *        the network.
+	 * @throws IllegalArgumentException Upon UnknownHostException thrown by 
+	 *         NodeInfo's copy constructor.
+	 */
 	public JoinNotificationMessage( final NodeInfo joiningNode )
 		throws IllegalArgumentException
 	{
@@ -23,7 +37,7 @@ public class JoinNotificationMessage implements MessageType, Serializable
 		{
 			joiningNodeInfo = new NodeInfo( joiningNode );	
 		}
-		catch( UnknownAddressException e )
+		catch( UnknownHostException e )
 		{
 			throw new 
 			IllegalArgumentException( "Unable to copy NodeInfo" );
