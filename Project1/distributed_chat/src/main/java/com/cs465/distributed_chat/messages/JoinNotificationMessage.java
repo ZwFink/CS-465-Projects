@@ -55,6 +55,14 @@ public class JoinNotificationMessage implements MessageType, Serializable
 		return MessageType.MessageTypes.JOIN_NOTIFICATION;	
 	}
 
-
+	/**
+	 * Retrieve the information about the node that sent the 
+	 * message.
+	 * @return NodeInfo about the node sending a message.
+	 */
+	public NodeInfo getInfo()
+	{
+		return this.joiningNodeInfo;	
+	}
 	
 }
