@@ -1,3 +1,5 @@
+package com.cs465.distributed_chat;
+
 // A Java program for a Client 
 import java.net.*; 
 import java.io.*; 
@@ -55,18 +57,51 @@ public Node(String address, int port) throws IOException, InterruptedException
                 }
             }
         };
-        //start the sender thread.
+        //start the receiver thread.
         receiver.start();
         
-        // End of Initiallization for Node0 / Starting node.
-
-        //Begin receiving Thread      
-        
-        while(true)
+        //Sender thread
+        sender = new Thread()
         {
-            Socket newSocket = new Socket(address, port);
-            handleSocket(newSocket);
-        }
+            @Override
+            
+            public void run()
+            {
+                //Wait until the user trys to send a message
+                
+                //Check the message to see if is a join or leave message
+                    //If join message
+                        //parse out the ip and port that the user is trying to join
+                        //create a socket to connect
+                        //add an input and output stream
+                        //send the join message through the input stream
+                        //wait and read a reply through the output stream
+                        // set the current node list of ip and ports 
+                            //of the node list that came back from the output 
+                
+                        //go back to waitinng for a user message
+                
+                    //If leave message
+                        //Create a loop through the node list of ip and ports
+                            //create a new socket on port at index I
+                            //send the leave message through the socket
+                            //close down the socket
+                        //Close down this node
+                
+                    //If normal message
+                        //Create a loop through the node list of ip and ports
+                            //create a new socket on port at index I
+                            //send the message through the socket
+                            //close down the socket
+                        //go back to waitinng for a user message
+            }
+        };
+
+        //Begin sender Thread      
+        sender.start();
+        
+        // End of Initiallization for Node0 / Starting node.
+        
 }
 
 
