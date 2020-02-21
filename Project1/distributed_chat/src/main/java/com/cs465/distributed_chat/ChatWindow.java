@@ -3,8 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-package userInterface;
+package com.cs465.distributed_chat;
 
 /*
  *
@@ -22,7 +21,7 @@ import javax.swing.*;
  
 
 
-public class chatWindow extends JPanel implements ActionListener 
+public class ChatWindow extends JPanel implements ActionListener 
 {
     
     protected JTextField inputArea;
@@ -31,7 +30,7 @@ public class chatWindow extends JPanel implements ActionListener
     /**
      * Initialize the chat window with desired size values.
      */
-    public chatWindow()
+    public ChatWindow()
     {
         super(new GridBagLayout());
            
@@ -83,7 +82,7 @@ public class chatWindow extends JPanel implements ActionListener
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
  
         //add duplicate window
-        frame.add(new chatWindow());       
+        frame.add(new ChatWindow());       
         frame.pack();
         frame.setVisible(true);
     }
