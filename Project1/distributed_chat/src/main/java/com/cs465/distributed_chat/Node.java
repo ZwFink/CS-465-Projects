@@ -24,9 +24,7 @@ public class Node
  */
 public Node(String address, int port) throws IOException, InterruptedException 
 {
-    // begin server given port that is passed in.
-    serverSocket = new ServerSocket(port);
-    
+ 
    // while(true)
     //{
         //System.out.println("Accepting Clients");
@@ -39,11 +37,24 @@ public Node(String address, int port) throws IOException, InterruptedException
             {
                 try
                 {
+                    // begin server given port that is passed in.
+                    serverSocket = new ServerSocket(port);
+                    
                     socket = new Socket(address, port);
                     System.out.println("User Connected- " + socket + " -is the users socket information");
                     
                     inputMessage = new DataInputStream(socket.getInputStream());
                     outputMessage = new DataOutputStream(socket.getOutputStream());
+                    
+                    //Check the recieved message
+                        //IF the message is a Join message
+                            //Send the ip/port list of this node
+                        //IF the message is a Join NOTIFY message
+                            //Append given ip/port to list of this node
+                        //IF the message is a normal message
+                            //Display the message to the user
+                        //IF the message is a Leave message
+                            //Remove the ip/port of the leaver from this nodes list
                 }
                 
                 catch(UnknownHostException i)
