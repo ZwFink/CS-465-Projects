@@ -1,3 +1,5 @@
+package com.cs465.distributed_chat;
+
 import java.io.*;
 import java.net.*;
 
@@ -8,7 +10,10 @@ import java.net.*;
 public class MainClass {
    public static void main(String[] args) throws IOException, InterruptedException 
    {
-       Node node = new Node("127.0.0.1", 2080);
+       InetAddress selfIP = InetAddress.getLocalHost();
+       int selfPort = 2080;
+       String logicalName = selfIP.getHostName();
+       Node node = new Node(selfIP, selfPort, logicalName);
    }
    
      

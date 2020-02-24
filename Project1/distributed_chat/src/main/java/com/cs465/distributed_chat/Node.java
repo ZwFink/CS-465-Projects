@@ -3,6 +3,7 @@ package com.cs465.distributed_chat;
 // A Java program for a Client 
 import java.net.*; 
 import java.io.*; 
+import java.util.LinkedList;
 
 public class Node 
 { 
@@ -13,18 +14,23 @@ public class Node
 	private DataOutputStream outputMessage = null; 
         private Thread sender = null;
         private Thread receiver = null;
+        private LinkedList nodeInfoList = null;
                      
 /**
  * Create a node that will become the user.
  * 
  * @param address users device address / must be unique
  * @param port number to connect to
+ * @param name logical name of node
  * @throws IOException
  * @throws InterruptedException 
  */
-public Node(String address, int port) throws IOException, InterruptedException 
+public Node(InetAddress address, int port, String name) throws IOException, InterruptedException 
 {
- 
+    //Use given info to add self to the list of ips and ports
+    NodeInfo selfNode = new NodeInfo(address, port, name);
+    nodeInfoList.add(selfNode);
+    
    // while(true)
     //{
         //System.out.println("Accepting Clients");
@@ -48,9 +54,9 @@ public Node(String address, int port) throws IOException, InterruptedException
                     
                     //Check the recieved message
                         //IF the message is a Join message
-                            //Send the ip/port list of this node
+                            //Send the ip/port list of this node back
                         //IF the message is a Join NOTIFY message
-                            //Append given ip/port to list of this node
+                            //Append given ip/port of the message to list of this node
                         //IF the message is a normal message
                             //Display the message to the user
                         //IF the message is a Leave message
