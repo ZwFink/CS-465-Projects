@@ -80,11 +80,13 @@ public Node(InetAddress address, int port, String name) throws IOException, Inte
                                    + " bytes, sending them back to client, data="
                                    + input );
                         
-                        //Try to read in the object
+                        //Try to read in the object from the string input
                         try
                         {
-                            ObjectInputStream objectInputStream = new ObjectInputStream(inputMessage);
-                            Object object = objectInputStream.readObject();
+                            FileInputStream fileIn = new FileInputStream(input);
+                            ObjectInputStream objectInputStream = new ObjectInputStream(fileIn);
+                            //Get our recieved object
+                            Object recObject = objectInputStream.readObject();
                             objectInputStream.close();
                         }
                         catch(ClassNotFoundException e)
