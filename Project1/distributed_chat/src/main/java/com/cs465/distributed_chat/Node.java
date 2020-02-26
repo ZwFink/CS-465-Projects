@@ -103,6 +103,9 @@ public Node(InetAddress address, int port, String name) throws IOException, Inte
                             //Display the message to the user
                         //IF the message is a Leave message
                             //Remove the ip/port of the leaver from this nodes list
+                        
+                        //Close out the socket and go back to the start of the loop
+                        socket.close();
                     }
                     
                 }
