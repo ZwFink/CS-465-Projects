@@ -9,6 +9,7 @@ import com.cs465.distributed_chat.NodeInfo;
 import java.io.Serializable;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * A JoinResponse message contains a list of 
@@ -24,7 +25,7 @@ public class JoinResponseMessage implements MessageType, Serializable
 	 * List of the other nodes that are in the network.
 	 * nodesInNetwork + sendingNode make up the entire network.
 	 */
-	final ArrayList<NodeInfo> nodesInNetwork;
+	final LinkedList nodesInNetwork;
 
 	/**
 	 * The node that is sending the JoinResponse.
@@ -52,18 +53,21 @@ public class JoinResponseMessage implements MessageType, Serializable
 	 * @throws IllegalArgumentException If copying NodeInfo objects 
 	 *         results in an error.
 	 */
-	public JoinResponseMessage( ArrayList<NodeInfo> nodes,
+	public JoinResponseMessage( LinkedList nodes,
 				    NodeInfo sendingNodeInfo 
 	                          ) throws IllegalArgumentException
 	{
-		this.nodesInNetwork = new ArrayList<>();
+		this.nodesInNetwork = new LinkedList();
 
 		try
 		{
-
-			for( NodeInfo info : nodes )
+                        int counter = 0;
+                        NodeInfo info = (NodeInfo) nodes.get(counter);
+			while( info != null )
 			{
 				this.nodesInNetwork.add( new NodeInfo( info ));
+                                counter++;
+                                info = (NodeInfo) nodes.get(counter);
 			}
 
 			this.sendingNode = new NodeInfo( sendingNodeInfo );

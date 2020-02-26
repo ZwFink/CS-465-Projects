@@ -1,7 +1,7 @@
 package com.cs465.distributed_chat;
 
 // A Java program for a Client 
-import com.cs465.distributed_chat.messages.MessageType;
+import com.cs465.distributed_chat.messages.*;
 import java.net.*; 
 import java.io.*; 
 import java.util.LinkedList;
@@ -16,6 +16,7 @@ public class Node
         private Thread sender = null;
         private Thread receiver = null;
         private LinkedList nodeInfoList = null;
+        private NodeInfo selfNode = null;
                      
 /**
  * Create a node that will become the user.
@@ -29,7 +30,7 @@ public class Node
 public Node(InetAddress address, int port, String name) throws IOException, InterruptedException 
 {
     //Use given info to add self to the list of ips and ports
-    NodeInfo selfNode = new NodeInfo(address, port, name);
+    selfNode = new NodeInfo(address, port, name);
     nodeInfoList.add(selfNode);
     
    // while(true)
@@ -108,21 +109,36 @@ public Node(InetAddress address, int port, String name) throws IOException, Inte
                         //IF the message is a Join message
                         if(messageRec.getType() == MessageType.MessageTypes.JOIN_REQUEST)
                         {
-                            ;//Handle join //Send the ip/port list of this node back
+                            //Transfrom the message into the join request type
+                            JoinRequestMessage joinReq = (JoinRequestMessage) messageRec;
+                            
+                            //Send the ip/port list of this node back
+                            JoinResponseMessage responseMsg = new JoinResponseMessage(nodeInfoList, selfNode);
+                            outputMessage.writeChars(responseMsg.toString());
                         }
                         //IF the message is a Join NOTIFY message
                         if(messageRec.getType() == MessageType.MessageTypes.JOIN_NOTIFICATION)
                         {
-                            ;//Append given ip/port of the message to list of this node
+                            //Transfrom the message into the join notification type
+                            JoinNotificationMessage joinNotf = (JoinNotificationMessage) messageRec;
+                            
+                            //Append given ip/port of the message to list of this node
+                            nodeInfoList.add(joinNotf.getInfo());
                         }
                         //IF the message is a normal message
                         if(messageRec.getType() == MessageType.MessageTypes.CHAT_MESSAGE)
                         {
-                            ;//Display the message to the user
+                            //Transfrom the message into the chat message type
+                            ChatMessage chatMsg = (ChatMessage) messageRec;
+                            
+                            //Display the message to the user
+                            System.out.println(chatMsg.getMessage());
                         }
                         //IF the message is a Leave message
                         if(messageRec.getType() == MessageType.MessageTypes.LEAVE_MESSAGE)
                         {
+                            //Transfrom the message into the leave message type
+                            LeaveMessage leaveMsg = (LeaveMessage) messageRec;
                             ;//Remove the ip/port of the leaver from this nodes list
                         }
 
