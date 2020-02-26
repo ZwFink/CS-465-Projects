@@ -46,13 +46,53 @@ public Node(InetAddress address, int port, String name) throws IOException, Inte
                     // begin server given port that is passed in.
                     serverSocket = new ServerSocket(port);
                     
-                    socket = new Socket(address, port);
-                    System.out.println("User Connected- " + socket + " -is the users socket information");
+                    while (true)
+                    {
+                        //Wait for a user to connect
+                        socket = serverSocket.accept();
+                        System.out.println("User Connected- " + socket + " -is the users socket information");
+                        
+                        //Create an input and output stream to handle this connection
+                        inputMessage = new DataInputStream(socket.getInputStream());
+                        outputMessage = new DataOutputStream(socket.getOutputStream());
+                        
+                        //Make a buffer
+                        byte[] buffer = new byte[1024];
+                        int bytes_read = 0;
+                        
+                        //Read in a message that comes through, note .read() halts program till info is received
+                        bytes_read = inputMessage.read(buffer, 0, buffer.length);
+                        
+                        String input = "";
+                        
+                        //Record the input as a String as long as bytes read is more than 0
+                        if(bytes_read > 0)
+                        {
+                            input = new String(buffer, 0, bytes_read);
+                        }
+                        else
+                        {
+                            input = "Error, bad byte length recieved";
+                        }
+                        
+                        //Print data to log for testing purposes
+                        System.err.println("Server: Received " + bytes_read
+                                   + " bytes, sending them back to client, data="
+                                   + input );
+                        
+                        //Try to read in the object
+                        try
+                        {
+                            ObjectInputStream objectInputStream = new ObjectInputStream(inputMessage);
+                            Object object = objectInputStream.readObject();
+                            objectInputStream.close();
+                        }
+                        catch(ClassNotFoundException e)
+                        {
+                            ;//handle error somehow
+                        }
                     
-                    inputMessage = new DataInputStream(socket.getInputStream());
-                    outputMessage = new DataOutputStream(socket.getOutputStream());
-                    
-                    //Check the recieved message
+                        //Check the recieved message
                         //IF the message is a Join message
                             //Send the ip/port list of this node back
                         //IF the message is a Join NOTIFY message
@@ -61,6 +101,8 @@ public Node(InetAddress address, int port, String name) throws IOException, Inte
                             //Display the message to the user
                         //IF the message is a Leave message
                             //Remove the ip/port of the leaver from this nodes list
+                    }
+                    
                 }
                 
                 catch(UnknownHostException i)
