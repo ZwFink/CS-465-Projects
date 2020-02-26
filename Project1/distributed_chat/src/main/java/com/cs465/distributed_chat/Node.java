@@ -1,6 +1,7 @@
 package com.cs465.distributed_chat;
 
 // A Java program for a Client 
+import com.cs465.distributed_chat.messages.MessageType;
 import java.net.*; 
 import java.io.*; 
 import java.util.LinkedList;
@@ -8,7 +9,7 @@ import java.util.LinkedList;
 public class Node 
 { 
 	// initialize socket and input output streams 
-	private Socket socket = null; 
+	private Socket socketTalker = null; 
         private ServerSocket serverSocket = null;
 	private DataInputStream inputMessage = null; 
 	private DataOutputStream outputMessage = null; 
@@ -49,12 +50,14 @@ public Node(InetAddress address, int port, String name) throws IOException, Inte
                     while (true)
                     {
                         //Wait for a user to connect
-                        socket = serverSocket.accept();
-                        System.out.println("User Connected- " + socket + " -is the users socket information");
+                        socketTalker = serverSocket.accept();
+                        System.out.println("Another User is sending something- " 
+                                + socketTalker 
+                                + " -is the talking users socket information");
                         
                         //Create an input and output stream to handle this connection
-                        inputMessage = new DataInputStream(socket.getInputStream());
-                        outputMessage = new DataOutputStream(socket.getOutputStream());
+                        inputMessage = new DataInputStream(socketTalker.getInputStream());
+                        outputMessage = new DataOutputStream(socketTalker.getOutputStream());
                         
                         //Make a buffer
                         byte[] buffer = new byte[1024];
@@ -63,9 +66,8 @@ public Node(InetAddress address, int port, String name) throws IOException, Inte
                         //Read in a message that comes through, note .read() halts program till info is received
                         bytes_read = inputMessage.read(buffer, 0, buffer.length);
                         
-                        String input = "";
-                        
                         //Record the input as a String as long as bytes read is more than 0
+                        String input = "";
                         if(bytes_read > 0)
                         {
                             input = new String(buffer, 0, bytes_read);
@@ -81,12 +83,14 @@ public Node(InetAddress address, int port, String name) throws IOException, Inte
                                    + input );
                         
                         //Try to read in the object from the string input
+                        MessageType messageRec = null;
                         try
                         {
                             FileInputStream fileIn = new FileInputStream(input);
                             ObjectInputStream objectInputStream = new ObjectInputStream(fileIn);
                             //Get our recieved object
                             Object recObject = objectInputStream.readObject();
+                            messageRec = (MessageType) recObject;
                             objectInputStream.close();
                         }
                         catch(ClassNotFoundException e)
@@ -95,17 +99,36 @@ public Node(InetAddress address, int port, String name) throws IOException, Inte
                         }
                     
                         //Check the recieved message
-                        //IF the message is a Join message
-                            //Send the ip/port list of this node back
-                        //IF the message is a Join NOTIFY message
-                            //Append given ip/port of the message to list of this node
-                        //IF the message is a normal message
-                            //Display the message to the user
-                        //IF the message is a Leave message
-                            //Remove the ip/port of the leaver from this nodes list
+                        //IF NULL == Bad Message
+                        if(messageRec == null)
+                        {
+                            ;//Handle null by creating a dummy chat message with an error as payload
+                        }
                         
-                        //Close out the socket and go back to the start of the loop
-                        socket.close();
+                        //IF the message is a Join message
+                        if(messageRec.getType() == MessageType.MessageTypes.JOIN_REQUEST)
+                        {
+                            ;//Handle join //Send the ip/port list of this node back
+                        }
+                        //IF the message is a Join NOTIFY message
+                        if(messageRec.getType() == MessageType.MessageTypes.JOIN_NOTIFICATION)
+                        {
+                            ;//Append given ip/port of the message to list of this node
+                        }
+                        //IF the message is a normal message
+                        if(messageRec.getType() == MessageType.MessageTypes.CHAT_MESSAGE)
+                        {
+                            ;//Display the message to the user
+                        }
+                        //IF the message is a Leave message
+                        if(messageRec.getType() == MessageType.MessageTypes.LEAVE_MESSAGE)
+                        {
+                            ;//Remove the ip/port of the leaver from this nodes list
+                        }
+
+                        
+                        //Close out the socket of the person "talking" and go back to the start of the loop
+                        socketTalker.close();
                     }
                     
                 }
