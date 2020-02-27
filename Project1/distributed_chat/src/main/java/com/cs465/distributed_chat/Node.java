@@ -96,14 +96,18 @@ public Node(InetAddress address, int port, String name) throws IOException, Inte
                         }
                         catch(ClassNotFoundException e)
                         {
-                            ;//handle error somehow
+                            //Close out the socket of the person "talking" and go back to the start of the loop
+                            socketTalker.close();
+                            continue;//handle the error by going to the top of the loop
                         }
                     
                         //Check the recieved message
                         //IF NULL == Bad Message
                         if(messageRec == null)
                         {
-                            ;//Handle null by creating a dummy chat message with an error as payload
+                            //Close out the socket of the person "talking" and go back to the start of the loop
+                            socketTalker.close();
+                            continue;//handle the error by going to the top of the loop
                         }
                         
                         //IF the message is a Join message
@@ -139,7 +143,8 @@ public Node(InetAddress address, int port, String name) throws IOException, Inte
                         {
                             //Transfrom the message into the leave message type
                             LeaveMessage leaveMsg = (LeaveMessage) messageRec;
-                            ;//Remove the ip/port of the leaver from this nodes list
+                            //Remove the ip/port of the leaver from this nodes list
+                            nodeInfoList.remove(leaveMsg.getInfo());
                         }
 
                         
@@ -171,16 +176,24 @@ public Node(InetAddress address, int port, String name) throws IOException, Inte
             public void run()
             {
                 //Wait until the user trys to send a message
+                    //This should be some from of string input
+                    //The string typed by the user should start with one of these:
+                        //join
+                        //chat
+                        //leave
+                      //Toss any other input out and inform the user
                 
                 //Check the message to see if is a join or leave message
                     //If join message
                         //parse out the ip and port that the user is trying to join
                         //create a socket to connect
                         //add an input and output stream
-                        //send the join message through the input stream
+                        //create a new join request message object
+                        //send the join request message through the input stream
+                            //as a string using .toString()
                         //wait and read a reply through the output stream
-                        // set the current node list of ip and ports 
-                            //of the node list that came back from the output 
+                        //set the current node list of ip and ports 
+                          //of the node list that came back from the output 
                 
                         //go back to waitinng for a user message
                 

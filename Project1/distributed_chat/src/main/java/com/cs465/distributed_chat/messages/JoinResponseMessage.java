@@ -90,5 +90,14 @@ public class JoinResponseMessage implements MessageType, Serializable
 	{
 		return this.sendingNode;	
 	}
+        
+        /**
+	 * Retrieve the list payload of the message.
+	 * @return LinkedList of nodeInfo objects.
+	 */
+	public LinkedList getList()
+	{
+		return this.nodesInNetwork;	
+	}
 		
 }
