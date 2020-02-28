@@ -9,12 +9,10 @@ import java.util.LinkedList;
 public class Node 
 { 
 	// initialize socket and input output streams 
-	private Socket socketTalker = null; 
-        private ServerSocket serverSocket = null;
 	private DataInputStream inputMessage = null; 
 	private DataOutputStream outputMessage = null; 
         private Thread sender = null;
-        private Thread receiver = null;
+        private Receiver receiver = null;
         private LinkedList nodeInfoList = null;
         private NodeInfo selfNode = null;
                      
@@ -32,141 +30,13 @@ public Node(InetAddress address, int port, String name) throws IOException, Inte
     //Use given info to add self to the list of ips and ports
     selfNode = new NodeInfo(address, port, name);
     nodeInfoList.add(selfNode);
-    
-   // while(true)
-    //{
-        //System.out.println("Accepting Clients");
         
-        receiver = new Thread()
-        {
-            @Override
-            
-            public void run()
-            {
-                try
-                {
-                    // begin server given port that is passed in.
-                    serverSocket = new ServerSocket(port);
-                    
-                    while (true)
-                    {
-                        //Wait for a user to connect
-                        socketTalker = serverSocket.accept();
-                        System.out.println("Another User is sending something- " 
-                                + socketTalker 
-                                + " -is the talking users socket information");
-                        
-                        //Create an input and output stream to handle this connection
-                        inputMessage = new DataInputStream(socketTalker.getInputStream());
-                        outputMessage = new DataOutputStream(socketTalker.getOutputStream());
-                        
-                        //Make a buffer
-                        byte[] buffer = new byte[1024];
-                        int bytes_read = 0;
-                        
-                        //Read in a message that comes through, note .read() halts program till info is received
-                        bytes_read = inputMessage.read(buffer, 0, buffer.length);
-                        
-                        //Record the input as a String as long as bytes read is more than 0
-                        String input = "";
-                        if(bytes_read > 0)
-                        {
-                            input = new String(buffer, 0, bytes_read);
-                        }
-                        else
-                        {
-                            input = "Error, bad byte length recieved";
-                        }
-                        
-                        //Print data to log for testing purposes
-                        System.err.println("Server: Received " + bytes_read
-                                   + " bytes, sending them back to client, data="
-                                   + input );
-                        
-                        //Try to read in the object from the string input
-                        MessageType messageRec = null;
-                        try
-                        {
-                            FileInputStream fileIn = new FileInputStream(input);
-                            ObjectInputStream objectInputStream = new ObjectInputStream(fileIn);
-                            //Get our recieved object
-                            Object recObject = objectInputStream.readObject();
-                            messageRec = (MessageType) recObject;
-                            objectInputStream.close();
-                        }
-                        catch(ClassNotFoundException e)
-                        {
-                            //Close out the socket of the person "talking" and go back to the start of the loop
-                            socketTalker.close();
-                            continue;//handle the error by going to the top of the loop
-                        }
-                    
-                        //Check the recieved message
-                        //IF NULL == Bad Message
-                        if(messageRec == null)
-                        {
-                            //Close out the socket of the person "talking" and go back to the start of the loop
-                            socketTalker.close();
-                            continue;//handle the error by going to the top of the loop
-                        }
-                        
-                        //IF the message is a Join message
-                        if(messageRec.getType() == MessageType.MessageTypes.JOIN_REQUEST)
-                        {
-                            //Transfrom the message into the join request type
-                            JoinRequestMessage joinReq = (JoinRequestMessage) messageRec;
-                            
-                            //Send the ip/port list of this node back
-                            JoinResponseMessage responseMsg = new JoinResponseMessage(nodeInfoList, selfNode);
-                            outputMessage.writeChars(responseMsg.toString());
-                        }
-                        //IF the message is a Join NOTIFY message
-                        if(messageRec.getType() == MessageType.MessageTypes.JOIN_NOTIFICATION)
-                        {
-                            //Transfrom the message into the join notification type
-                            JoinNotificationMessage joinNotf = (JoinNotificationMessage) messageRec;
-                            
-                            //Append given ip/port of the message to list of this node
-                            nodeInfoList.add(joinNotf.getInfo());
-                        }
-                        //IF the message is a normal message
-                        if(messageRec.getType() == MessageType.MessageTypes.CHAT_MESSAGE)
-                        {
-                            //Transfrom the message into the chat message type
-                            ChatMessage chatMsg = (ChatMessage) messageRec;
-                            
-                            //Display the message to the user
-                            System.out.println(chatMsg.getMessage());
-                        }
-                        //IF the message is a Leave message
-                        if(messageRec.getType() == MessageType.MessageTypes.LEAVE_MESSAGE)
-                        {
-                            //Transfrom the message into the leave message type
-                            LeaveMessage leaveMsg = (LeaveMessage) messageRec;
-                            //Remove the ip/port of the leaver from this nodes list
-                            nodeInfoList.remove(leaveMsg.getInfo());
-                        }
-
-                        
-                        //Close out the socket of the person "talking" and go back to the start of the loop
-                        socketTalker.close();
-                    }
-                    
-                }
-                
-                catch(UnknownHostException i)
-                {
-                    System.out.println(i);
-                }
-                
-                catch(IOException ioe)
-                {
-                    System.out.println(ioe);
-                }
-            }
-        };
-        //start the receiver thread.
-        receiver.start();
+    //Create a receiver thread and hand it this Node
+    receiver = new Receiver(this);
+        
+    //start the receiver thread.
+    receiver.start();
+    
         
         //Sender thread
         sender = new Thread()
@@ -202,7 +72,7 @@ public Node(InetAddress address, int port, String name) throws IOException, Inte
                             //create a new socket on port at index I
                             //send the leave message through the socket
                             //close down the socket
-                        //Close down this node
+                        //Close down this node and all threads
                 
                     //If normal message
                         //Create a loop through the node list of ip and ports
@@ -218,6 +88,36 @@ public Node(InetAddress address, int port, String name) throws IOException, Inte
         
         // End of Initiallization for Node0 / Starting node.
         
+}
+
+public NodeInfo getSelf()
+{
+    return this.selfNode;
+}
+
+public LinkedList getInfoList()
+{
+    return this.nodeInfoList;
+}
+
+public DataOutputStream getOut()
+{
+    return this.outputMessage;
+}
+
+public DataInputStream getInput()
+{
+    return this.inputMessage;
+}
+
+public void addNodeInfo(NodeInfo adding)
+{
+    nodeInfoList.add(adding);
+}
+
+public void removeNodeInfo(NodeInfo removing)
+{
+    nodeInfoList.add(removing);
 }
 
 
