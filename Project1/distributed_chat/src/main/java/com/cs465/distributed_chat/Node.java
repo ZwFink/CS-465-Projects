@@ -258,18 +258,6 @@ public MessageType stringToMessage( final String message )
 	                       );
 }
 
-private void closeConnection(Socket socket)
-{
-    try
-    {
-        socketTalker.close();
-    }
-    catch(IOException exception)
-    {
-       System.out.println("error closing the socket" + exception);         
-    }
-}
-
 
 
 public NodeInfo getSelf()
