@@ -13,7 +13,7 @@ public class Node
 	private DataOutputStream outputMessage = null; 
         private Thread sender = null;
         private Receiver receiver = null;
-        private LinkedList nodeInfoList = null;
+        private LinkedList<NodeInfo> nodeInfoList = null;
         private NodeInfo selfNode = null;
         private Socket socketTalker;
         private Node userNode;
@@ -31,7 +31,7 @@ public Node(InetAddress address, int port, String name) throws IOException, Inte
 {
     //Use given info to add self to the list of ips and ports
     selfNode = new NodeInfo(address, port, name);
-    //nodeInfoList.add(selfNode);
+    nodeInfoList = new LinkedList<>();
         
     //Create a receiver thread and hand it this Node
     receiver = new Receiver(this);
@@ -166,6 +166,35 @@ public Node(InetAddress address, int port, String name) throws IOException, Inte
         
         // End of Initiallization for Node0 / Starting node.
         
+}
+
+
+/**
+ * Transform a string into a message.
+ * @pre message contains either the string "leave", or a string 
+ *      representing a chat message the user is trying to send.
+ * @param message The string message a user is trying to send.
+ *        If, when trimmed and transformed to lower case, the message 
+ *        does not equal ''leave'', the message will be assumed to be 
+ *        a chat message
+ * @return Either a LeaveMessage, or a ChatMessage, depending upon the 
+ * 	   format of the message input by the user.
+ */
+public MessageType stringToMessage( final String message )
+{
+	final String lowerCaseMsg = message.trim().toLowerCase();
+
+	if( lowerCaseMsg.equals( "leave" ) )
+	{
+		return new LeaveMessage( this.selfNode );	
+	}
+
+	// assume this is a chat message
+	// send the original message, we don't want to 
+	// change what the user is trying to send
+	return new ChatMessage( this.selfNode,
+				message 
+	                       );
 }
 
 private void closeConnection(Socket socket)
