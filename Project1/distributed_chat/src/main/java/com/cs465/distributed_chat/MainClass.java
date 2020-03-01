@@ -14,6 +14,9 @@ public class MainClass {
        int selfPort = 2080;
        String logicalName = selfIP.getHostName();
        Node node = new Node(selfIP, selfPort, logicalName);
+       //System.out.println("NODEINFO:" + node);
+       //System.out.println("IP" + selfIP);
+       
    }
    
      
