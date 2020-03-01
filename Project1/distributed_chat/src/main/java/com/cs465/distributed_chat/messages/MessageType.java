@@ -5,6 +5,8 @@
  */
 package com.cs465.distributed_chat.messages;
 
+import com.cs465.distributed_chat.NodeInfo;
+
 /**
  * Interface specifying different types of messages.
  * A message that implements this interface must 
@@ -53,4 +55,6 @@ public interface MessageType
 	}
     
     MessageTypes getType();
+
+    NodeInfo getInfo();
 }
