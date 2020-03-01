@@ -92,5 +92,17 @@ public class NodeInfo implements Serializable
 	{
 		return	this.logicalName;
 	}
+
+	/**
+	 * Determine if this NodeInfo is equal to other. 
+	 * @param comp
+	 * @return 
+	 */
+	public boolean equals( NodeInfo comp )
+	{
+		return this.getIPAddress().equals( comp.getIPAddress())
+			&& this.getPort() == comp.getPort()
+			  && this.getName().equals( comp.getName() );
+	}
 	
 }
