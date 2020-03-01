@@ -48,6 +48,9 @@ public class Sender extends Thread
                 String input = inputScan.nextLine();
        
                 String lowerIn = input.toLowerCase();
+                
+                //Update the node info list just in case it changed since last time
+                NodeInfo = userNode.getInfoList();
                         
                 if(lowerIn.startsWith("join"))
                 {
