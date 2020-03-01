@@ -54,56 +54,73 @@ public Node(InetAddress address, int port, String name) throws IOException, Inte
                     while (true)
                     {
                         nodeInfoList = userNode.getInfoList();
+                        
                         //Wait until the user trys to send a message
                         Socket socketTalker = serverSocket.accept();
+                        System.out.println("Connected \n " );
                       
+                        //create input and output streams to handle data
                         DataOutputStream outputMessage = new DataOutputStream(socketTalker.getOutputStream());
                         DataInputStream inputMessage = new DataInputStream(socketTalker.getInputStream());
-                       
-                         
-                        //Wait for a user to connect
-                        System.out.println("User is sending a message- " );
+                             
+                        //prompt user to send message
+                        System.out.println("User is sending a message-  \n" );
                                                
-                        //Make a buffer reader
-                        BufferedReader message = new BufferedReader(new InputStreamReader(System.in));
-    
+                        //Make a buffer reader to read in data
+                        BufferedReader read = new BufferedReader(new InputStreamReader(inputMessage));
                         
-                        //Read in a message that comes through, note .read() halts program till info is received
-                        String input = message.readLine();
-                        outputMessage.writeBytes( input + "\n" );
+                        //cast the data into a string
+                        String entry = read.toString();   
+                        
+                        outputMessage.write(("Connected To Server \n" + entry).getBytes());
+
+                        while( (entry = read.readLine()) != null)
+                        {
+                            String message = entry;
+                            
+                            System.out.println(message);
+                            
+                        }
+                        
+                        outputMessage.writeBytes( entry + "\n" );
                         //Record the input as a String as long as bytes read is more than 
                         
                         //System.out.println(input); // testing
                         
                         //Try to read in the object from the string input
-                        MessageType messageSent = null;
+                       
                    
                         //Check the recieved message
                         //IF NULL == Bad Message
                         //Check the recieved message
                         //IF the message is a Join message
-                        if(input == "join")
+                        if(entry == "join")
                         {
                             //Send the ip/port list of this node
                              NodeInfo newNode = new NodeInfo(address, port, name);
                              nodeInfoList.add(newNode);
+                             System.out.println(socketTalker + " has joined");
                         }
                        
                         //IF the message is a normal message
-                        if(input != "leave")
+                        if(entry != "leave")
                         {
                             //Display the message to the user
-                            BufferedReader read = new BufferedReader(new InputStreamReader(inputMessage));
+                            outputMessage.write(entry);
+                           
                             
+                              
                         }
                         
                         //IF the message is a Leave message
-                        if(input == "leave")
+                        if(entry == "leave")
                         {
                             //Remove the ip/port of the leaver from this nodes list
                             NodeInfo newNode = null;
                             
                             closeConnection(socketTalker);
+                            
+                            numConnections --;
                         }
 
                         
@@ -168,6 +185,10 @@ public Node(InetAddress address, int port, String name) throws IOException, Inte
         
 }
 
+        
+        
+        
+        
 private void closeConnection(Socket socket)
 {
     try
