@@ -82,8 +82,8 @@ public class Receiver extends Thread
                         }
                         
                         //Print data to log for testing purposes
-                        System.err.println("Server: Received " + bytes_read
-                                   + " bytes, sending them back to client, data="
+                        System.err.println("Receiver: Received " + bytes_read
+                                   + " bytes, displaying recieved data="
                                    + input );
                         
                         //Try to read in the object from the string input
