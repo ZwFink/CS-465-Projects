@@ -5,6 +5,7 @@ import com.cs465.distributed_chat.messages.*;
 import java.net.*; 
 import java.io.*; 
 import java.util.LinkedList;
+import java.util.Scanner;
 
 public class Node 
 { 
@@ -15,8 +16,7 @@ public class Node
         private Receiver receiver = null;
         private LinkedList<NodeInfo> nodeInfoList = null;
         private NodeInfo selfNode = null;
-        private Socket socketTalker;
-        private Node userNode;
+        public boolean active = true; // Boolean used to tell if the node has stopped
                      
 /**
  * Create a node that will become the user.
@@ -48,67 +48,163 @@ public Node(InetAddress address, int port, String name) throws IOException, Inte
             {
                 try
                 {
-                    // begin server given port that is passed in.
-                    ServerSocket serverSocket = new ServerSocket(port);
                     
+                    Scanner inputScan = new Scanner(System.in);
+
                     while (true)
                     {
-                        nodeInfoList = userNode.getInfoList();
-                        //Wait until the user trys to send a message
-                        Socket socketTalker = serverSocket.accept();
-                      
-                        DataOutputStream outputMessage = new DataOutputStream(socketTalker.getOutputStream());
-                        DataInputStream inputMessage = new DataInputStream(socketTalker.getInputStream());
-                       
-                         
-                        //Wait for a user to connect
-                        System.out.println("User is sending a message- " );
-                                               
-                        //Make a buffer reader
-                        BufferedReader message = new BufferedReader(new InputStreamReader(System.in));
-    
+                        //Get input from chat user
+                        System.out.println("<Chat>: " );
+                        String input = inputScan.nextLine();
                         
-                        //Read in a message that comes through, note .read() halts program till info is received
-                        String input = message.readLine();
-                        outputMessage.writeBytes( input + "\n" );
-                        //Record the input as a String as long as bytes read is more than 
+                        //This should be some from of string input     
+                        //The string typed by the user should start with one of these:
+                        //join
+                        //leave
+                        //IF it doesn't treat it like regular chat
+                        //Toss any other input out and inform the user
+                           //Update Node info from user Node for this thread
                         
-                        //System.out.println(input); // testing
+                        String lowerIn = input.toLowerCase();
                         
-                        //Try to read in the object from the string input
-                        MessageType messageSent = null;
-                   
-                        //Check the recieved message
-                        //IF NULL == Bad Message
-                        //Check the recieved message
-                        //IF the message is a Join message
-                        if(input == "join")
+                        if(lowerIn.startsWith("join"))
                         {
-                            //Send the ip/port list of this node
-                             NodeInfo newNode = new NodeInfo(address, port, name);
-                             nodeInfoList.add(newNode);
-                        }
-                       
-                        //IF the message is a normal message
-                        if(input != "leave")
-                        {
-                            //Display the message to the user
-                            BufferedReader read = new BufferedReader(new InputStreamReader(inputMessage));
+                            //If join message
+                            //parse out the ip and port that the user is trying to join
+                            String[] inputArr = input.split(" ");
+                            int joinPort = 0;
+                            InetAddress joinIP = null;
+                            try
+                            {
+                                joinIP = InetAddress.getByAddress(inputArr[1].getBytes());
+                                joinPort = Integer.parseInt(inputArr[2]);
+                            }
+                            catch(ArrayIndexOutOfBoundsException e)
+                            {
+                                System.out.println("Please provide an IP and port to join");
+                                //Go back to asking for input
+                                continue;
+                            }
+                            //create a socket to connect
+                            Socket otherNode = new Socket(joinIP, joinPort);
+                            //add an input and output stream
+                            DataInputStream inputMessage = new DataInputStream(otherNode.getInputStream());
+                            DataOutputStream outputMessage = new DataOutputStream(otherNode.getOutputStream());
+                            //create a new join request message object
+                            JoinRequestMessage newJoin = new JoinRequestMessage(selfNode);
+                            //send the join request message through the input stream
+                                //as a string using .toString()
+                            outputMessage.writeChars(newJoin.toString());
+                            //wait and read a reply through the output stream
+                            //Make a buffer
+                            byte[] buffer = new byte[1024];
+                            int bytes_read = 0;
+                        
+                            //Read in a message that comes through, note .read() halts program till info is received
+                            bytes_read = inputMessage.read(buffer, 0, buffer.length);
                             
-                        }
+                            //Record the input as a String as long as bytes read is more than 0
+                            String reply = "";
+                            if(bytes_read > 0)
+                            {
+                                reply = new String(buffer, 0, bytes_read);
+                            }
+                            else
+                            {
+                                reply = "Error, bad byte length recieved";
+                            }
                         
-                        //IF the message is a Leave message
-                        if(input == "leave")
-                        {
-                            //Remove the ip/port of the leaver from this nodes list
-                            NodeInfo newNode = null;
+                            //Print data to log for testing purposes
+                            System.err.println("User: Received " + bytes_read
+                                    + " bytes, displaying reply="
+                                    + reply );
                             
-                            closeConnection(socketTalker);
+                            //Convert the return message into a join response message object
+                            //Try to read in the object from the string input
+                            JoinResponseMessage messageRec = null;
+                            try
+                            {
+                                FileInputStream fileIn = new FileInputStream(input);
+                                ObjectInputStream objectInputStream = new ObjectInputStream(fileIn);
+                                //Get our recieved object
+                                Object recObject = objectInputStream.readObject();
+                                messageRec = (JoinResponseMessage) recObject;
+                                objectInputStream.close();
+                            }
+                            catch(ClassNotFoundException e)
+                            {
+                                //Close out the socket of the person "replying"
+                                otherNode.close();
+                                continue;//handle the error by going to the top of the loop
+                            }
+                            
+                            //set the current node list of ip and ports 
+                                //of the node list that came back from the output 
+                            nodeInfoList = messageRec.getList();
                         }
-
-                        
-                        //Close out the socket of the person "talking" and go back to the start of the loop
-                        closeConnection(socketTalker);
+                        else
+                        {
+                            if(lowerIn.startsWith("leave"))
+                            {
+                                //If leave message
+                                //Create a loop through the node list of ip and ports
+                                int index = 0;
+                                while(index < nodeInfoList.size())
+                                {
+                                    //create a socket to connect
+                                    NodeInfo indexNodeInfo = (NodeInfo) nodeInfoList.get(index);
+                                    //Get IP and Port from node at index I
+                                    InetAddress indexIP = indexNodeInfo.getIPAddress();
+                                    int indexPort = indexNodeInfo.getPort();
+                                    //Create a new socket to the node
+                                    Socket indexSock = new Socket(indexIP, indexPort);
+                                    //add an output stream
+                                    DataOutputStream outputMessage = new DataOutputStream(indexSock.getOutputStream());
+                                    //send the leave message through the socket
+                                    LeaveMessage leaveMsg = new LeaveMessage(selfNode);
+                                    //send the Leave message through the input stream
+                                        //as a string using .toString()
+                                    outputMessage.writeChars(leaveMsg.toString());
+                                    //close down the socket
+                                    indexSock.close();
+                                    //Move to next node in list
+                                    index++;
+                                }
+                                    
+                                active = false;
+                                //Close down this node and all threads
+                            }
+                            
+                            else //Not a properly Flagged Message == Regular chat
+                            {
+                                //Create a loop through the node list of ip and ports
+                                int index = 0;
+                                while(index < nodeInfoList.size())
+                                {
+                                    //create a socket to connect
+                                    NodeInfo indexNodeInfo = (NodeInfo) nodeInfoList.get(index);
+                                    //Get IP and Port from node at index I
+                                    InetAddress indexIP = indexNodeInfo.getIPAddress();
+                                    int indexPort = indexNodeInfo.getPort();
+                                    //Create a new socket to the node
+                                    Socket indexSock = new Socket(indexIP, indexPort);
+                                    //add an output stream
+                                    DataOutputStream outputMessage = new DataOutputStream(indexSock.getOutputStream());
+                                    //send the chat message through the socket
+                                    ChatMessage chatMsg = new ChatMessage(selfNode, input);
+                                    //send the chat message through the input stream
+                                        //as a string using .toString()
+                                    outputMessage.writeChars(chatMsg.toString());
+                                    //close down the socket
+                                    indexSock.close();
+                                    //Move to next node in list
+                                    index++;
+                                }
+                                
+                            }
+                        }//Done handling message
+                       
+                       //go back to waitinng for a user message
                     }
                     
                 }
@@ -122,49 +218,14 @@ public Node(InetAddress address, int port, String name) throws IOException, Inte
                 {
                     System.out.println(ioe);
                 }
-               
-                      //This should be some from of string input     
-                      //The string typed by the user should start with one of these:
-                        //join
-                        //chat
-                        //leave
-                      //Toss any other input out and inform the user
-                        //Update Node info from user Node for this thread
-                
-                //Check the message to see if is a join or leave message
-                    //If join message
-                        //parse out the ip and port that the user is trying to join
-                        //create a socket to connect
-                        //add an input and output stream
-                        //create a new join request message object
-                        //send the join request message through the input stream
-                            //as a string using .toString()
-                        //wait and read a reply through the output stream
-                        //set the current node list of ip and ports 
-                          //of the node list that came back from the output 
-                
-                        //go back to waitinng for a user message
-                
-                    //If leave message
-                        //Create a loop through the node list of ip and ports
-                            //create a new socket on port at index I
-                            //send the leave message through the socket
-                            //close down the socket
-                        //Close down this node and all threads
-                
-                    //If normal message
-                        //Create a loop through the node list of ip and ports
-                            //create a new socket on port at index I
-                            //send the message through the socket
-                            //close down the socket
-                        //go back to waitinng for a user message
+                    
             }
         };
 
         //Begin sender Thread      
         sender.start();
         
-        // End of Initiallization for Node0 / Starting node.
+        // End of Initiallization for Node.
         
 }
 
@@ -241,33 +302,5 @@ public void removeNodeInfo(NodeInfo removing)
     nodeInfoList.add(removing);
 }
 
-
-/**
- * Method to handle new incoming socket connections and set
- * @param socket
- * @throws IOException
- * @throws InterruptedException 
- */
- private static void handleSocket(Socket socket) throws IOException, InterruptedException
-{
-    
-    InputStream inputMessage = socket.getInputStream();
-    OutputStream output = socket.getOutputStream();
-
-    BufferedReader read = new BufferedReader(new InputStreamReader(inputMessage));
-    String entry;
-    output.write(("Connected To Server \n").getBytes());
-
-    while( (entry = read.readLine()) != null)
-    {
-        String message = "user typed: " + entry + "\n";
-
-        output.write(message.getBytes());
-
-    } 
-    
-    socket.close();
-
-}
-       
+//End of class
 }
