@@ -106,7 +106,18 @@ public void addNodeInfo(NodeInfo adding)
 
 public void removeNodeInfo(NodeInfo removing)
 {
-    nodeInfoList.remove(removing);
+    boolean removed = false;
+    int index = 0;
+    while(index < nodeInfoList.size())
+    {
+        NodeInfo test = nodeInfoList.get(index);
+        if(test.equals(removing))
+        {
+            removed = true;
+            nodeInfoList.remove(index);
+        }
+    }
+    System.out.println("Removal: " + removed);
 }
 
 public void setInfoList(LinkedList newList)
