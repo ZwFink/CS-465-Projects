@@ -15,7 +15,8 @@ public class MainClass {
        if(args.length < 2)
        {
            System.out.println("Please give an IP and a Port");
-           selfPort = 2080;
+           selfPort = 2000;
+           selfIP = InetAddress.getByName("127.0.0.1");
        }
        else
        {

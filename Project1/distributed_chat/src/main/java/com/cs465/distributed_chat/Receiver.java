@@ -11,11 +11,14 @@ import com.cs465.distributed_chat.messages.JoinRequestMessage;
 import com.cs465.distributed_chat.messages.JoinResponseMessage;
 import com.cs465.distributed_chat.messages.LeaveMessage;
 import com.cs465.distributed_chat.messages.MessageType;
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -60,50 +63,20 @@ public class Receiver extends Thread
                                 + " -is the talking users socket information");
                         
                         //Create an input and output stream to handle this connection
-                        DataInputStream inputMessage = new DataInputStream(socketTalker.getInputStream());
-                        DataOutputStream outputMessage = new DataOutputStream(socketTalker.getOutputStream());
+                        ObjectOutputStream outputMessage = new ObjectOutputStream(socketTalker.getOutputStream());
+                        ObjectInputStream inputMessage = new ObjectInputStream(socketTalker.getInputStream());
                         
-                        //Make a buffer
-                        byte[] buffer = new byte[1024];
-                        int bytes_read = 0;
-                        
-                        //Read in a message that comes through, note .read() halts program till info is received
-                        bytes_read = inputMessage.read(buffer, 0, buffer.length);
-                        
-                        //Record the input as a String as long as bytes read is more than 0
-                        String input = "";
-                        if(bytes_read > 0)
-                        {
-                            input = new String(buffer, 0, bytes_read);
-                        }
-                        else
-                        {
-                            input = "Error, bad byte length recieved";
-                        }
-                        
-                        //Print data to log for testing purposes
-                        System.err.println("Receiver: Received " + bytes_read
-                                   + " bytes, displaying recieved data="
-                                   + input );
-                        
-                        //Try to read in the object from the string input
                         MessageType messageRec = null;
+                        
                         try
                         {
-                            FileInputStream fileIn = new FileInputStream(input);
-                            ObjectInputStream objectInputStream = new ObjectInputStream(fileIn);
-                            //Get our recieved object
-                            Object recObject = objectInputStream.readObject();
-                            messageRec = (MessageType) recObject;
-                            objectInputStream.close();
+                            messageRec = (MessageType) inputMessage.readObject();
                         }
-                        catch(ClassNotFoundException e)
+                        catch(Throwable e)
                         {
-                            //Close out the socket of the person "talking" and go back to the start of the loop
-                            socketTalker.close();
-                            continue;//handle the error by going to the top of the loop
+                            System.out.println("Failed to convert message to object");
                         }
-                    
+                        
                         //Check the recieved message
                         //IF NULL == Bad Message
                         if(messageRec == null)
@@ -113,6 +86,15 @@ public class Receiver extends Thread
                             continue;//handle the error by going to the top of the loop
                         }
                         
+                        //Record the input as a String
+                        String input = messageRec.toString();
+
+                        //Print data to log for testing purposes
+                        System.err.println("Receiver: displaying received data ="
+                                   + input );
+                        System.out.println("Parsing Message");
+                        
+                        
                         //IF the message is a Join message
                         if(messageRec.getType() == MessageType.MessageTypes.JOIN_REQUEST)
                         {
@@ -121,7 +103,7 @@ public class Receiver extends Thread
                             
                             //Send the ip/port list of this node back
                             JoinResponseMessage responseMsg = new JoinResponseMessage(nodeInfoList, selfNode);
-                            outputMessage.writeChars(responseMsg.toString());
+                            outputMessage.writeObject(responseMsg);
                         }
                         //IF the message is a Join NOTIFY message
                         if(messageRec.getType() == MessageType.MessageTypes.JOIN_NOTIFICATION)
