@@ -62,9 +62,9 @@ public class JoinResponseMessage implements MessageType, Serializable
 		try
 		{
                         int counter = 0;
-                        NodeInfo info = (NodeInfo) nodes.get(counter);
-			while( info != null )
+			while( counter <  nodes.size())
 			{
+                                NodeInfo info = (NodeInfo) nodes.get(counter);
 				this.nodesInNetwork.add( new NodeInfo( info ));
                                 counter++;
                                 info = (NodeInfo) nodes.get(counter);

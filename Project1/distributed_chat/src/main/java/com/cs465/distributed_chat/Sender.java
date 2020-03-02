@@ -10,7 +10,7 @@ public class Sender extends Thread
 { 
     // initialize socket and input output streams 
 
-    private final LinkedList<NodeInfo> nodeInfoList = null;
+    private LinkedList<NodeInfo> nodeInfoList = null;
     private final NodeInfo selfNode = null;
     public boolean active = true; // Boolean used to tell if the node has stopped
     private final Node userNode;
@@ -30,8 +30,7 @@ public class Sender extends Thread
     public void run()
     {
         //Get the user of the node that created this thread to open sockects
-        LinkedList NodeInfo;
-        NodeInfo = userNode.getInfoList();
+        nodeInfoList = userNode.getInfoList();
         NodeInfo senderNode;
         senderNode = userNode.getSelf();
         int port = 2080;
@@ -48,7 +47,7 @@ public class Sender extends Thread
             while (true)
             {    
                 //Update the node info list just in case it changed since last time
-                NodeInfo = userNode.getInfoList();
+                nodeInfoList = userNode.getInfoList();
                                    
                 //Get input from chat user
                 System.out.println("<Chat>: " );                       
@@ -64,11 +63,11 @@ public class Sender extends Thread
                 
                 //join 127.0.0.1 2080
                 
-                if("join".equals(inputArr[0]))
+                if(lowerIn.startsWith("join"))
                 {
                     //If join message
                     //parse out the ip and port that the user is trying to join
-                    int indexPort = 0;
+                    int joinPort = 0;
                     
                     InetAddress joinIP = null;
                     
@@ -80,7 +79,7 @@ public class Sender extends Thread
                         joinIP = InetAddress.getByName(inputArr[1]);
                                 
                         //get the port part
-                        indexPort = Integer.parseInt(inputArr[2]);
+                        joinPort = Integer.parseInt(inputArr[2]);
                         
                     //    System.out.println("join ip is: " + joinIP);
                    
@@ -109,7 +108,7 @@ public class Sender extends Thread
                         Socket otherNode = null;
                         try
                         {
-                            otherNode = new Socket(joinIP, indexPort);
+                            otherNode = new Socket(joinIP, joinPort);
                         }
                         catch(ConnectException e)
                         {
@@ -128,13 +127,71 @@ public class Sender extends Thread
                             
                         //send the join request message through the input stream
                             //as a string using .toString()
-                        outputMessage.writeChars(newJoin.toString());
+                        outputMessage.writeObject(newJoin);
                         
                       //  System.out.println("Made it here! 4");
                    
-                    
+                   
+                        //wait and read a reply through the output stream
+                        JoinResponseMessage response = null;
+                        try
+                        {
+                            response = (JoinResponseMessage) inputMessage.readObject();
+                        }
+                        catch(Throwable e)
+                        {
+                            System.out.println("Failed to convert response");
+                        }
+                        
+                        if(response != null)
+                        {
+                            //update own list
+                            userNode.setNodeInfo(response.getList());
+                            userNode.addNodeInfo(response.getInfo());
                             
-                    //wait and read a reply through the output stream
+                            //Iterate through new lst and notify all
+                            //Make notify message
+                            JoinNotificationMessage newNotf = new JoinNotificationMessage(senderNode);
+                            
+                            //Update the node info list of this thread
+                            nodeInfoList = userNode.getInfoList();
+                            
+                            int index = 0;
+                            while(index < nodeInfoList.size())
+                            {
+                                //create a socket to connect
+                                NodeInfo indexNodeInfo = (NodeInfo) nodeInfoList.get(index);
+                            
+                                //Get IP and Port from node at index I
+                                InetAddress indexIP = indexNodeInfo.getIPAddress();
+                            
+                                int indexPort = indexNodeInfo.getPort();
+                            
+                                //Create a new socket to the node
+                                Socket indexSock = new Socket(indexIP, indexPort);
+                                    
+                                //add an output stream
+                                ObjectOutputStream notifyMessage = new ObjectOutputStream(indexSock.getOutputStream());
+                                
+                                //send the Leave message through the input stream
+                                //as a string using .toString()
+                                notifyMessage.writeObject(newNotf);
+                                   
+                                //close down the socket
+                                notifyMessage.close();
+                                indexSock.close();
+                                    
+                                //Move to next node in list
+                                index++;
+                            }
+                        }//End of notify
+                        
+                        //Close out socket and streams
+                        outputMessage.close();
+                        inputMessage.close();
+                        
+                        otherNode.close();
+                        
                 }
                         
                 else
@@ -145,10 +202,10 @@ public class Sender extends Thread
                                 
                         //Create a loop through the node list of ip and ports
                         int index = 0;
-                        while(index < NodeInfo.size())
+                        while(index < nodeInfoList.size())
                         {
                             //create a socket to connect
-                            NodeInfo indexNodeInfo = (NodeInfo) NodeInfo.get(index);
+                            NodeInfo indexNodeInfo = (NodeInfo) nodeInfoList.get(index);
                             
                             //Get IP and Port from node at index I
                             InetAddress indexIP = indexNodeInfo.getIPAddress();
@@ -166,9 +223,10 @@ public class Sender extends Thread
                                     
                             //send the Leave message through the input stream
                                 //as a string using .toString()
-                            outputMessage.writeChars(leaveMsg.toString());
+                            outputMessage.writeObject(leaveMsg);
                                    
                             //close down the socket
+                            outputMessage.close();
                             indexSock.close();
                                     
                             //Move to next node in list
@@ -185,10 +243,10 @@ public class Sender extends Thread
                         int index = 0;
                                 
                         //iterate though the list of ip's
-                        while(index < NodeInfo.size())
+                        while(index < nodeInfoList.size())
                         {
                             //create a socket to connect
-                            NodeInfo indexNodeInfo = (NodeInfo) NodeInfo.get(index);
+                            NodeInfo indexNodeInfo = (NodeInfo) nodeInfoList.get(index);
                                     
                             //Get IP and Port from node at index I
                             InetAddress indexIP = indexNodeInfo.getIPAddress();
@@ -205,9 +263,10 @@ public class Sender extends Thread
                                     
                             //send the chat message through the input stream
                                 //as a string using .toString()
-                            outputMessage.writeChars(chatMsg.toString());
+                            outputMessage.writeObject(chatMsg);
                             
                             //close down the socket
+                            outputMessage.close();
                             indexSock.close();
                               
                             //Move to next node in list

@@ -109,5 +109,10 @@ public void removeNodeInfo(NodeInfo removing)
     nodeInfoList.add(removing);
 }
 
+public void setNodeInfo(LinkedList newList)
+{
+    nodeInfoList = newList;
+}
+
 //End of class
 }
