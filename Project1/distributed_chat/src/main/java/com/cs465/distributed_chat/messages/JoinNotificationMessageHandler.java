@@ -12,17 +12,18 @@ import java.util.List;
  *
  * @author zane
  */
-public class JoinMessageHandler implements MessageHandler 
+public class JoinNotificationMessageHandler implements MessageHandler 
 {
 	
 	List<NodeInfo> memberList;
 
-	public JoinMessageHandler( List<NodeInfo> membershipList )
+	public JoinNotificationMessageHandler( List<NodeInfo> membershipList )
 	{
 		this.memberList = membershipList;			
 	}
 
-	public void handleResponse( final MessageType responseMessage )
+	@Override
+	public void handleMessage( final MessageType responseMessage )
 	{
 		this.memberList.add( responseMessage.getInfo() );
 	}
