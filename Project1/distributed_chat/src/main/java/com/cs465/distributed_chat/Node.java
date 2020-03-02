@@ -117,7 +117,7 @@ public void removeNodeInfo(NodeInfo removing)
             nodeInfoList.remove(index);
         }
     }
-    System.out.println("Removal: " + removed);
+    //System.out.println("Removal: " + removed);
 }
 
 public void setInfoList(LinkedList newList)

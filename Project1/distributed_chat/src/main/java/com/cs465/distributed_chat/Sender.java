@@ -147,8 +147,9 @@ public class Sender extends Thread
                             userNode.setInfoList(response.getList());
                             userNode.addNodeInfo(response.getInfo());
                             
-                            NodeInfo firstNode = (NodeInfo) userNode.getInfoList().get(0);
-                            System.out.println("New Node Info Port: " + firstNode.getPort());
+                            //For Testing TODO Remove later
+                            //NodeInfo firstNode = (NodeInfo) userNode.getInfoList().get(0);
+                            //System.out.println("New Node Info Port: " + firstNode.getPort());
                             
                             //Iterate through new lst and notify all
                             //Make notify message
@@ -187,8 +188,8 @@ public class Sender extends Thread
                             }
                         }//End of notify
                         
-                        //Close out socket
-                        //otherNode.close();
+                        //Inform user htey joined
+                        System.out.println("Join Succeeded!");
                         
                 }
                         

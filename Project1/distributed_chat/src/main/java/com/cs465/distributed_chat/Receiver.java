@@ -58,10 +58,12 @@ public class Receiver extends Thread
                         
                         //Wait for a user to connect
                         Socket socketTalker = serverSocket.accept();
+                        
+                        /* TODO Removal later
                         System.out.println("Another User is sending something- " 
                                 + socketTalker 
                                 + " -is the talking users socket information");
-                        
+                        */
                         //Create an input and output stream to handle this connection
                         ObjectOutputStream outputMessage = new ObjectOutputStream(socketTalker.getOutputStream());
                         ObjectInputStream inputMessage = new ObjectInputStream(socketTalker.getInputStream());
@@ -94,8 +96,7 @@ public class Receiver extends Thread
                         String input = messageRec.toString();
 
                         //Print data to log for testing purposes TODO Remove later
-                        System.err.println("Receiver: displaying received data = "
-                                   + input );
+                        //System.err.println("Receiver: displaying received data = " + input );
                         //System.out.println("Parsing Message");
                         
                         
@@ -125,8 +126,14 @@ public class Receiver extends Thread
                             userNode.addNodeInfo(joinNotf.getInfo());
                             //Update the node info list of this thread
                             nodeInfoList = userNode.getInfoList();
+                            
+                            //Testing prints, TODO remove later
                             NodeInfo firstNode = (NodeInfo) userNode.getInfoList().get(0);
+                            System.out.println("New Node Joined");
+                            System.out.println("New Node Info IP: " + firstNode.getIPAddress().toString());
                             System.out.println("New Node Info Port: " + firstNode.getPort());
+                            //Reshow chat input test
+                            System.out.println("<Chat>: ");
                         }
                         //IF the message is a normal message
                         if(messageRec.getType() == MessageType.MessageTypes.CHAT_MESSAGE)
@@ -134,11 +141,13 @@ public class Receiver extends Thread
                             //Transfrom the message into the chat message type
                             ChatMessage chatMsg = (ChatMessage) messageRec;
                             
-                            //TODO Remove later
-                            //System.out.println("Got a chat message");
-                            
+                            NodeInfo talkerInfo = chatMsg.getInfo();
+                            System.out.print("< " + talkerInfo.getIPAddress().toString());
+                            System.out.print(" // " + talkerInfo.getPort() + ">: ");
                             //Display the message to the user
-                            System.out.println(chatMsg.getMessage());
+                            System.out.print(chatMsg.getMessage() + "\n");
+                            //Reshow chat input test
+                            System.out.println("<Chat>: ");
                         }
                         //IF the message is a Leave message
                         if(messageRec.getType() == MessageType.MessageTypes.LEAVE_MESSAGE)
@@ -147,11 +156,11 @@ public class Receiver extends Thread
                             LeaveMessage leaveMsg = (LeaveMessage) messageRec;
                             
                             //TODO Remove later
-                            System.out.println("Got a leave message");
+                            //System.out.println("Got a leave message");
                          
                             //Remove the ip/port of the leaver from this nodes list
                             userNode.removeNodeInfo(leaveMsg.getInfo());
-                            System.out.println("New List size: " + userNode.getInfoList().size());
+                            //System.out.println("New List size: " + userNode.getInfoList().size());
                         }
 
                         //outputMessage.close();
