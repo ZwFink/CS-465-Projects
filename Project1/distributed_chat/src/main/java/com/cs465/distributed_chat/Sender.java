@@ -24,7 +24,7 @@ public class Sender extends Thread
 
     /**
      * Creates the Sender thread
-     * used for sending messages to other nodes
+     * used for sending messages to other 
      */
     @Override
     public void run()
@@ -38,65 +38,83 @@ public class Sender extends Thread
         try
         {
             Scanner inputScan = new Scanner(System.in);
+            
+            System.out.println("\n  To join the chat type \n"
+                                + "join -> ip address -> port # \n");
+            
 
             while (true)
             {
                 //Get input from chat user
-                System.out.println("<Chat>: " );
-                        
+                System.out.println("<Chat>: " );                       
                 //This should be some from of string input  
-                String input = inputScan.nextLine();
-       
+                String input = inputScan.nextLine();       
+                
+               // System.out.println("input is " + input);       // Testing 
+               
                 String lowerIn = input.toLowerCase();
+
+                // split the input into segments
+                String[] inputArr = input.split(" ");
                 
                 //Update the node info list just in case it changed since last time
                 NodeInfo = userNode.getInfoList();
-                        
-                if(lowerIn.startsWith("join"))
+                                        
+                if(inputArr[0].startsWith("join"))
                 {
                     //If join message
                     //parse out the ip and port that the user is trying to join
-                    String[] inputArr = input.split(" ");
-                    int joinPort = 0;
+                    int indexPort = 0;
+                    
                     InetAddress joinIP = null;
-                        
-                    try
-                    {
+                    
+                    System.out.println("Made it here!  1");
+                    
+                   try
+                   {
                         // get the address part
                         joinIP = InetAddress.getByAddress(inputArr[1].getBytes());
                                 
                         //get the port part
-                        joinPort = Integer.parseInt(inputArr[2]);
+                        indexPort = Integer.parseInt(inputArr[2]);
+                        
+                        System.out.println("join ip is: " + joinIP);
+                   
+                        System.out.println("user is connected");
+  
+                        //create a socket to connect
+                        Socket otherNode = new Socket(joinIP, indexPort);
+                            
+                        //add an input and output stream
+                        DataInputStream inputMessage = new DataInputStream(otherNode.getInputStream());
+                        DataOutputStream outputMessage = new DataOutputStream(otherNode.getOutputStream());
+                            
+                        //create a new join request message object
+                        JoinRequestMessage newJoin = new JoinRequestMessage(senderNode);
+                            
+                        //send the join request message through the input stream
+                            //as a string using .toString()
+                        outputMessage.writeChars(newJoin.toString());
+                   }
+                   
+                    catch(UnknownHostException i)
+                    {
+                        System.out.println(i);
+                        
+                        System.out.println("Made it here! 2");
                     }
                     
                     catch(ArrayIndexOutOfBoundsException e)
                     {
                         System.out.println("Please provide an IP and port to join");
                         
+                        System.out.println("Made it here! 3");
+                        
+                        
+                        
                         //Go back to asking for input
                         continue;
                     }
-                    
-                    //create a socket to connect
-                    try
-                    {
-                        Socket otherNode = new Socket(joinIP, joinPort);
-                    }
-                    catch(Throwable e)
-                    {
-                        System.out.println("Failed to create connection to node you tried to join");
-                    }
-                            
-                    //add an input and output stream
-                    DataInputStream inputMessage = new DataInputStream(otherNode.getInputStream());
-                    DataOutputStream outputMessage = new DataOutputStream(otherNode.getOutputStream());
-                            
-                    //create a new join request message object
-                    JoinRequestMessage newJoin = new JoinRequestMessage(senderNode);
-                            
-                    //send the join request message through the input stream
-                        //as a string using .toString()
-                    outputMessage.writeChars(newJoin.toString());
                             
                     //wait and read a reply through the output stream
                 }
@@ -184,6 +202,11 @@ public class Sender extends Thread
                        //go back to waitinng for a user message
             }
                     
+        }
+        
+        catch(UnknownHostException i)
+        {
+            System.out.println(i);
         }
                 
         catch(IOException ioe)
