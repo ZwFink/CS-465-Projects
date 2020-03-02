@@ -103,7 +103,7 @@ public class Receiver extends Thread
                             
                             //Send the ip/port list of this node back
                             JoinResponseMessage responseMsg = new JoinResponseMessage(nodeInfoList, selfNode);
-                            outputMessage.writeChars(responseMsg.toString());
+                            outputMessage.writeObject(responseMsg);
                         }
                         //IF the message is a Join NOTIFY message
                         if(messageRec.getType() == MessageType.MessageTypes.JOIN_NOTIFICATION)

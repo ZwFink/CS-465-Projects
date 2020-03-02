@@ -217,7 +217,7 @@ public class Sender extends Thread
                     }
                 }//Done handling message
                        
-                       //go back to waitinng for a user message
+                       //go back to waiting for a user message
             }
                     
         }
