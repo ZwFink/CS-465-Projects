@@ -11,11 +11,14 @@ import com.cs465.distributed_chat.messages.JoinRequestMessage;
 import com.cs465.distributed_chat.messages.JoinResponseMessage;
 import com.cs465.distributed_chat.messages.LeaveMessage;
 import com.cs465.distributed_chat.messages.MessageType;
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -79,28 +82,32 @@ public class Receiver extends Thread
                         else
                         {
                             input = "Error, bad byte length recieved";
+                            System.out.println("Bad Byte Length");
                         }
                         
                         //Print data to log for testing purposes
                         System.err.println("Receiver: Received " + bytes_read
                                    + " bytes, displaying recieved data="
                                    + input );
+                        System.out.println("Parsing Message");
                         
                         //Try to read in the object from the string input
                         MessageType messageRec = null;
                         try
                         {
-                            FileInputStream fileIn = new FileInputStream(input);
-                            ObjectInputStream objectInputStream = new ObjectInputStream(fileIn);
+                            ByteArrayInputStream bis = new ByteArrayInputStream(buffer);
+                            ObjectInput inObject = new ObjectInputStream(bis);
                             //Get our recieved object
-                            Object recObject = objectInputStream.readObject();
+                            Object recObject = inObject.readObject();
                             messageRec = (MessageType) recObject;
-                            objectInputStream.close();
+                            inObject.close();
+                            bis.close();
                         }
                         catch(ClassNotFoundException e)
                         {
                             //Close out the socket of the person "talking" and go back to the start of the loop
                             socketTalker.close();
+                            System.out.println("Bad Conversion");
                             continue;//handle the error by going to the top of the loop
                         }
                     
