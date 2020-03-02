@@ -12,5 +12,5 @@ package com.cs465.distributed_chat.messages;
 public interface MessageHandler 
 {
 	
-	public void handleResponse( final MessageType responseMessage );
+	public void handleMessage( final MessageType responseMessage );
 }
