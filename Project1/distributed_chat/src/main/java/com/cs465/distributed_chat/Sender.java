@@ -78,7 +78,14 @@ public class Sender extends Thread
                     }
                     
                     //create a socket to connect
-                    Socket otherNode = new Socket(joinIP, joinPort);
+                    try
+                    {
+                        Socket otherNode = new Socket(joinIP, joinPort);
+                    }
+                    catch(Throwable e)
+                    {
+                        System.out.println("Failed to create connection to node you tried to join");
+                    }
                             
                     //add an input and output stream
                     DataInputStream inputMessage = new DataInputStream(otherNode.getInputStream());
