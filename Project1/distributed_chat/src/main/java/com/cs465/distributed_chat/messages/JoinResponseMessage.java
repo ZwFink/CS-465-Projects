@@ -25,7 +25,7 @@ public class JoinResponseMessage implements MessageType, Serializable
 	 * List of the other nodes that are in the network.
 	 * nodesInNetwork + sendingNode make up the entire network.
 	 */
-	final LinkedList nodesInNetwork;
+	final LinkedList<NodeInfo> nodesInNetwork;
 
 	/**
 	 * The node that is sending the JoinResponse.
@@ -53,7 +53,7 @@ public class JoinResponseMessage implements MessageType, Serializable
 	 * @throws IllegalArgumentException If copying NodeInfo objects 
 	 *         results in an error.
 	 */
-	public JoinResponseMessage( LinkedList nodes,
+	public JoinResponseMessage( LinkedList<NodeInfo> nodes,
 				    NodeInfo sendingNodeInfo 
 	                          ) throws IllegalArgumentException
 	{
