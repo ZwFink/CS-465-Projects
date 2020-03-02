@@ -90,7 +90,7 @@ public class MessageSender
 	 * @return
 	 */
 	public MessageType sendMessageWithResponse( final MessageType toSend,
-		MessageResponseHandler responseHandler 
+		MessageHandler responseHandler 
 	)
 	{
 		return null;
