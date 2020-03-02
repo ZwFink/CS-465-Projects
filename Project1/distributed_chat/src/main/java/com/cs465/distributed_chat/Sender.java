@@ -78,7 +78,7 @@ public class Sender extends Thread
                    try
                    {
                         // get the address part
-                        joinIP = InetAddress.getByAddress(inputArr[1].getBytes());
+                        joinIP = InetAddress.getByName(inputArr[1]);
                                 
                         //get the port part
                         indexPort = Integer.parseInt(inputArr[2]);

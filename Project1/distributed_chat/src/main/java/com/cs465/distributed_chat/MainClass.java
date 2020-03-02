@@ -15,11 +15,12 @@ public class MainClass {
        if(args.length < 2)
        {
            System.out.println("Please give an IP and a Port");
+           selfPort = 2080;
        }
        else
        {
            selfPort = Integer.parseInt(args[1]);
-           selfIP = InetAddress.getByAddress(args[0].getBytes());
+           selfIP = InetAddress.getByName(args[0]);
        }
        
        String logicalName = selfIP.getHostName();
