@@ -12,9 +12,9 @@ import java.lang.Integer;
 public class MainClass {
    public static void main(String[] args) throws IOException, InterruptedException 
    {
-       String defaultIP = "127.0.0.1";
+       String defaultIP = InetAddress.getLocalHost().toString();
        int selfPort = 0;
-       InetAddress selfIP = null;
+       InetAddress selfIP = InetAddress.getLocalHost();
        if(args.length < 2)
        {
             System.out.println("IP and Port arguments not given, usng default IP: " 
@@ -23,7 +23,6 @@ public class MainClass {
             System.out.println("Please give a Port number to use: ");
             String portStr = portScan.nextLine();     
             selfPort = Integer.parseInt(portStr);
-            selfIP = InetAddress.getByName(defaultIP);
        }
        else
        {
