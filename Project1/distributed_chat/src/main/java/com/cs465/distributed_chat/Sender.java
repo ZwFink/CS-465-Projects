@@ -49,8 +49,7 @@ public class Sender extends Thread
             {    
                 //Update the node info list just in case it changed since last time
                 NodeInfo = userNode.getInfoList();
-                                
-                
+                                   
                 //Get input from chat user
                 System.out.println("<Chat>: " );                       
                 //This should be some from of string input  
@@ -73,7 +72,7 @@ public class Sender extends Thread
                     
                     InetAddress joinIP = null;
                     
-                    System.out.println("Made it here!  1");
+                //    System.out.println("Made it here!  1"); 
                     
                    try
                    {
@@ -83,25 +82,25 @@ public class Sender extends Thread
                         //get the port part
                         indexPort = Integer.parseInt(inputArr[2]);
                         
-                        System.out.println("join ip is: " + joinIP);
+                    //    System.out.println("join ip is: " + joinIP);
                    
-                        System.out.println("user is connected");
+                    //    System.out.println("user is connected");
                         
-                        System.out.println("Made it here! 5");
+                     //   System.out.println("Made it here! 5");
                     }
                    
                     catch(UnknownHostException i)
                     {
                         System.out.println(i);
                         
-                        System.out.println("Made it here! 2");
+                        System.out.println(i + "ERROR LOCATION 3");
                     }
                     
                     catch(ArrayIndexOutOfBoundsException e)
                     {
                         System.out.println("Please provide an IP and port to join");
                         
-                        System.out.println("Made it here! 3");
+                     //   System.out.println("Made it here! 3");
                         
                         //Go back to asking for input
                         continue;
@@ -110,8 +109,9 @@ public class Sender extends Thread
                         Socket otherNode = new Socket(joinIP, indexPort);
                             
                         //add an input and output stream
-                        DataInputStream inputMessage = new DataInputStream(otherNode.getInputStream());
-                        DataOutputStream outputMessage = new DataOutputStream(otherNode.getOutputStream());
+                        ObjectOutputStream outputMessage = new ObjectOutputStream(otherNode.getOutputStream());
+                        ObjectInputStream inputMessage = new ObjectInputStream(otherNode.getInputStream());
+                        
                             
                         
                         //create a new join request message object
@@ -121,7 +121,7 @@ public class Sender extends Thread
                             //as a string using .toString()
                         outputMessage.writeChars(newJoin.toString());
                         
-                        System.out.println("Made it here! 4");
+                      //  System.out.println("Made it here! 4");
                    
                     
                             
@@ -150,7 +150,7 @@ public class Sender extends Thread
                             Socket indexSock = new Socket(indexIP, indexPort);
                                     
                             //add an output stream
-                            DataOutputStream outputMessage = new DataOutputStream(indexSock.getOutputStream());
+                            ObjectOutputStream outputMessage = new ObjectOutputStream(indexSock.getOutputStream());
                                     
                             //send the leave message through the socket
                             LeaveMessage leaveMsg = new LeaveMessage(senderNode);
@@ -189,7 +189,7 @@ public class Sender extends Thread
                             Socket indexSock = new Socket(indexIP, indexPort);
                                     
                             //add an output stream
-                            DataOutputStream outputMessage = new DataOutputStream(indexSock.getOutputStream());
+                            ObjectOutputStream outputMessage = new ObjectOutputStream(indexSock.getOutputStream());
                                 
                             //send the chat message through the socket
                             ChatMessage chatMsg = new ChatMessage(senderNode, input);
@@ -215,7 +215,7 @@ public class Sender extends Thread
         
         catch(UnknownHostException i)
         {
-            System.out.println(i);
+         //   System.out.println(i + "ERROR LOCATION 1");
         }
                 
         catch(IOException ioe)
