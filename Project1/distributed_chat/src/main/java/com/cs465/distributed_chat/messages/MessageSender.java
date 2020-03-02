@@ -62,7 +62,7 @@ public class MessageSender
 	 * @note If a message cannot be sent successfully to a recipient,
 	 *       that recipient will be removed from the iterator.
 	 */
-	public void sendMessageWithoutResponse( final MessageType toSend, 
+	public static void sendMessageWithoutResponse( final MessageType toSend, 
 		Iterator recipients
 	)
 	{
@@ -89,7 +89,7 @@ public class MessageSender
 	 * @param toSend
 	 * @return
 	 */
-	public MessageType sendMessageWithResponse( final MessageType toSend,
+	public static MessageType sendMessageWithResponse( final MessageType toSend,
 		MessageHandler responseHandler 
 	)
 	{
