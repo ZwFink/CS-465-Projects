@@ -85,8 +85,7 @@ public class Receiver extends Thread
                         //IF NULL == Bad Message
                         if(messageRec == null)
                         {
-                            //Close out the socket of the person "talking" and go back to the start of the loop
-                            socketTalker.close();
+                            //go back to the start of the loop
                             System.out.println("Message was null");
                             continue;//handle the error by going to the top of the loop
                         }
@@ -124,6 +123,10 @@ public class Receiver extends Thread
                             
                             //Append given ip/port of the message to list of this node
                             userNode.addNodeInfo(joinNotf.getInfo());
+                            //Update the node info list of this thread
+                            nodeInfoList = userNode.getInfoList();
+                            NodeInfo firstNode = (NodeInfo) userNode.getInfoList().get(0);
+                            System.out.println("New Node Info Port: " + firstNode.getPort());
                         }
                         //IF the message is a normal message
                         if(messageRec.getType() == MessageType.MessageTypes.CHAT_MESSAGE)
@@ -144,16 +147,17 @@ public class Receiver extends Thread
                             LeaveMessage leaveMsg = (LeaveMessage) messageRec;
                             
                             //TODO Remove later
-                            //System.out.println("Got a leave message");
+                            System.out.println("Got a leave message");
                          
                             //Remove the ip/port of the leaver from this nodes list
                             userNode.removeNodeInfo(leaveMsg.getInfo());
+                            System.out.println("New List size: " + userNode.getInfoList().size());
                         }
 
-                        outputMessage.close();
-                        inputMessage.close();
+                        //outputMessage.close();
+                        //inputMessage.close();
                         //Close out the socket of the person "talking" and go back to the start of the loop
-                        socketTalker.close();
+                        //socketTalker.close();
                     }
                     
                 }

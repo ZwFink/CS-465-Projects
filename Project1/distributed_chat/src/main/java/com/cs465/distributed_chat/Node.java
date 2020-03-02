@@ -106,10 +106,10 @@ public void addNodeInfo(NodeInfo adding)
 
 public void removeNodeInfo(NodeInfo removing)
 {
-    nodeInfoList.add(removing);
+    nodeInfoList.remove(removing);
 }
 
-public void setNodeInfo(LinkedList newList)
+public void setInfoList(LinkedList newList)
 {
     nodeInfoList = newList;
 }

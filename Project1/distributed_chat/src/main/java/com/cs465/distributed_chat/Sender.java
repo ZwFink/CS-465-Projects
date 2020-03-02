@@ -11,7 +11,7 @@ public class Sender extends Thread
     // initialize socket and input output streams 
 
     private LinkedList<NodeInfo> nodeInfoList = null;
-    private final NodeInfo selfNode = null;
+    private NodeInfo senderNode = null;
     public boolean active = true; // Boolean used to tell if the node has stopped
     private final Node userNode;
         
@@ -31,9 +31,7 @@ public class Sender extends Thread
     {
         //Get the user of the node that created this thread to open sockects
         nodeInfoList = userNode.getInfoList();
-        NodeInfo senderNode;
         senderNode = userNode.getSelf();
-        int port = 2080;
         
         try
         {
@@ -146,8 +144,11 @@ public class Sender extends Thread
                         if(response != null)
                         {
                             //update own list
-                            userNode.setNodeInfo(response.getList());
+                            userNode.setInfoList(response.getList());
                             userNode.addNodeInfo(response.getInfo());
+                            
+                            NodeInfo firstNode = (NodeInfo) userNode.getInfoList().get(0);
+                            System.out.println("New Node Info Port: " + firstNode.getPort());
                             
                             //Iterate through new lst and notify all
                             //Make notify message
@@ -173,24 +174,21 @@ public class Sender extends Thread
                                 //add an output stream
                                 ObjectOutputStream notifyMessage = new ObjectOutputStream(indexSock.getOutputStream());
                                 
-                                //send the Leave message through the input stream
+                                //send the Notify message through the input stream
                                 //as a string using .toString()
                                 notifyMessage.writeObject(newNotf);
                                    
                                 //close down the socket
-                                notifyMessage.close();
-                                indexSock.close();
+                                //notifyMessage.close();
+                                //indexSock.close();
                                     
                                 //Move to next node in list
                                 index++;
                             }
                         }//End of notify
                         
-                        //Close out socket and streams
-                        outputMessage.close();
-                        inputMessage.close();
-                        
-                        otherNode.close();
+                        //Close out socket
+                        //otherNode.close();
                         
                 }
                         
@@ -226,8 +224,8 @@ public class Sender extends Thread
                             outputMessage.writeObject(leaveMsg);
                                    
                             //close down the socket
-                            outputMessage.close();
-                            indexSock.close();
+                            //outputMessage.close();
+                            //indexSock.close();
                                     
                             //Move to next node in list
                             index++;
@@ -266,8 +264,8 @@ public class Sender extends Thread
                             outputMessage.writeObject(chatMsg);
                             
                             //close down the socket
-                            outputMessage.close();
-                            indexSock.close();
+                            //outputMessage.close();
+                            //indexSock.close();
                               
                             //Move to next node in list
                             index++;
