@@ -2,6 +2,8 @@ package com.cs465.distributed_chat;
 
 import java.io.*;
 import java.net.*;
+import java.util.Scanner;
+import java.lang.Integer;
 
 /**
  * create a node to initialize base connections on main device.
@@ -10,13 +12,18 @@ import java.net.*;
 public class MainClass {
    public static void main(String[] args) throws IOException, InterruptedException 
    {
+       String defaultIP = "127.0.0.1";
        int selfPort = 0;
        InetAddress selfIP = null;
        if(args.length < 2)
        {
-           System.out.println("Please give an IP and a Port");
-           selfPort = 2080;
-           selfIP = InetAddress.getByName("127.0.0.1");
+            System.out.println("IP and Port arguments not given, usng default IP: " 
+                                + defaultIP);
+            Scanner portScan = new Scanner(System.in);
+            System.out.println("Please give a Port number to use: ");
+            String portStr = portScan.nextLine();     
+            selfPort = Integer.parseInt(portStr);
+            selfIP = InetAddress.getByName(defaultIP);
        }
        else
        {

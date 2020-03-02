@@ -150,7 +150,8 @@ public class Receiver extends Thread
                             userNode.removeNodeInfo(leaveMsg.getInfo());
                         }
 
-                        
+                        outputMessage.close();
+                        inputMessage.close();
                         //Close out the socket of the person "talking" and go back to the start of the loop
                         socketTalker.close();
                     }
