@@ -106,7 +106,16 @@ public class Sender extends Thread
                         continue;
                     }
                         //create a socket to connect
-                        Socket otherNode = new Socket(joinIP, indexPort);
+                        Socket otherNode = null;
+                        try
+                        {
+                            otherNode = new Socket(joinIP, indexPort);
+                        }
+                        catch(ConnectException e)
+                        {
+                            System.out.println("That IP and Port is not on the network");
+                            continue;
+                        }
                             
                         //add an input and output stream
                         ObjectOutputStream outputMessage = new ObjectOutputStream(otherNode.getOutputStream());
