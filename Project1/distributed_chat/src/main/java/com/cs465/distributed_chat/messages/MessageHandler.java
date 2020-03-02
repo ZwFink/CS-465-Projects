@@ -9,7 +9,7 @@ package com.cs465.distributed_chat.messages;
  *
  * @author zane
  */
-public interface MessageResponseHandler 
+public interface MessageHandler 
 {
 	
 	public void handleResponse( final MessageType responseMessage );
