@@ -34,9 +34,11 @@ public class Sender extends Thread
         NodeInfo = userNode.getInfoList();
         NodeInfo senderNode;
         senderNode = userNode.getSelf();
+        int port = 2080;
         
         try
         {
+            
             Scanner inputScan = new Scanner(System.in);
             
             System.out.println("\n  To join the chat type \n"
@@ -44,7 +46,11 @@ public class Sender extends Thread
             
 
             while (true)
-            {
+            {    
+                //Update the node info list just in case it changed since last time
+                NodeInfo = userNode.getInfoList();
+                                
+                
                 //Get input from chat user
                 System.out.println("<Chat>: " );                       
                 //This should be some from of string input  
@@ -57,10 +63,9 @@ public class Sender extends Thread
                 // split the input into segments
                 String[] inputArr = input.split(" ");
                 
-                //Update the node info list just in case it changed since last time
-                NodeInfo = userNode.getInfoList();
-                                        
-                if(inputArr[0].startsWith("join"))
+                //join 127.0.0.1 2080
+                
+                if("join".equals(inputArr[0]))
                 {
                     //If join message
                     //parse out the ip and port that the user is trying to join
@@ -81,21 +86,9 @@ public class Sender extends Thread
                         System.out.println("join ip is: " + joinIP);
                    
                         System.out.println("user is connected");
-  
-                        //create a socket to connect
-                        Socket otherNode = new Socket(joinIP, indexPort);
-                            
-                        //add an input and output stream
-                        DataInputStream inputMessage = new DataInputStream(otherNode.getInputStream());
-                        DataOutputStream outputMessage = new DataOutputStream(otherNode.getOutputStream());
-                            
-                        //create a new join request message object
-                        JoinRequestMessage newJoin = new JoinRequestMessage(senderNode);
-                            
-                        //send the join request message through the input stream
-                            //as a string using .toString()
-                        outputMessage.writeChars(newJoin.toString());
-                   }
+                        
+                        System.out.println("Made it here! 5");
+                    }
                    
                     catch(UnknownHostException i)
                     {
@@ -110,11 +103,27 @@ public class Sender extends Thread
                         
                         System.out.println("Made it here! 3");
                         
-                        
-                        
                         //Go back to asking for input
                         continue;
                     }
+                        //create a socket to connect
+                        Socket otherNode = new Socket(joinIP, indexPort);
+                            
+                        //add an input and output stream
+                        DataInputStream inputMessage = new DataInputStream(otherNode.getInputStream());
+                        DataOutputStream outputMessage = new DataOutputStream(otherNode.getOutputStream());
+                            
+                        
+                        //create a new join request message object
+                        JoinRequestMessage newJoin = new JoinRequestMessage(senderNode);
+                            
+                        //send the join request message through the input stream
+                            //as a string using .toString()
+                        outputMessage.writeChars(newJoin.toString());
+                        
+                        System.out.println("Made it here! 4");
+                   
+                    
                             
                     //wait and read a reply through the output stream
                 }
