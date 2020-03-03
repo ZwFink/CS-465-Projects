@@ -38,17 +38,22 @@ public Node(InetAddress address, int port, String name) throws IOException, Inte
     receiver = new Receiver(this);
     
     sender = new Sender(this);
-         
-    //Begin sender Thread      
-    sender.start();
-    
-    //start the receiver thread.
-    receiver.start();
-     
     // End of Initiallization for Node threads
         
 }
 
+/**
+ * Start the chat client, given the information it was initialized with.
+ * This will run until the user leaves.
+ */
+public void startChatClient()
+{
+    //Begin sender Thread      
+    sender.start();
+
+    //start the receiver thread.
+    receiver.start();
+}
 
 /**
  * Transform a string into a message.
@@ -117,7 +122,6 @@ public void removeNodeInfo(NodeInfo removing)
             nodeInfoList.remove(index);
         }
     }
-    //System.out.println("Removal: " + removed);
 }
 
 public void setInfoList(LinkedList newList)
