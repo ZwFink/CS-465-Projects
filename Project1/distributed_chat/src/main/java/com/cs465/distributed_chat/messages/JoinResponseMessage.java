@@ -67,7 +67,6 @@ public class JoinResponseMessage implements MessageType, Serializable
                                 NodeInfo info = (NodeInfo) nodes.get(counter);
 				this.nodesInNetwork.add( new NodeInfo( info ));
                                 counter++;
-                                info = (NodeInfo) nodes.get(counter);
 			}
 
 			this.sendingNode = new NodeInfo( sendingNodeInfo );

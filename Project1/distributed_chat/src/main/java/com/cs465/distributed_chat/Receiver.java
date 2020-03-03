@@ -53,17 +53,13 @@ public class Receiver extends Thread
                     
                     while (true)
                     {
-                        //Update Node info from user Node for this thread
-                        nodeInfoList = userNode.getInfoList();
-                        
+  
                         //Wait for a user to connect
                         Socket socketTalker = serverSocket.accept();
                         
-                        /* TODO Removal later
-                        System.out.println("Another User is sending something- " 
-                                + socketTalker 
-                                + " -is the talking users socket information");
-                        */
+                        //Update Node info from user Node for this thread
+                        nodeInfoList = userNode.getInfoList();
+
                         //Create an input and output stream to handle this connection
                         ObjectOutputStream outputMessage = new ObjectOutputStream(socketTalker.getOutputStream());
                         ObjectInputStream inputMessage = new ObjectInputStream(socketTalker.getInputStream());
@@ -94,10 +90,6 @@ public class Receiver extends Thread
                         
                         //Record the input as a String
                         String input = messageRec.toString();
-
-                        //Print data to log for testing purposes TODO Remove later
-                        //System.err.println("Receiver: displaying received data = " + input );
-                        //System.out.println("Parsing Message");
                         
                         
                         //IF the message is a Join message
@@ -105,9 +97,6 @@ public class Receiver extends Thread
                         {
                             //Transfrom the message into the join request type
                             JoinRequestMessage joinReq = (JoinRequestMessage) messageRec;
-                            
-                            //TODO Remove later
-                            //System.out.println("Got a join request message");
                             
                             //Send the ip/port list of this node back
                             JoinResponseMessage responseMsg = new JoinResponseMessage(nodeInfoList, selfNode);
@@ -119,19 +108,16 @@ public class Receiver extends Thread
                             //Transfrom the message into the join notification type
                             JoinNotificationMessage joinNotf = (JoinNotificationMessage) messageRec;
                             
-                            //TODO Remove later
-                            //System.out.println("Got a join notify message");
                             
                             //Append given ip/port of the message to list of this node
                             userNode.addNodeInfo(joinNotf.getInfo());
                             //Update the node info list of this thread
                             nodeInfoList = userNode.getInfoList();
                             
-                            //Testing prints, TODO remove later
-                            NodeInfo firstNode = (NodeInfo) userNode.getInfoList().get(0);
+                            NodeInfo notifingNode = (NodeInfo) joinNotf.getInfo();
                             System.out.println("New Node Joined");
-                            System.out.println("New Node Info IP: " + firstNode.getIPAddress().toString());
-                            System.out.println("New Node Info Port: " + firstNode.getPort());
+                            System.out.println("New Node Info IP: " + notifingNode.getIPAddress().toString());
+                            System.out.println("New Node Info Port: " + notifingNode.getPort());
                             //Reshow chat input test
                             System.out.println("<Chat>: ");
                         }
@@ -154,9 +140,6 @@ public class Receiver extends Thread
                         {
                             //Transfrom the message into the leave message type
                             LeaveMessage leaveMsg = (LeaveMessage) messageRec;
-                            
-                            //TODO Remove later
-                            //System.out.println("Got a leave message");
                          
                             //Remove the ip/port of the leaver from this nodes list
                             userNode.removeNodeInfo(leaveMsg.getInfo());

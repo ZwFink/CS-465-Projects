@@ -146,10 +146,7 @@ public class Sender extends Thread
                             //update own list
                             userNode.setInfoList(response.getList());
                             userNode.addNodeInfo(response.getInfo());
-                            
-                            //For Testing TODO Remove later
-                            //NodeInfo firstNode = (NodeInfo) userNode.getInfoList().get(0);
-                            //System.out.println("New Node Info Port: " + firstNode.getPort());
+                           
                             
                             //Iterate through new lst and notify all
                             //Make notify message
