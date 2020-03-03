@@ -6,6 +6,7 @@
 package com.cs465.distributed_chat;
 
 import com.cs465.distributed_chat.messages.ChatMessage;
+import com.cs465.distributed_chat.messages.ChatMessageFormatter;
 import com.cs465.distributed_chat.messages.JoinNotificationMessage;
 import com.cs465.distributed_chat.messages.JoinRequestMessage;
 import com.cs465.distributed_chat.messages.JoinResponseMessage;
@@ -115,11 +116,8 @@ public class Receiver extends Thread
                             nodeInfoList = userNode.getInfoList();
                             
                             NodeInfo notifingNode = (NodeInfo) joinNotf.getInfo();
-                            System.out.println("New Node Joined");
-                            System.out.println("New Node Info IP: " + notifingNode.getIPAddress().toString());
-                            System.out.println("New Node Info Port: " + notifingNode.getPort());
+                            System.out.println("New Node Joined: " + notifingNode.getName() );
                             //Reshow chat input test
-                            System.out.println("<Chat>: ");
                         }
                         //IF the message is a normal message
                         if(messageRec.getType() == MessageType.MessageTypes.CHAT_MESSAGE)
@@ -128,18 +126,18 @@ public class Receiver extends Thread
                             ChatMessage chatMsg = (ChatMessage) messageRec;
                             
                             NodeInfo talkerInfo = chatMsg.getInfo();
-                            System.out.print("< " + talkerInfo.getIPAddress().toString());
-                            System.out.print(" // " + talkerInfo.getPort() + ">: ");
+			    ChatMessageFormatter fmt = new ChatMessageFormatter();
+
                             //Display the message to the user
-                            System.out.print(chatMsg.getMessage() + "\n");
+                            System.out.print( fmt.formatMessage( chatMsg ) + "\n");
                             //Reshow chat input test
-                            System.out.println("<Chat>: ");
                         }
                         //IF the message is a Leave message
                         if(messageRec.getType() == MessageType.MessageTypes.LEAVE_MESSAGE)
                         {
                             //Transfrom the message into the leave message type
                             LeaveMessage leaveMsg = (LeaveMessage) messageRec;
+			    System.out.println( leaveMsg.getInfo().getName() + " has left the chat.");
                          
                             //Remove the ip/port of the leaver from this nodes list
                             userNode.removeNodeInfo(leaveMsg.getInfo());

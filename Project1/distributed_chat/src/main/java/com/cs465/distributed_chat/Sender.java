@@ -39,16 +39,16 @@ public class Sender extends Thread
             Scanner inputScan = new Scanner(System.in);
             
             System.out.println("\n  To join the chat type \n"
-                                + "join -> ip address -> port # \n");
+                                + "join ip_address  port \n");
             
 
             while (true)
             {    
                 //Update the node info list just in case it changed since last time
                 nodeInfoList = userNode.getInfoList();
+		
                                    
                 //Get input from chat user
-                System.out.println("<Chat>: " );                       
                 //This should be some from of string input  
                 String input = inputScan.nextLine();       
                 
@@ -61,7 +61,7 @@ public class Sender extends Thread
                 
                 //join 127.0.0.1 2080
                 
-                if(lowerIn.startsWith("join"))
+                if(inputArr[ 0 ].equals("join"))
                 {
                     //If join message
                     //parse out the ip and port that the user is trying to join
@@ -69,7 +69,6 @@ public class Sender extends Thread
                     
                     InetAddress joinIP = null;
                     
-                //    System.out.println("Made it here!  1"); 
                     
                    try
                    {
@@ -79,11 +78,6 @@ public class Sender extends Thread
                         //get the port part
                         joinPort = Integer.parseInt(inputArr[2]);
                         
-                    //    System.out.println("join ip is: " + joinIP);
-                   
-                    //    System.out.println("user is connected");
-                        
-                     //   System.out.println("Made it here! 5");
                     }
                    
                     catch(UnknownHostException i)
@@ -221,13 +215,10 @@ public class Sender extends Thread
                                 //as a string using .toString()
                             outputMessage.writeObject(leaveMsg);
                                    
-                            //close down the socket
-                            //outputMessage.close();
-                            //indexSock.close();
-                                    
                             //Move to next node in list
                             index++;
                         }
+			nodeInfoList = new LinkedList<>();
                                     
                       active = false;
                       //Close down this node and all threads
