@@ -170,10 +170,6 @@ public class Sender extends Thread
                                 //as a string using .toString()
                                 notifyMessage.writeObject(newNotf);
                                    
-                                //close down the socket
-                                //notifyMessage.close();
-                                //indexSock.close();
-                                    
                                 //Move to next node in list
                                 index++;
                             }
@@ -187,7 +183,7 @@ public class Sender extends Thread
                 else
                 {
                     //If leave message
-                    if(lowerIn.startsWith("leave"))
+                    if(lowerIn.equals("leave"))
                     {
                                 
                         //Create a loop through the node list of ip and ports
@@ -214,11 +210,13 @@ public class Sender extends Thread
                             //send the Leave message through the input stream
                                 //as a string using .toString()
                             outputMessage.writeObject(leaveMsg);
+			    outputMessage.flush();
                                    
                             //Move to next node in list
                             index++;
                         }
 			nodeInfoList = new LinkedList<>();
+			userNode.setInfoList( new LinkedList<NodeInfo>() );
                                     
                       active = false;
                       //Close down this node and all threads
@@ -252,9 +250,6 @@ public class Sender extends Thread
                                 //as a string using .toString()
                             outputMessage.writeObject(chatMsg);
                             
-                            //close down the socket
-                            //outputMessage.close();
-                            //indexSock.close();
                               
                             //Move to next node in list
                             index++;
@@ -270,7 +265,7 @@ public class Sender extends Thread
         
         catch(UnknownHostException i)
         {
-         //   System.out.println(i + "ERROR LOCATION 1");
+            System.out.println(i + "ERROR LOCATION 1");
         }
                 
         catch(IOException ioe)
