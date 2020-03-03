@@ -76,7 +76,7 @@ public class Receiver extends Thread
                         }
                         catch(Throwable e)
                         {
-                            System.out.println("Failed to convert message to object");
+                            e.printStackTrace();
                             continue;
                         }
                         
@@ -141,13 +141,8 @@ public class Receiver extends Thread
                          
                             //Remove the ip/port of the leaver from this nodes list
                             userNode.removeNodeInfo(leaveMsg.getInfo());
-                            //System.out.println("New List size: " + userNode.getInfoList().size());
                         }
 
-                        //outputMessage.close();
-                        //inputMessage.close();
-                        //Close out the socket of the person "talking" and go back to the start of the loop
-                        //socketTalker.close();
                     }
                     
                 }
