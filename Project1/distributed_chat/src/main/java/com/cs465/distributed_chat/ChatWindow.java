@@ -1,104 +1,85 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.cs465.distributed_chat;
 
-/*
- *
- * @author kenny
- * Graphical user interface for chat application.
- * Displays a window to begin the chat.
- * 
- * currently closing the window terminates the
- * TODO: Closes the window when leave_chat is reached.
- * 
- */
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
- 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Scanner;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
-
-public class ChatWindow extends JPanel implements ActionListener 
+public class ChatWindow extends JFrame
 {
-    
-    protected JTextField inputArea;
-    protected JTextArea chatArea;
-    
-    /**
-     * Initialize the chat window with desired size values.
-     */
-    public ChatWindow()
-    {
-        super(new GridBagLayout());
-           
-        // Where users will input information
-        inputArea = new JTextField(40);
-        inputArea.addActionListener(this);
- 
-        //Area where text will be displayed to the users
-        chatArea = new JTextArea(20, 20);
-        chatArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(inputArea);
- 
-        //Add Components to this panel.
-        GridBagConstraints container = new GridBagConstraints();
-        container.gridwidth = GridBagConstraints.REMAINDER;
- 
-        container.fill = GridBagConstraints.HORIZONTAL;
-        add(chatArea, container);
- 
-        container.fill = GridBagConstraints.BOTH;
-        container.weightx = 1.0;
-        container.weighty = 1.0;
-        
-        add(scrollPane, container);
-    }
- 
-    @Override
-    public void actionPerformed(ActionEvent event)
-    {
-        String userInput = inputArea.getText();
-        chatArea.append(userInput + "\n");
-        inputArea.selectAll();
- 
-        //Make sure the new text is visible, even if there
-        
-        chatArea.setCaretPosition(chatArea.getDocument().getLength());
-    }
- 
-    /*
-     * Display the GUI
-     */
-    private static void showGUI() 
-    {     
-        //Create window with title of program
-        JFrame frame = new JFrame("Chat Application");
-        
-        // set to exit on close 
-        //ToDo: incorporate leaveing the chat with leave_chat
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
- 
-        //add duplicate window
-        frame.add(new ChatWindow());       
-        frame.pack();
-        frame.setVisible(true);
-    }
- 
-    /**
-     * run GUI with main method
-     * @param args 
-     */
-    public static void main(String[] args) {
-       
-        //Response thread creation
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                showGUI();
-            }
-        });
-    }
-}
+       JPanel panel = new JPanel();
+       JLabel label = new JLabel();
+       JTextField textField = new JTextField(30);
+       JTextArea textArea = new JTextArea(20,30);
 
+       public ChatWindow(Node node)
+       {
+              setTitle("Chat App");
+              setVisible(true);
+              setSize(400, 200);
+              setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+              panel.add(textField);
+              panel.add(textArea);
+
+
+              textField.addActionListener(new ActionListener()
+              {
+                     public void actionPerformed(ActionEvent e)
+                     {
+                           String input = textField.getText();
+                           
+                          
+                           System.out.println(node);
+                     }
+              });
+                 
+              panel.add(label);
+              add(panel);
+
+       }
+       
+       
+       
+       
+
+       public static void main(String[] args) throws UnknownHostException, IOException, InterruptedException
+       {
+           
+       String defaultIP = InetAddress.getLocalHost().toString();
+       int selfPort = 0;
+       InetAddress selfIP = InetAddress.getLocalHost();
+       if(args.length < 2)
+       {
+            System.out.println("IP and Port arguments not given, usng default IP: " 
+                                + defaultIP);
+            Scanner portScan = new Scanner(System.in);
+            System.out.println("Please give a Port number to use: ");
+            String portStr = portScan.nextLine();     
+            selfPort = Integer.parseInt(portStr);
+       }
+       else
+       {
+           selfPort = Integer.parseInt(args[1]);
+           selfIP = InetAddress.getByName(args[0]);
+       }
+       
+       String logicalName = selfIP.getHostName();
+       Node node = new Node(selfIP, selfPort, logicalName);
+       //System.out.println("NODEINFO:" + node);
+       //System.out.println("IP" + selfIP);
+       
+        ChatWindow t = new ChatWindow(node);
+       
+   
+             
+       }
+}
