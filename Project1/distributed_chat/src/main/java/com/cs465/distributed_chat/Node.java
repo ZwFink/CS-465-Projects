@@ -10,8 +10,6 @@ import java.util.LinkedList;
 public class Node 
 {
     // initialize socket and input output streams 
-    private final DataInputStream inputMessage = null; 
-    private final DataOutputStream outputMessage = null; 
     private Sender sender = null;
     private Receiver receiver = null;
     private LinkedList<NodeInfo> nodeInfoList = null;
@@ -94,16 +92,6 @@ public LinkedList getInfoList()
     return this.nodeInfoList;
 }
 
-public DataOutputStream getOut()
-{
-    return this.outputMessage;
-}
-
-public DataInputStream getInput()
-{
-    return this.inputMessage;
-}
-
 public void addNodeInfo(NodeInfo adding)
 {
     nodeInfoList.add(adding);
@@ -111,17 +99,14 @@ public void addNodeInfo(NodeInfo adding)
 
 public void removeNodeInfo(NodeInfo removing)
 {
-    boolean removed = false;
-    int index = 0;
-    while(index < nodeInfoList.size())
-    {
-        NodeInfo test = nodeInfoList.get(index);
-        if(test.equals(removing))
-        {
-            removed = true;
-            nodeInfoList.remove(index);
-        }
-    }
+	for( NodeInfo no : nodeInfoList )
+	{
+		if( no.equals( removing ) )
+		{
+			nodeInfoList.remove( no );
+			break;
+		}
+	}
 }
 
 public void setInfoList(LinkedList newList)
