@@ -11,5 +11,5 @@ package transaction;
  */
 public class TransactionManager 
 {
-    
+    // Handles a transaction by calling an Account Manager to handle alterations to the account
 }

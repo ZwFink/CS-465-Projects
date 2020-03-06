@@ -11,5 +11,5 @@ package accounts;
  */
 public class AccountManager 
 {
-    
+    // Uses a Lock Manager to handle the reading and writing to an account
 }

@@ -18,5 +18,6 @@ public class TransactionServer
 {
     //Waits for client
         //Handles transaction //THREADS
+            // Calls a transaction manager
         //Closes ONLY when client says to
 }
