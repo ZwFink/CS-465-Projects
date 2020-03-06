@@ -7,7 +7,8 @@ package client;
  */
 
 /**
- *
+ * Connects to the Proxy Server and issues commands
+ * Commands: Open, Read, Write, Close
  * @author caleb
  */
 public class Client 

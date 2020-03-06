@@ -6,7 +6,8 @@
 package client;
 
 /**
- *
+ * Shields Client from Server
+ * Acts on behalf of Client
  * @author caleb
  */
 public class TransactionServerProxy 
