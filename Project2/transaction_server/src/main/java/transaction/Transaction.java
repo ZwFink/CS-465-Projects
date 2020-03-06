@@ -11,5 +11,6 @@ package transaction;
  */
 public class Transaction 
 {
-
+    //Holds a reference to the account it wants to perform a transaction
+    //Defines itself as Read OR Write
 }
