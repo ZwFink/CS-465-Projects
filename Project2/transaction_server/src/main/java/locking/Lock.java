@@ -1,3 +1,5 @@
+package locking;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -5,10 +7,10 @@
  */
 
 /**
- *
+ *Handles Low Level Locking
  * @author caleb
  */
-public class Client 
+public class Lock 
 {
-    
+    //Has wait and notify
 }

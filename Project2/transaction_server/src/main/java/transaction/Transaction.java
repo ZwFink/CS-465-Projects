@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+package transaction;
 
 /**
- *Handles Low Level Locking
+ *
  * @author caleb
  */
-public class Lock 
-{
-    //Has wait and notify
+public class Transaction {
+    
 }
