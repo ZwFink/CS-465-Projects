@@ -16,8 +16,18 @@ package transaction_server;
  */
 public class TransactionServer 
 {
-    //Waits for client
+    
+    //Waits for proxy
         //Handles transaction //THREADS
             // Calls a transaction manager
         //Closes ONLY when client says to
+    
+    // option when locking isnt used. 
+    
+    	//Simple run while true 
+		//Run trans accept socket
+		//Transmanager.runtrans(socket accept)
+
+    
+    
 }
