@@ -7,7 +7,7 @@ package transaction_server;
  */
 
 /**
- * 
+ * This server handles the requests from the proxy server
  * Utilizes the following
  *      AccountManager
  *      TransactionManager
@@ -17,6 +17,6 @@ package transaction_server;
 public class TransactionServer 
 {
     //Waits for client
-    //Handles transaction //THREADS
-    //Closes ONLY when client says to
+        //Handles transaction //THREADS
+        //Closes ONLY when client says to
 }
