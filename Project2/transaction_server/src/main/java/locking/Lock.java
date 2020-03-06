@@ -7,7 +7,7 @@ package locking;
  */
 
 /**
- *Handles Low Level Locking
+ * Handles Low Level Locking
  * @author caleb
  */
 public class Lock 

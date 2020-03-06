@@ -7,7 +7,7 @@ package locking;
  */
 
 /**
- *Handles High Level locking
+ * Handles High Level locking
  * @author caleb
  */
 public class LockManager 
