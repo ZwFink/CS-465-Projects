@@ -12,6 +12,9 @@ package transaction;
 public class TransactionManager 
 {
     // Handles a transaction by calling an Account Manager to handle alterations to the account
+	
+	// Threads respond to messages from a clients proxy
+		// spawns off threads handles clients locking
     
     /*
     Third object does work in a semantical area deals with the transactions.  
