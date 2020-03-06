@@ -9,6 +9,7 @@ package accounts;
  *
  * @author caleb
  */
-public class AccountManager {
+public class AccountManager 
+{
     
 }
