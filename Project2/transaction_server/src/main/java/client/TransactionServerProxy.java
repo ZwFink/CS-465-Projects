@@ -12,5 +12,9 @@ package client;
  */
 public class TransactionServerProxy 
 {
-    
+    // Waits for a client to call for a open connection
+        // Connects to the TransactionServer
+        // Handles the clients requests
+        // Processes replies from the TransactionServer
+    // Closes socket connect to Transaction server if Client calls close()
 }
