@@ -18,7 +18,7 @@ public class Main
     public static void main(String[] args) {
         // Create a new Transaction Server
         
-        // Create a new Client and proxy
+        // Create a new Client and proxy //THREAD Client to have multiple clients at same time
         
         // Have Client issue some commands to test the system
     }
