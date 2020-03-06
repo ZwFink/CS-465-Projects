@@ -13,5 +13,7 @@ package client;
  */
 public class Client 
 {
-    
+    // Opens a proxy server
+        // Issues read and write commands
+    // Closes the proxy server
 }
