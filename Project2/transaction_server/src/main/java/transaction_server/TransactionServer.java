@@ -7,7 +7,11 @@ package transaction_server;
  */
 
 /**
- *
+ * 
+ * Utilizes the following
+ *      AccountManager
+ *      TransactionManager
+ *      LockManager
  * @author caleb
  */
 public class TransactionServer 

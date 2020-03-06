@@ -9,7 +9,7 @@ package transaction;
  *
  * @author caleb
  */
-public class TransactionHandler 
+public class TransactionManager 
 {
     
 }
