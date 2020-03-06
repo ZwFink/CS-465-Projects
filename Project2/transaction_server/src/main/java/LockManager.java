@@ -5,10 +5,10 @@
  */
 
 /**
- *
+ *Handles High Level locking
  * @author caleb
  */
-public class Client 
+public class LockManager 
 {
     
 }

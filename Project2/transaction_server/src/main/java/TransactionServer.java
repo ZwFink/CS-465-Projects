@@ -8,6 +8,7 @@
  *
  * @author caleb
  */
-public class TransactionServer {
+public class TransactionServer 
+{
     
 }

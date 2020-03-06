@@ -5,10 +5,10 @@
  */
 
 /**
- *
+ *Handles Low Level Locking
  * @author caleb
  */
-public class Client 
+public class Lock 
 {
-    
+    //Has wait and notify
 }
