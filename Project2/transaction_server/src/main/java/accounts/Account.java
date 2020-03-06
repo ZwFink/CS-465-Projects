@@ -3,13 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package transaction;
+package accounts;
 
 /**
  *
  * @author caleb
  */
-public class TransactionHandler 
-{
+public class Account {
     
 }

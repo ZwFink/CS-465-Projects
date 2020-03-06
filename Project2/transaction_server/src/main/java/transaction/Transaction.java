@@ -9,6 +9,7 @@ package transaction;
  *
  * @author caleb
  */
-public class Transaction {
+public class Transaction 
+{
     
 }
