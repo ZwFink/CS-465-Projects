@@ -13,4 +13,9 @@ package locking;
 public class LockManager 
 {
     //Handles the demands for a lock and their release and aquisition
+    
+    /*
+    High level holds 
+			Set lock / release lock
+    */
 }
