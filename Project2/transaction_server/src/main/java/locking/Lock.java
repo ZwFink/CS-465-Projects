@@ -13,12 +13,12 @@ import transaction.TransID;
  * Handles Low Level Locking
  * @author caleb
  */
+//Has wait and notify
 public class Lock 
 {
     private LockType lockType;
     private Vector holders;
     private Object object;
-    //Has wait and notify
     
     //has function "aquire"
     public synchronized void aquire(TransID trans, LockType aLockType)
