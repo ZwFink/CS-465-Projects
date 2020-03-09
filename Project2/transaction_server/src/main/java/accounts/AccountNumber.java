@@ -6,20 +6,9 @@
 package accounts;
 
 /**
- *
+ * Represents an account by value rather than by object
  * @author caleb
  */
-
-
-// create an account object
-// uses Accountmanager to hanld Account data
-public class Account 
-{
-    public AccountNumber accountNumber = null;
-    
-    public Account()
-    {
-        
-    }
+public class AccountNumber {
     
 }
