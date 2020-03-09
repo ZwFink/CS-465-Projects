@@ -5,6 +5,12 @@
  */
 package accounts;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.util.Hashtable;
+import locking.LockType;
+import transaction.TransID;
+
 /**
  *
  * @author caleb, kennny
@@ -15,8 +21,9 @@ public class AccountManager
 	DataInputStream read = null;
 	DataOutputStream write = null;
 	AccountNumber accountNumber;
-	TransactionID transID;
+	TransID transID;
 	LockType lockType; 
+        private Hashtable accountList;
 	
 	
       /**
