@@ -16,8 +16,9 @@ package transaction_server;
  */
 public class TransactionServer 
 {
-    
-    //Waits for proxy
+    //Creates a server socket
+    //Waits for proxy ==> .accept()
+    //Create input and output streams
         //Handles transaction //THREADS
             // Calls a transaction manager
         //Closes ONLY when client says to
