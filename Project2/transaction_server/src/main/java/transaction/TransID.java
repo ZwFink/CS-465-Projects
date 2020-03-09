@@ -6,7 +6,7 @@
 package transaction;
 
 /**
- *
+ * Represents a value to the table holding transactions 
  * @author caleb
  */
 public class TransID {
