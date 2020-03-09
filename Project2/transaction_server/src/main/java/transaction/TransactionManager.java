@@ -5,12 +5,15 @@
  */
 package transaction;
 
+import java.util.Hashtable;
+
 /**
  *
  * @author caleb
  */
 public class TransactionManager 
 {
+    private Hashtable transList;
     // Handles a transaction by calling an Account Manager to handle alterations to the account
 	
 	// Threads respond to messages from a clients proxy

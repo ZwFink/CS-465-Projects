@@ -9,6 +9,7 @@ package accounts;
  * Represents an account by value rather than by object
  * @author caleb
  */
-public class AccountNumber {
+public class AccountNumber 
+{
     
 }
