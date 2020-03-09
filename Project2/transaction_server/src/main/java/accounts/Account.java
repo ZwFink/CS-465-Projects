@@ -9,7 +9,17 @@ package accounts;
  *
  * @author caleb
  */
+
+
+// create an account object
+// uses Accountmanager to hanld Account data
 public class Account 
 {
+    public AccountNumber accountNumber = null;
+    
+    public class Account()
+    {
+        
+    }
     
 }
