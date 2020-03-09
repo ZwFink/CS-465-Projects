@@ -31,7 +31,7 @@ public class AccountManager
 	* 
 	*
 	*/
-	public AccountManager(AccountNumber accountNumber, TransactionID transID, LockType lockType)
+	public AccountManager(AccountNumber accountNumber, TransID transID, LockType lockType)
 	{
 		
 	// only implements read and write operations
