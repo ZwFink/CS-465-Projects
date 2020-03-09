@@ -12,6 +12,8 @@ package locking;
  */
 public class LockManager 
 {
+    // pseudo code in the book
+	
     //Handles the demands for a lock and their release and aquisition
     
     /*

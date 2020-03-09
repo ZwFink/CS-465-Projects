@@ -11,6 +11,8 @@ package accounts;
  */
 public class AccountManager 
 {
+	// only implements read and write operations
+
     // Works on the accounts initializes full set of accounts needed
 		
     //Provides access to accounts give number -> get account
