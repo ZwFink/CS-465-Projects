@@ -11,6 +11,10 @@ package transaction;
  */
 public class Transaction 
 {
+    // note from otte
+        // make transaction a bit more elaborate attach messages to the transactions
+        // put comments with transactions themselves
+    
     //Holds a reference to the account it wants to perform a transaction
     //Defines itself as Read OR Write
     //POSSIBILITY ==> Holds its own locks, suggested by Otte
