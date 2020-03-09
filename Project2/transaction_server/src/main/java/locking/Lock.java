@@ -50,4 +50,10 @@ public class Lock
         //set LockType to None
         notifyAll();
     }
+    
+    //Checks if the object is in confict due to lock
+    public synchronized boolean isConflict()
+    {
+        return false;//STUB
+    }
 }
