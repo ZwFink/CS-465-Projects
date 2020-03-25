@@ -16,6 +16,9 @@ package transaction_server;
  */
 public class TransactionServer 
 {
+    public static TransactionManager;
+    public static AccountManager;
+    public static LockManager;
     //Creates a server socket
     //Waits for proxy ==> .accept()
     //Create input and output streams
