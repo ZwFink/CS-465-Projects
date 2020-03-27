@@ -7,7 +7,7 @@ package transaction;
 
 /**
  * Holds low level values
- * @author caleb
+ * @author caleb, kenny
  */
 public class Transaction 
 {
