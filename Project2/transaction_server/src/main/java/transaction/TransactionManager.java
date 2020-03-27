@@ -11,9 +11,10 @@ import java.util.Hashtable;
  *
  * @author caleb
  */
-public class TransactionManager 
+public class TransactionManager extends MessageType
 {
     private Hashtable transList;
+    private int transCounter = 0;
     // Handles a transaction by calling an Account Manager to handle alterations to the account
 	
 	// Threads respond to messages from a clients proxy
