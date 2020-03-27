@@ -5,16 +5,180 @@
  */
 package transaction;
 
-import java.util.Hashtable;
+import java.util.*;
+import java.io.*;
+import java.net.*;
+import transaction.comm.Message;
+import transaction.comm.MessageTypes;
+import transaction.server.TransactionServer;
+
 
 /**
  *
- * @author caleb
+ * @author caleb, kenny
  */
 public class TransactionManager extends MessageType
 {
-    private Hashtable transList;
-    private int transCounter = 0;
+    private static final ArrayList<Transaction> transactions = new ArrayList<>();
+    private static int transCounter = 0;
+    
+    public ArrayList<Transaction> getTransactions()
+    {
+    	return transactions;
+    }
+    
+    public void runTransaction(Socket client)
+    {
+    	(new TransactionManagerWorker(client)).start();
+    }
+    
+    public class TransactionManagerWorker extends Thread
+    {
+    	Socket client = null;
+	ObjectInputStream readFrom = null;
+	ObjectOutputStream writeTo = null;
+	Message message = null;
+	
+	Transaction transaction = null;
+	int accountNumber = 0;
+	int balance = 0;
+	
+	boolean activeTrans = true;
+	
+	private TransactionManagerWorker(Socket client)
+	{
+	   this.client = client;
+	   
+	   try
+	   {
+	   	readFrom = new ObjectInputStream(client.getInputStream());
+		readTo = new ObjectOutputStream(client.getOutputStream());
+	   }
+	   catch(IOException e)
+	   {
+	   	System.out.println("transaction failed");
+		e.printStackTrace();
+		System.exit(1);
+	   }
+	}
+	
+	@Override
+	public void run()
+	{
+		while(activeTrans)
+		{
+			try
+			{
+			   message = (Message) readFrom.readObject();
+			}
+			catch (IOException | ClassNotFoundException e)
+			{
+			   System.out.println("Transaction could not be read");
+			   System.exit(1);
+			}
+			
+			switch (message.getType())
+			{
+			   case OPEN_TRANSACTION:
+			   
+			   synchronized (transactions)
+			   {
+			      transaction = new Transaction(transCounter++);
+			      transactions.add(transaction);
+			   }
+			   
+			   try
+			   {
+			     writeToNet.writeObject(transaction.getID());
+			   }
+			   catch(IOException e)
+			   {
+			      System.out.println("OPEN TRANSACTION ERROR")
+			   }
+			   
+			   transaction.log("Open transaction #" + transaction.getID();
+			   
+			   break;
+			   
+	          case CLOSE_TRANSACTION:
+		  	
+			TransactionServer.lockManager.unlock(transaction);
+			transactions.remove(transaction);
+			
+			try
+			{
+			   readFrom.close();
+			   writeTo.close();
+			   client.close();
+			   activeTrans = false;
+			}
+			catch(IOException e)
+			{
+			   System.out.println("CLOSE TRANSACTION ERROR")
+			}
+			
+			transaction.log("Close transaction #" + transaction.getID();
+			
+			if (TransactionServer.transactionView)
+			{
+			   System.out.println(transaction.getLog());
+			}
+			
+			break;
+			
+		case READ_REQUEST:
+		
+			accountNumber = (Integer) message.getContent();
+			transaction.log("READ_REQUEST -> account # " + accountNumber + "->"transaction.getID();
+			balance = TransactionServer.accountManager.read(accountNumber, transaction);
+			
+			try
+			{
+			  writeToNet.writeObject((Integer) balance);
+			}
+			catch(IOException e)
+			{
+			  System.out.println("READ REQUEST ERROR");
+			}
+			
+			transaction.log("READ_REQUEST" + accountNumber);
+			
+			break;
+			
+		case WRITE_REQUEST:
+		
+			Object[] content = (Object[]) message.getContent();
+			accountNumber = ((Integer) content[0]);
+			balance = ((Integer) content[1]);
+			transaction.log("Write Request" + accountNumber);
+			balance = TransactionServer.accountManager.write(accountNumber, transaction, balance);
+			
+			try
+			{
+			  writeToNet.writeObject((Integer) balance);
+			}
+			
+			catch(IOException e)
+			{
+			  System.out.println("WRITE REQUEST ERROR");
+			}
+			
+			transaction.log("WRITE REQUEST" + accountNumber);
+			
+			break;
+			
+		default:
+			System.out.println("Warning message types not implemented");
+			
+		
+			
+		
+			
+			
+			 }
+		}
+	}
+	
     // Handles a transaction by calling an Account Manager to handle alterations to the account
 	
 	// Threads respond to messages from a clients proxy
