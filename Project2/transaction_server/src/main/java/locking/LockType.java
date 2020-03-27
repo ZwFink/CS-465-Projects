@@ -14,13 +14,13 @@ public class LockType
     // need three different types of locks
     
     // one for no lock
-    public static int noLock = 1;
+    public final static int EMPTY = 1;
     
     // one for write lock
-    public static int writeLock = 2;
+    public final static int WRITE = 2;
     
     // one for read lock
-    public static int readLock = 3;
+    public final static int READ = 3;
     
     
 }
