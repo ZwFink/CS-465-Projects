@@ -12,14 +12,18 @@ package accounts;
 
 
 // create an account object
-// uses Accountmanager to hanld Account data
+// uses Accountmanager to handle Account data
 public class Account 
 {
-    public AccountNumber accountNumber = null;
+    public int accountNumber = null;
     
     public Account()
     {
         
     }
     
+    public int getNumber()
+    {
+        return this.accountNumber;
+    }
 }
