@@ -18,48 +18,46 @@ import transaction.Transaction;
  */
 public class AccountManager 
 {
-	// need input and output streams to handle reads/writes
-	DataInputStream read = null;
-	DataOutputStream write = null;
 	int numberOfAccounts = 0;
 	int transID;
-	LockType lockType; 
         private static final ArrayList<Account> accountList = new ArrayList<>();
 	
 	
       /**
 	* Account manager preforms all the necessary handling for the account class
-	* 
-	*
+	* Works on the accounts initializes full set of accounts needed
+	* Provides access to accounts give number -> get account
+        * Shields all the accounts takes high level read write requests
 	*/
 	public AccountManager(ArrayList<Account> accountList)
 	{
-		
-            // only implements read and write operations
-
-            // Works on the accounts initializes full set of accounts needed
-
-            //Provides access to accounts give number -> get account
-
-            //Read – Write
-
-            //Write on → tentative data/committed data
-                                    //Ex which accounts were read from
-
-
-            //Shields all the accounts takes high lever read write requests
-                //translates to how read and write are being done.
-
-            //Aware of locking needs to try to acquire a lock
-                    //Either in the read or write
-
-            //Write – accnum,  Tran transaction, balance
-               // Variables
-
-                    //New object with account number
-                    //Lock
-                    //Get balance
-
+            for(Account newAcc : accountList)
+            {
+                numberOfAccounts++;
+                accountList.add(newAcc);
+            }
 	}
+        
+        public void addAccount(int newBalance)
+        {
+            Account newAcc = new Account(newBalance, numberOfAccounts);
+            numberOfAccounts++;
+            accountList.add(newAcc);
+        }
+        
+        public int handleTrans(Transaction trans)
+        {
+            if(trans.getType().equals("WRITE"))
+            {
+                accountList.get(trans.getAccount()).setBalance(trans.getValue());
+                //Return the new balance set
+                return accountList.get(trans.getAccount()).getBalance();
+            }
+            else //Treat any opther type as a READ
+            {
+                Account desiredAcc = accountList.get(trans.getAccount());
+                return desiredAcc.getBalance();
+            }
+        }
     
 }

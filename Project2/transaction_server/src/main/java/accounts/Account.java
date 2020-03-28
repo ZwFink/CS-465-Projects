@@ -15,15 +15,25 @@ package accounts;
 // uses Accountmanager to handle Account data
 public class Account 
 {
-    public int accountNumber = 0;
+    private int accountNumber;
+    private int balance;
     
-    public Account()
+    public Account(int newBalance, int id)
     {
-        
+        balance = newBalance;
+        accountNumber = id;
     }
     
     public int getNumber()
     {
         return this.accountNumber;
+    }
+    public int getBalance()
+    {
+        return this.balance;
+    }
+    public void setBalance(int balance)
+    {
+        this.balance = balance;
     }
 }

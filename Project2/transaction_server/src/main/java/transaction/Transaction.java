@@ -15,15 +15,20 @@ import transaction_server.TransactionServer;
  */
 public class Transaction 
 {
-    int transID;
-    ArrayList<Lock> locks = null;
+    private int transID;
+    private ArrayList<Lock> locks = null;
+    private StringBuffer log = new StringBuffer("");
+    private String transType = "READ"; //Default as read
+    private int accountNum; //holds index to account being read/write
+    private int value; //holds value to write to the account (direct write over)
     
-    StringBuffer log = new StringBuffer("");
-    
-    Transaction(int transID)
+    Transaction(int transID, String transType, int accountNum, int value)
     {
         this.transID = transID;
         this.locks = new ArrayList();
+        this.transType = transType;
+        this.accountNum = accountNum;
+        this.value = value;
     }
     
     public int getID()
@@ -55,9 +60,23 @@ public class Transaction
      {
          return log;
      }
+     
+     public int getValue() 
+     {
+         return value;
+     }
+     
+     public int getAccount() 
+     {
+         return accountNum;
+     }
+     
+     public String getType() 
+     {
+         return transType;
+     }
                    
  }
-                       
     // note from otte
         // make transaction a bit more elaborate attach messages to the transactions
         // put comments with transactions themselves

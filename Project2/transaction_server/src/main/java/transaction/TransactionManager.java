@@ -52,7 +52,15 @@ public class TransactionManager extends MessageType
 	   try
 	   {
 	   	readFrom = new ObjectInputStream(client.getInputStream());
-		readTo = new ObjectOutputStream(client.getOutputStream());
+		writeTo = new ObjectOutputStream(client.getOutputStream());
+                
+                //check for client input, if its the tansaction close then end this loop
+                
+                //Handle client requests using accountManager and LockManager
+                
+                //Write back to client results of transaction
+                
+                //Return to top of loop to wait for next client input
 	   }
 	   catch(IOException e)
 	   {
