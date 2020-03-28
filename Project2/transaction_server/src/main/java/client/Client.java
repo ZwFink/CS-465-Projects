@@ -11,54 +11,50 @@ package client;
  * Commands: Open, Read, Write, Close
  * @author caleb, kenny
  */
-public class Client extends thread
+public class Client extends Thread
 {
     //save host and port number as variables
-    string host = "127.0.0.1";
-    private final int port = 2080;
-    private int index = 0;
+    private String host;
+    private int port;
     
-    //hold the current number of transactions
-    private int numTrans = 0;
+    public Client()
+    {
+        host = "127.0.0.1";
+        port = 2080;
+    }
     
     // Opens a proxy server
     @Override
     public void run()
+    {        
+        
+    }
+        
+    public void randomReadWrite(int numberAccounts, int initialBalance)
     {
-        // get the transaction id
-        for (index = 0; index < numTrans; index++)
-        
-        new Tread()
-        {
-            @Override
-            public void run()
-            {
-                TransactionServerProxy transaction = new TransactionServerProxy(host, port);
-                int transID = transaction.openTransaction();
-                System.out.println("transaction number" + transID + " started");
+        TransactionServerProxy transaction = new TransactionServerProxy(host, port);
+        int transID = transaction.openTransaction();
+        System.out.println("transaction number" + transID + " started");
                 
-                int accountFrom = (int) Math.floor(Math.random() * numberAccounts);
-                int accountTo = (int) Math.floor(Math.random() * numberAccounts);
-                int amount = (int) Math.ceil(Math.random() * initialBalance);
-                int balance;
-                System.out.println("\n transaction # " + transID + ", $ " + amount + " from " + accountFrom + " to " + accountTo);
+        int accountFrom = (int) Math.floor(Math.random() * numberAccounts);
+        int accountTo = (int) Math.floor(Math.random() * numberAccounts);
+        int amount = (int) Math.ceil(Math.random() * initialBalance);
+        int balance;
+        System.out.println("\n transaction # " + transID + ", $ " + amount + " from " + accountFrom + " to " + accountTo);
                 
-                balance = transaction.read(accountFrom);
-                fromBalance = balance - amount;
-                transaction.write(accountFrom, fromBalance);
+        balance = transaction.read(accountFrom);
+        int fromBalance = balance - amount;
+        transaction.write(accountFrom, fromBalance);
                 
-                balance = transaction.read(accountTo);
-                toBalance = balance + amount;
-                transaction.write(accountTo, toBalance);
+        balance = transaction.read(accountTo);
+        int toBalance = balance + amount;
+        transaction.write(accountTo, toBalance);
                 
-                transaction.closeTransaction();
+        transaction.closeTransaction();
                 
-                System.out.println("Transaction # " + transID + " Completed ");
-            
-        }
-     } .start();
-        
-        // create loop to handle # of transactions
+        System.out.println("Transaction # " + transID + " Completed ");
+    }
+}
   
   
   
