@@ -12,9 +12,30 @@ package client;
  */
 public class TransactionServerProxy 
 {
+
+    TransactionServerProxy(String host, int port) 
+    {
+        
+    }
     // Waits for a client to call for a open connection
         // Connects to the TransactionServer
         // Handles the clients requests
         // Processes replies from the TransactionServer
     // Closes socket connect to Transaction server if Client calls close()
+
+    int openTransaction() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    int read(int accountFrom) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    void write(int accountTo, int toBalance) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    void closeTransaction() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
