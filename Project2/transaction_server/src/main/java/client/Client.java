@@ -16,18 +16,27 @@ public class Client extends Thread
     //save host and port number as variables
     private String host;
     private int port;
+    private int totalAccounts;
+    private int maxBalance;
+    private int randTransNum;
     
     public Client()
     {
         host = "127.0.0.1";
         port = 2080;
+        totalAccounts = 3;
+        maxBalance = 100;
+        randTransNum = 10;
     }
     
     // Opens a proxy server
     @Override
     public void run()
     {        
-        
+        for(int i = 0; i < randTransNum; i++)
+        {
+            randomReadWrite(totalAccounts, maxBalance);
+        }
     }
         
     public void randomReadWrite(int numberAccounts, int initialBalance)
