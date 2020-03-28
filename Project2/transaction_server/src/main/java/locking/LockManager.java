@@ -3,6 +3,7 @@ package locking;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import transaction.TransID;
+import transaction.Transaction;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -26,7 +27,7 @@ public class LockManager
     High level holds 
 			Set lock / release lock
     */
-    public void setLock(Object object, TransID trans, LockType lockType)
+    public void setLock(Object object, Transaction trans, LockType lockType)
     {
         Lock foundLock = null;
         synchronized (this) 
@@ -38,7 +39,7 @@ public class LockManager
     }
     
     // Used for close transaction 
-    public synchronized void unLock(TransID trans)
+    public synchronized void unLock(Transaction trans)
     {
         Enumeration e = lockList.elements();
         while(e.hasMoreElements())

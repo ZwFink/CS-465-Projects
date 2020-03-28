@@ -9,18 +9,16 @@ package locking;
  *
  * @author caleb, kenny
  */
-public class LockType
+public enum LockType
 {
     // need three different types of locks
-    
     // one for no lock
-    public final static int EMPTY = 1;
+    EMPTY,
     
     // one for write lock
-    public final static int WRITE = 2;
+    WRITE,
     
     // one for read lock
-    public final static int READ = 3;
-    
+    READ
     
 }

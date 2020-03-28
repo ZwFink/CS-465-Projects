@@ -15,7 +15,7 @@ package accounts;
 // uses Accountmanager to handle Account data
 public class Account 
 {
-    public int accountNumber = null;
+    public int accountNumber = 0;
     
     public Account()
     {

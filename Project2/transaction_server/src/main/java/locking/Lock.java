@@ -1,7 +1,7 @@
 package locking;
 
 import java.util.Vector;
-import transaction.TransID;
+import transaction.Transaction;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -15,13 +15,14 @@ import transaction.TransID;
  */
 //Has wait and notify
 public class Lock 
-{
-    private LockType lockType;
+{    
+    private LockType lockType = LockType.EMPTY;
     private Vector holders;
     private Object object;
     
+    
     //has function "aquire"
-    public synchronized void aquire(TransID trans, LockType aLockType)
+    public synchronized void aquire(Transaction trans, LockType aLockType)
     {
         //while another transaction holds the lock in confilciting mode
         while(false /*STUB*/)
@@ -44,10 +45,14 @@ public class Lock
                 }
     }
     
-    public synchronized void release(TransID trans)
+    public synchronized void release(Transaction trans)
     {
         holders.removeElement(trans);
         //set LockType to None
+        if(holders.isEmpty())
+        {
+            lockType = LockType.EMPTY;
+        }
         notifyAll();
     }
     

@@ -7,9 +7,10 @@ package accounts;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import locking.LockType;
-import transaction.TransID;
+import transaction.Transaction;
 
 /**
  *
@@ -20,44 +21,44 @@ public class AccountManager
 	// need input and output streams to handle reads/writes
 	DataInputStream read = null;
 	DataOutputStream write = null;
-	AccountNumber accountNumber;
-	TransID transID;
+	int numberOfAccounts = 0;
+	int transID;
 	LockType lockType; 
-        private Hashtable accountList;
+        private static final ArrayList<Account> accountList = new ArrayList<>();
 	
 	
       /**
-	* Account manager preforms all the necessary handleing for the account class
+	* Account manager preforms all the necessary handling for the account class
 	* 
 	*
 	*/
-	public AccountManager(AccountNumber accountNumber, TransID transID, LockType lockType)
+	public AccountManager(ArrayList<Account> accountList)
 	{
 		
-	// only implements read and write operations
+            // only implements read and write operations
 
-        // Works on the accounts initializes full set of accounts needed
-		
-        //Provides access to accounts give number -> get account
+            // Works on the accounts initializes full set of accounts needed
 
-	//Read – Write
-    
-        //Write on → tentative data/committed data
-				//Ex which accounts were read from
-		
+            //Provides access to accounts give number -> get account
 
-        //Shields all the accounts takes high lever read write requests
-            //translates to how read and write are being done.
+            //Read – Write
 
-        //Aware of locking needs to try to acquire a lock
-		//Either in the read or write
+            //Write on → tentative data/committed data
+                                    //Ex which accounts were read from
 
-        //Write – accnum,  Tran transaction, balance
-           // Variables
-    
-	        //New object with account number
-	        //Lock
-	        //Get balance
+
+            //Shields all the accounts takes high lever read write requests
+                //translates to how read and write are being done.
+
+            //Aware of locking needs to try to acquire a lock
+                    //Either in the read or write
+
+            //Write – accnum,  Tran transaction, balance
+               // Variables
+
+                    //New object with account number
+                    //Lock
+                    //Get balance
 
 	}
     
