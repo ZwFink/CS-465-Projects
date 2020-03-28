@@ -5,6 +5,10 @@
  */
 package transaction;
 
+import java.util.ArrayList;
+import locking.Lock;
+import transaction_server.TransactionServer;
+
 /**
  * Holds low level values
  * @author caleb, kenny
@@ -39,9 +43,9 @@ public class Transaction
     
     public void log (String logString)
     {
-        log.append("\n).append(logString);
+        log.append("\n").append(logString);
         
-        if (!TransactionSErver.transactionView)
+        if (!TransactionServer.transactionView)
         {
             System.out.println("Transaction # " + this.getID() + " " + logString);
         }
