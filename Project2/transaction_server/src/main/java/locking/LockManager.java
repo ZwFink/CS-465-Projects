@@ -2,7 +2,6 @@ package locking;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
-import transaction.TransID;
 import transaction.Transaction;
 
 /*

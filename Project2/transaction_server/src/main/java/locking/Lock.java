@@ -25,7 +25,7 @@ public class Lock
     public synchronized void aquire(Transaction trans, LockType aLockType)
     {
         //while another transaction holds the lock in confilciting mode
-        while(false /*STUB*/)
+        while(aLockType != LockType.EMPTY /*STUB*/)
         {
             try
             {
