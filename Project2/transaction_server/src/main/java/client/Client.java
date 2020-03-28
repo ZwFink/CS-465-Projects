@@ -29,6 +29,15 @@ public class Client extends Thread
         randTransNum = 10;
     }
     
+    public Client(String host, int port, int totalAccounts, int maxBalance, int randTransNum)
+    {
+        this.host = host;
+        this.port = port;
+        this.totalAccounts = totalAccounts;
+        this.maxBalance = maxBalance;
+        this.randTransNum = randTransNum;
+    }
+    
     // Opens a proxy server
     @Override
     public void run()
