@@ -91,20 +91,33 @@ public class TransactionManager extends MessageType
 			   
 			   synchronized (transactions)
 			   {
-			      transaction = new Transaction(transCounter++);
-			      transactions.add(transaction);
+			      String transType;
+                              int accountNum;
+                              int value;
+                              transCounter++;
+                              
+                              //Parse the message transaction for:
+                                //Account number
+                                //Transaction type -> READ or WRITE
+                                //Value -> If type is READ set this as 0
+                              
+                              Transaction newTransaction = new Transaction(transCounter,
+                                                                transType,
+                                                                accountNum,
+                                                                value);
+			      transactions.add(newTransaction);
 			   }
 			   
 			   try
 			   {
-			     writeToNet.writeObject(transaction.getID());
+			     writeTo.writeObject(transaction.getID());
 			   }
 			   catch(IOException e)
 			   {
-			      System.out.println("OPEN TRANSACTION ERROR")
+			      System.out.println("OPEN TRANSACTION ERROR");
 			   }
 			   
-			   transaction.log("Open transaction #" + transaction.getID();
+			   transaction.log("Open transaction #" + transaction.getID());
 			   
 			   break;
 			   
