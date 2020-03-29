@@ -26,7 +26,7 @@ public class LockManager
     High level holds 
 			Set lock / release lock
     */
-    public void setLock(Object object, Transaction trans, LockType lockType)
+    public void setLock(Object object, Transaction trans, LockMode lockType)
     {
         Lock foundLock = null;
         synchronized (this) 
@@ -34,7 +34,7 @@ public class LockManager
             // find lock associated with the object
             // if there isn't one  create it and add it to the hashtable
         }
-        foundLock.aquire(trans, lockType);
+        foundLock.acquire(trans, lockType);
     }
     
     // Used for close transaction 
