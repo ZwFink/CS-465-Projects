@@ -51,10 +51,14 @@ public class LockingLock implements Lock, LockType
      * @note This method will block until the lock can be acquired. 
      */
     @Override
-    public synchronized void acquire( Transaction trans, LockMode aLockType )
+    public synchronized void acquire( Transaction trans, LockMode lockingMode )
     {
         //while another transaction holds the lock in confilciting mode
-        while(aLockType != LockMode.EMPTY /*STUB*/)
+        while( isConflict( trans, lockingMode ) )
+            {
+                
+            }
+        while( lockingMode != LockMode.EMPTY /*STUB*/)
         {
             try
             {
@@ -68,7 +72,7 @@ public class LockingLock implements Lock, LockType
         if(holders.isEmpty())
         {
             holders.add(trans);
-            lockType = aLockType;
+            lockType = lockingMode;
         } else if(true /*STUB*/) //if another transaction holds a lock then share it
                 {
                 }
@@ -95,9 +99,22 @@ public class LockingLock implements Lock, LockType
      * @return 
      */
     @Override
-    public synchronized boolean isConflict()
+    public synchronized boolean isConflict( Transaction t, 
+                                            LockMode lockType
+    )
     {
         return false;//STUB
+    }
+
+    /**
+     * Determine whether this lock is held by a transaction. 
+     * @param trans the transaction to test
+     * @return True if trans is in this lock's list of holders,
+     *         false otherwise.
+     */
+    public synchronized boolean isHeldBy( Transaction trans )
+    {
+        return holders.contains( trans ); 
     }
 
     /**
