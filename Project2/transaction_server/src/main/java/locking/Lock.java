@@ -31,6 +31,11 @@ public interface Lock
 	 * Determine whether 
 	 * @return 
 	 */
-	public boolean isConflict();
+	public boolean isConflict( Transaction trans, 
+                               LockMode lockingMode 
+                             );
+
+
+    public boolean isHeldBy( Transaction trans );
 	
 }
