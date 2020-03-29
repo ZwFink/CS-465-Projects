@@ -1,7 +1,8 @@
 package locking;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
+import accounts.Account;
+import java.util.HashMap;
+import java.util.Map;
 import transaction.Transaction;
 
 /*
@@ -16,12 +17,38 @@ import transaction.Transaction;
  */
 public class LockManager 
 {
-    private Hashtable lockList;
+    private HashMap<Account,Lock> locks;
+
+    private LockFactory lockCreator;
     //ALTERNATIVE ==> Have each transaction hold its own locks
     // pseudo code in the book
 	
     //Handles the demands for a lock and their release and aquisition
     
+    /**
+     * Constructor of LockManager that determines whether 
+     * locking should be applied or not.
+     * @param applyLocking Boolean specifying whether locking should be 
+     *        applied to account access or not. If true, any read/write 
+     *        operations will acquire non-conflicting exclusive access.
+     *        Otherwise, no locking will be done.
+     */
+    public LockManager( boolean applyLocking ) 
+    {
+        locks = new HashMap();
+
+        if( applyLocking )
+        {
+            this.lockCreator 
+                = new LockFactory( LockType.lockType.LOCKING_LOCK );
+        }
+        else
+        {
+             this.lockCreator 
+                = new LockFactory( LockType.lockType.NON_LOCKING_LOCK );
+        }
+        
+    }
     /*
     High level holds 
 			Set lock / release lock
