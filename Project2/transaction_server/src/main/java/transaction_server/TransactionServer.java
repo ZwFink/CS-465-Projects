@@ -36,6 +36,11 @@ public class TransactionServer
 		//Run trans accept socket
 		//Transmanager.runtrans(socket accept)
     public static boolean transactionView = true;
+    
+    public TransactionServer()
+    {
+        //Constructor wth premade defaults
+    }
 
     
     

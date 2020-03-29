@@ -22,7 +22,7 @@ public class Transaction
     private int accountNum; //holds index to account being read/write
     private int value; //holds value to write to the account (direct write over)
     
-    Transaction(int transID, String transType, int accountNum, int value)
+    public Transaction(int transID, String transType, int accountNum, int value)
     {
         this.transID = transID;
         this.locks = new ArrayList();
