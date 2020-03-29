@@ -40,9 +40,11 @@ public class NonLockingLock implements Lock, LockType
      * @return False, because no conflict is possible when no locking is done.
      */
     @Override
-    public synchronized boolean isConflict()
+	public boolean isConflict( Transaction trans, 
+                               LockMode lockType 
+                             )
     {
-	    return false;
+        return false;
     }
     
 
@@ -54,4 +56,15 @@ public class NonLockingLock implements Lock, LockType
     {
 	    return LockType.lockType.NON_LOCKING_LOCK;
     }
+
+    /**
+     * Determine whether this lock is held by a transaction.
+     * @param trans The transaction to test.
+     * @return False, because this lock doesn't lock and thus can't be held.
+     */
+    public synchronized boolean isHeldBy( Transaction trans )
+    {
+        return false;
+    }
+
 }
