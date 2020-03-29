@@ -9,7 +9,7 @@ package locking;
  *
  * @author caleb, kenny
  */
-public enum LockType
+public enum LockMode
 {
     // need three different types of locks
     // one for no lock
