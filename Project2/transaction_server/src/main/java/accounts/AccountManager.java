@@ -9,7 +9,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import locking.LockType;
+import locking.LockMode;
 import transaction.Transaction;
 
 /**
