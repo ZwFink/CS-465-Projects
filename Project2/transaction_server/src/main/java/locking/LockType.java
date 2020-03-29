@@ -6,19 +6,20 @@
 package locking;
 
 /**
- *
- * @author caleb, kenny
+ * Describes the lock type of a lock. 
+ * A lock can be either two things:
+ * - locking: Operations related to concurrency control result in 
+ *            the locking/unlocking of access to resources. 
+ * - Non-locking: Operations related to concurrency control
+ *   result in no-operations
+ * @author zane
  */
-public enum LockType
+public interface LockType 
 {
-    // need three different types of locks
-    // one for no lock
-    EMPTY,
-    
-    // one for write lock
-    WRITE,
-    
-    // one for read lock
-    READ
-    
+	public enum lockType
+	{
+		LOCKING_LOCK,
+		NON_LOCKING_LOCK
+	}
+	public lockType getType();
 }
