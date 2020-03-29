@@ -10,7 +10,7 @@ import java.io.*;
 import java.net.*;
 import transaction.comm.Message;
 import transaction.comm.MessageTypes;
-import transaction.server.TransactionServer;
+import transaction_server.TransactionServer;
 
 
 /**
