@@ -10,19 +10,48 @@ import transaction.Transaction;
  */
 
 /**
- * Handles Low Level Locking
+ * A class that implements acquisition and release of a lock
+ * for an object. 
  * @author caleb
  */
-//Has wait and notify
 public class LockingLock implements Lock, LockType
 {    
+
+    /**
+     * The current mode of this lock.
+     */
     private LockMode lockType = LockMode.EMPTY;
+
+    /**
+     * The holders of this lock.
+     */
     private ArrayList holders;
+
+    /**
+     * The object that is being held by the lock.
+     */
     private Object object;
+
+    /**
+     * Default initialization of the lock.
+     */
+    public LockingLock()
+    {
+        lockType = LockMode.EMPTY;
+        holders = new ArrayList();
+        object = null;
+    }
     
 
-    //has function "aquire"
-    public synchronized void acquire(Transaction trans, LockMode aLockType)
+    /**
+     * Acquire the lock in a way such that conflicting operations 
+     * cannot be done.
+     * @param trans The transaction that is acquiring a lock.
+     * @param aLockType The type of lock that is requested.
+     * @note This method will block until the lock can be acquired. 
+     */
+    @Override
+    public synchronized void acquire( Transaction trans, LockMode aLockType )
     {
         //while another transaction holds the lock in confilciting mode
         while(aLockType != LockMode.EMPTY /*STUB*/)
@@ -45,7 +74,12 @@ public class LockingLock implements Lock, LockType
                 }
     }
     
-    public synchronized void release(Transaction trans)
+    /**
+     * Release the lock from the object that is being held
+     * @param trans The transaction that requested the lock.
+     */
+    @Override
+    public synchronized void release( Transaction trans )
     {
         holders.remove(trans);
         //set LockMode to None
@@ -56,14 +90,23 @@ public class LockingLock implements Lock, LockType
         notifyAll();
     }
     
-    //Checks if the object is in confict due to lock
+    /**
+     * Determine whether this lock is in conflict with another.
+     * @return 
+     */
+    @Override
     public synchronized boolean isConflict()
     {
         return false;//STUB
     }
 
+    /**
+     * Get the type of this lock.
+     * @return lockType.LOCKING_LOCK
+     */
+    @Override
     public lockType getType()
     {
-	return LockType.lockType.LOCKING_LOCK;	    
+        return LockType.lockType.LOCKING_LOCK;	    
     }
 }
