@@ -36,6 +36,11 @@ public class TransactionServer
 		//Run trans accept socket
 		//Transmanager.runtrans(socket accept)
     public static boolean transactionView = true;
+
+    public static boolean transactionView()
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     public TransactionServer()
     {
