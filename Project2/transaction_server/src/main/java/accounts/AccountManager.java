@@ -20,7 +20,7 @@ public class AccountManager
 {
 	int numberOfAccounts = 0;
 	int transID;
-        private static final ArrayList<Account> accountList = new ArrayList<>();
+        private static ArrayList<Account> accountList;
 	
 	
       /**
@@ -31,11 +31,17 @@ public class AccountManager
 	*/
 	public AccountManager(ArrayList<Account> accountList)
 	{
+            accountList = new ArrayList<>();
             for(Account newAcc : accountList)
             {
                 numberOfAccounts++;
                 accountList.add(newAcc);
             }
+	}
+        
+        public AccountManager()
+	{
+            ArrayList<Account> accountList = new ArrayList<>();
 	}
         
         public void addAccount(int newBalance)
