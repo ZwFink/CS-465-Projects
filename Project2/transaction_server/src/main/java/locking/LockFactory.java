@@ -14,7 +14,7 @@ public class LockFactory
 	/**
 	 * The type of lock that will be produced by this factory.
 	 */
-	private LockType.lockType productionLockType;
+	private final LockType.lockType productionLockType;
 
 	/**
 	 * Create a factory that will produce a certain type of lock.
@@ -31,7 +31,7 @@ public class LockFactory
 	 * @return An appropriate lock, as determined by the initialization of 
 	 *         the factory.
 	 */
-	public LockType getLock()
+	public Lock getLock()
 	{
 		if( this.productionLockType == LockType.lockType.LOCKING_LOCK )
 		{
