@@ -53,25 +53,32 @@ public class LockManager
     High level holds 
 			Set lock / release lock
     */
-    public void setLock(Object object, Transaction trans, LockMode lockType)
+    public void setLock( Account account, Transaction trans, LockMode lockType)
     {
         Lock foundLock = null;
         synchronized (this) 
         {
-            // find lock associated with the object
-            // if there isn't one  create it and add it to the hashtable
+            foundLock = locks.get( account );
+
+            if( foundLock == null )
+            {
+                foundLock = lockCreator.getLock();
+                locks.put( account, foundLock );
+            }
         }
-        foundLock.acquire(trans, lockType);
+
+        foundLock.acquire( trans, lockType );
     }
     
     // Used for close transaction 
-    public synchronized void unLock(Transaction trans)
+    public synchronized void unsetLock( Transaction trans )
     {
-        Enumeration e = lockList.elements();
-        while(e.hasMoreElements())
+        
+        for( Map.Entry<Account,Lock> entry : locks.entrySet() )
         {
-            Lock aLock = (Lock) (e.nextElement());
-            if(true /*STUB trans is a holder of this lock */)
+            Lock aLock = entry.getValue();
+
+            if( aLock.isHeldBy( trans ) )
             {
                 aLock.release(trans);
             }
