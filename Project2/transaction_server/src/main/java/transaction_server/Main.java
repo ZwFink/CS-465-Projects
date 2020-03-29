@@ -29,7 +29,7 @@ public class Main
         // Create a new Transaction Server
         TransactionServer tranServer = new TransactionServer();
         // Create a new Client and proxy //THREAD Client to have multiple clients at same time
-        for(int i; i < numClients; i++)
+        for(int i = 0; i < numClients; i++)
         {
             Client newClient = new Client(defaultHost,
                     startPort + i,
