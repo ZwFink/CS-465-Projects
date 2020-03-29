@@ -88,23 +88,13 @@ public class TransactionManager extends MessageType
 			switch (message.getType())
 			{
 			   case OPEN_TRANSACTION:
-			   
+			   //A new transaction was created so this case should parse it
+                               
 			   synchronized (transactions)
 			   {
-			      String transType;
-                              int accountNum;
-                              int value;
                               transCounter++;
-                              
-                              //Parse the message transaction for:
-                                //Account number
-                                //Transaction type -> READ or WRITE
-                                //Value -> If type is READ set this as 0
-                              
-                              Transaction newTransaction = new Transaction(transCounter,
-                                                                transType,
-                                                                accountNum,
-                                                                value);
+                              //Create a new BLANK transaction to be filled out later
+                              Transaction newTransaction = new Transaction(transCounter);
 			      transactions.add(newTransaction);
 			   }
 			   
@@ -135,12 +125,12 @@ public class TransactionManager extends MessageType
 			}
 			catch(IOException e)
 			{
-			   System.out.println("CLOSE TRANSACTION ERROR")
+			   System.out.println("CLOSE TRANSACTION ERROR");
 			}
 			
-			transaction.log("Close transaction #" + transaction.getID();
+			transaction.log("Close transaction #" + transaction.getID());
 			
-			if (TransactionServer.transactionView)
+			if (TransactionServer.transactionView())
 			{
 			   System.out.println(transaction.getLog());
 			}
@@ -150,12 +140,12 @@ public class TransactionManager extends MessageType
 		case READ_REQUEST:
 		
 			accountNumber = (Integer) message.getContent();
-			transaction.log("READ_REQUEST -> account # " + accountNumber + "->"transaction.getID();
+			transaction.log("READ_REQUEST -> account # " + accountNumber + "->" + transaction.getID());
 			balance = TransactionServer.accountManager.read(accountNumber, transaction);
 			
 			try
 			{
-			  writeToNet.writeObject((Integer) balance);
+			  writeTo.writeObject((Integer) balance);
 			}
 			catch(IOException e)
 			{
@@ -176,7 +166,7 @@ public class TransactionManager extends MessageType
 			
 			try
 			{
-			  writeToNet.writeObject((Integer) balance);
+			  writeTo.writeObject((Integer) balance);
 			}
 			
 			catch(IOException e)

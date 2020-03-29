@@ -30,6 +30,11 @@ public class Transaction
         this.accountNum = accountNum;
         this.value = value;
     }
+    public Transaction(int transID)
+    {
+        this.transID = transID;
+        this.locks = new ArrayList();
+    }
     
     public int getID()
     {
@@ -65,15 +70,27 @@ public class Transaction
      {
          return value;
      }
+     public void setValue(int value) 
+     {
+         this.value = value;
+     }
      
      public int getAccount() 
      {
          return accountNum;
      }
+     public void setAccount(int accountNum) 
+     {
+         this.accountNum = accountNum;
+     }
      
      public String getType() 
      {
          return transType;
+     }
+     public void setType(String transType) 
+     {
+         this.transType = transType;
      }
                    
  }
