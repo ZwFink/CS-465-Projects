@@ -54,13 +54,15 @@ public class TransactionServerProxy
     {
         try
         {
-            socket = new Socket(host, port);
-            readFrom = new ObjectInputStream(socket.getInputStream());
-            writeTo = new ObjectOutputStream(socket.getOutputStream());
+            socket = new Socket();
             
             InetAddress inetAddress=InetAddress.getByName(serverHost);  
             SocketAddress socketAddress = new InetSocketAddress(inetAddress, port);  
             socket.connect(socketAddress, serverPort);
+
+
+            readFrom = new ObjectInputStream(socket.getInputStream());
+            writeTo = new ObjectOutputStream(socket.getOutputStream());
             
             //Create some dummy data for content
             Object[] newContent = {0, 0};
@@ -73,6 +75,7 @@ public class TransactionServerProxy
         }
         catch(IOException e)
         {
+            e.printStackTrace();
             System.out.println("Unable to open transaction");
         }
         
