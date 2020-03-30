@@ -45,7 +45,6 @@ public class TransactionManager
         ObjectInputStream readFrom = null;
         ObjectOutputStream writeTo = null;
         Message message = null;
-        Boolean active = false;
 
         Transaction transaction = null;
         int accountNumber = 0;
@@ -58,31 +57,24 @@ public class TransactionManager
             this.client = client;
             accMan = TransactionServer.accMan;
             lockMan = TransactionServer.lockMan;
-
-            while (active)
-            {
-                try
-                {
-                    //get input and output streams
-                    readFrom = new ObjectInputStream(client.getInputStream());
-                    writeTo = new ObjectOutputStream(client.getOutputStream());
-
-                    //check for client input, if its the tansaction close then end this loop
-                    //Handle client requests using accountManager and LockManager
-                    //Write back to client results of transaction
-                    //Return to top of loop to wait for next client input
-                } catch (IOException e)
-                {
-                    System.out.println("transaction failed");
-                    e.printStackTrace();
-                    System.exit(1);
-                }
-            }
         }
 
         @Override
         public void run()
         {
+            try
+            {
+                //get input and output streams
+                readFrom = new ObjectInputStream(client.getInputStream());
+                writeTo = new ObjectOutputStream(client.getOutputStream());
+                
+            } catch (IOException e)
+            {
+                System.out.println("transaction failed");
+                e.printStackTrace();
+                System.exit(1);
+            }
+
             while (activeTrans)
             {
                 try
