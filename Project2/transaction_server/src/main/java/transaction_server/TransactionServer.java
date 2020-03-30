@@ -49,10 +49,10 @@ public class TransactionServer
         boolean locking = true;
         try
         {
-            PropertyHandler propHand = new PropertyHandler("properties.txt");
+            PropertyHandler propHand = new PropertyHandler("General.properties");
             numAccounts = Integer.parseInt(propHand.getProperty("NUMBER_ACCOUNTS"));
             initialBal = Integer.parseInt(propHand.getProperty("INITIAL_BALANCE"));
-            locking = Boolean.parseBoolean(propHand.getProperty("LOCKING"));
+            locking = Boolean.parseBoolean(propHand.getProperty("APPLY_LOCKING"));
             
         } catch (IOException ex)
         {

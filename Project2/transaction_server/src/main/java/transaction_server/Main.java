@@ -32,12 +32,12 @@ public class Main
         //Try to load propety file to replace hard coded defaults
         try
         {
-            PropertyHandler propHand = new PropertyHandler("properties.txt");
+            PropertyHandler propHand = new PropertyHandler("General.properties");
             numTestAccounts = Integer.parseInt(propHand.getProperty("NUMBER_ACCOUNTS"));
             maxBalance = Integer.parseInt(propHand.getProperty("INITIAL_BALANCE"));
             numTransactions = Integer.parseInt(propHand.getProperty("NUMBER_TRANSACTIONS"));
             numClients = Integer.parseInt(propHand.getProperty("NUMBER_CLIENTS"));
-            startPort = Integer.parseInt(propHand.getProperty("START_PORT"));
+            startPort = Integer.parseInt(propHand.getProperty("PORT"));
             defaultHost = propHand.getProperty("HOST");
             
         } catch (IOException ex)
