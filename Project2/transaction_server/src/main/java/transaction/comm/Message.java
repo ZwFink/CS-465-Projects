@@ -5,11 +5,13 @@
  */
 package transaction.comm;
 
+import java.io.Serializable;
+
 /**
  * Represents the base message that is sent over the network. 
  * @author caleb johnson
  */
-public class Message implements MessageTypes
+public class Message implements MessageTypes, Serializable
 {
     /**
      * The type of message this is.
