@@ -29,6 +29,7 @@ public class TransactionServer
     public static LockManager lockMan;
     serverSocket serverSocket;
     public final int portNumber = 2080;
+    public static boolean transactionView = true;
     //Creates a server socket
 	
   public TransactionServer()
@@ -59,6 +60,13 @@ public class TransactionServer
 	
 	readFrom = new ObjectInputStream(client.getInputStream());
 	writeTo = new ObjectOutputStream(client.getOutputStream());
+	    
+	@Override
+	public void run()
+	{
+		try
+		{
+		
 	
         //Handles transaction //THREADS
             // Calls a transaction manager
@@ -69,7 +77,7 @@ public class TransactionServer
     	//Simple run while true 
 		//Run trans accept socket
 		//Transmanager.runtrans(socket accept)
-    public static boolean transactionView = true;
+   
     }
 
     public static boolean transactionView()
