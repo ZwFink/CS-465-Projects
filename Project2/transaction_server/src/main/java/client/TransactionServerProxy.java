@@ -12,9 +12,12 @@ package client;
  */
 public class TransactionServerProxy 
 {
-
+    private Socket socket = null;
+    private ObjectOutputStream writeTo = null;
+    private ObjectInputStream readFrom = null;
     private String host;
     private int port;
+    
     TransactionServerProxy(String host, int port) 
     {
         this.host = host;
@@ -26,19 +29,58 @@ public class TransactionServerProxy
         // Processes replies from the TransactionServer
     // Closes socket connect to Transaction server if Client calls close()
 
-    int openTransaction() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    int openTransaction() 
+    {
+        try
+        {
+            socket = new Socket(host, port);
+            readFrom = new ObjectInputStream(socket.getInputStream());
+            writeTo = new ObjectOutputStream(socket.getOutputStream());
+            
+            // need to handle messages
+        }
+        catch
+        {
+            System.out.println("Unable to open transaction");
+        }
     }
 
-    int read(int accountFrom) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    int read(int accountFrom) 
+    {
+        try
+        {
+           
+            
+            // need to handle messages
+        }
+        catch
+        {
+            System.out.println("Unable to read transaction");
+        }.
     }
 
     void write(int accountTo, int toBalance) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try
+        {
+           
+            // need to handle messages
+        }
+        catch
+        {
+            System.out.println("Unable to write transaction");
+        }
     }
 
     void closeTransaction() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try
+        {
+           
+            
+            // need to handle messages
+        }
+        catch
+        {
+            System.out.println("Unable to close transaction");
+        }
     }
 }
