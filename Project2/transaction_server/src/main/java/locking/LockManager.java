@@ -61,6 +61,8 @@ public class LockManager
             if( foundLock == null )
             {
                 foundLock = lockCreator.getLock();
+                foundLock.setItem( trans.getAccount() );
+
                 locks.put( account, foundLock );
 
                 if( lockCreator.isLocking() )
@@ -97,7 +99,7 @@ public class LockManager
                         lockModeToString( aLock.getMode() )
                         )
                         + " lock for account #" +
-                        ((Account)aLock.getItem()).getNumber()
+                        ((int)aLock.getItem())
                     );
                 }
                 aLock.release(trans);

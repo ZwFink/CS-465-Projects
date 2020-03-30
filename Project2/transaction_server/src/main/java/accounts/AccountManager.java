@@ -9,6 +9,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import locking.LockManager;
 import locking.LockMode;
 import transaction.Transaction;
 
@@ -22,6 +23,7 @@ public class AccountManager
     int numberOfAccounts = 0;
     int transID;
     private static ArrayList<Account> accountList;
+    private LockManager lockMan;
 
     /**
      * Account manager preforms all the necessary handling for the account class
@@ -40,7 +42,7 @@ public class AccountManager
     }
 
     //Constructor specific for preference file use
-    public AccountManager(int accountAmount, int startBal)
+    public AccountManager(int accountAmount, int startBal, LockManager lockMan)
     {
         accountList = new ArrayList<>();
         for (int i = 0; i < accountAmount; i++)
@@ -49,6 +51,7 @@ public class AccountManager
             numberOfAccounts++;
             accountList.add(newAcc);
         }
+        this.lockMan = lockMan;
     }
 
     public AccountManager()
@@ -67,11 +70,22 @@ public class AccountManager
     {
         if (trans.getType().equals("WRITE"))
         {
+            lockMan.setLock( new Account( 0, trans.getAccount() ), 
+                trans, LockMode.WRITE 
+            );
             accountList.get(trans.getAccount()).setBalance(trans.getValue());
             //Return the new balance set
-            return accountList.get(trans.getAccount()).getBalance();
+            int newBalance = accountList.get(trans.getAccount()).getBalance();
+            trans.log( "Account " + 
+                Integer.toString( trans.getAccount() )
+            + " new balance: " + newBalance);
+            return newBalance;
         } else //Treat any other type as a READ
         {
+            lockMan.setLock( new Account( 0, trans.getAccount() ), 
+                trans, LockMode.READ 
+            );
+
             Account desiredAcc = accountList.get(trans.getAccount());
             return desiredAcc.getBalance();
         }

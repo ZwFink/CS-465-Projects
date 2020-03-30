@@ -24,6 +24,11 @@ public class NonLockingLock implements Lock, LockType
     {
     }
     
+   public void setItem( Object newObject )
+    {
+    }
+
+
     /**
      * Release the lock for transaction. -- Does nothing.
      * @param trans 

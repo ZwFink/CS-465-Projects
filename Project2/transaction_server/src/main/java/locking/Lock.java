@@ -21,6 +21,8 @@ public interface Lock
 	 */
 	public void acquire( Transaction trans, LockMode aLockType );
 
+    public void setItem( Object item );
+
 	/**
 	 * Release all locks that are held by a transaction.
 	 * @param trans The transaction whose locks should be released.

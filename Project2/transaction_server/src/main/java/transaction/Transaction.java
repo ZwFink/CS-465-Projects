@@ -57,6 +57,12 @@ public class Transaction
         isDone = false;
     }
 
+    public Transaction( int transID, int accountNum )
+    {
+        this.accountNum = accountNum;
+        this.transID = transID;
+    }
+
     /**
      * Constructor with just a transaction ID.
      * @param transID The ID of this transaction.
@@ -100,12 +106,13 @@ public class Transaction
      */
     public void log (String logString)
     {
-        log.append("\n").append(logString);
+//        log.append("\n").append(logString);
         
-        if (!TransactionServer.transactionView)
-        {
-            System.out.println("Transaction # " + this.getID() + " " + logString);
-        }
+//        if (!TransactionServer.transactionView)
+//        {
+//            System.out.println("Transaction # " + this.getID() + " " + logString);
+//        }
+        System.out.println( logString );
      }
      
     /**
@@ -151,6 +158,12 @@ public class Transaction
      public boolean getState() 
      {
          return isDone;
+     }
+
+     @Override
+     public boolean equals( Object other )
+     {
+         return this.transID == ((Transaction)other).transID;
      }
                    
  }

@@ -35,6 +35,7 @@ public class TransactionServer extends Thread
     public String host;
     public int portNumber;
     public int numClients;
+    public int numTransactions;
     public static boolean transactionView = true;
     //Creates a server socket
 
@@ -56,6 +57,7 @@ public class TransactionServer extends Thread
             initialBal = Integer.parseInt(propHand.getProperty("INITIAL_BALANCE"));
             locking = Boolean.parseBoolean(propHand.getProperty("APPLY_LOCKING"));
             numClients = Integer.parseInt(propHand.getProperty("NUMBER_CLIENTS"));
+            numTransactions = Integer.parseInt(propHand.getProperty("NUMBER_TRANSACTIONS"));
             
         } catch (IOException ex)
         {
@@ -63,8 +65,8 @@ public class TransactionServer extends Thread
             System.out.println("Property file called properties.txt failed to load, switch to defaults");
         }
         
-        accMan = new AccountManager(numAccounts, initialBal);
         lockMan = new LockManager(locking); 
+        accMan = new AccountManager(numAccounts, initialBal, lockMan );
     }
     
     @Override
@@ -86,7 +88,7 @@ public class TransactionServer extends Thread
         System.out.println( "Initial total balance: " + initialSum );
 
         //Stays open forever
-        while ( handledClients < numClients )
+        while ( handledClients < numClients * numTransactions )
         {
             //Waits for proxy ==> .accept()
             System.out.println("Waiting for connections");
@@ -118,21 +120,27 @@ public class TransactionServer extends Thread
         boolean transRemaining = true;
         while(transRemaining)
         {
-            transRemaining = false;
-            for(Transaction tran : transactions)
-            {
-                if(!tran.getState())
+            synchronized( transactions )
+                {
+                    transRemaining = false;
+                    for(Transaction tran : transactions)
                     {
-                        transRemaining = true;
+                        if(!tran.getState())
+                        {
+                            transRemaining = true;
+                        }
+                        
                     }
-            
-            }
+                }
         }
         
-        for(Transaction tran : transactions)
+        synchronized( transactions )
+        {
+            for(Transaction tran : transactions)
             {
                 System.out.println(tran.getLog());
             }
+        }
         
 
         int endingSum = accMan.getBalanceSum();

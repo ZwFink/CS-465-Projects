@@ -79,7 +79,7 @@ public class TransactionServerProxy
             System.out.println("Unable to open transaction");
         }
         
-        return transID;
+        return ++transID;
     }
 
     int read(int accountFrom) 
@@ -116,7 +116,7 @@ public class TransactionServerProxy
         return balance;
     }
 
-    int write(int accountTo, int toBalance) 
+    void write(int accountTo, int toBalance) 
     {
         try
         {    
@@ -134,20 +134,6 @@ public class TransactionServerProxy
             System.out.println("Unable to perfrom read transaction");
         }
         
-        //Wait for response
-        int balance = -1;
-        try
-        {
-            balance = (int) readFrom.readObject();
-        } catch (IOException ex)
-        {
-            Logger.getLogger(TransactionServerProxy.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex)
-        {
-            Logger.getLogger(TransactionServerProxy.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        return balance;
     }
 
     void closeTransaction() 
@@ -162,7 +148,7 @@ public class TransactionServerProxy
             writeTo.writeObject(closeTrans);
             
             //close the connection
-            socket.close();
+//            socket.close();
         }
         catch(IOException e)
         {
