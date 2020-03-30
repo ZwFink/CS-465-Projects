@@ -126,4 +126,16 @@ public class LockingLock implements Lock, LockType
     {
         return LockType.lockType.LOCKING_LOCK;	    
     }
+
+    /**
+     * Promote this from a read lock to a write lock.
+     * If this is not a read lock, this method is a noop.
+     */
+    public void promote()
+    {
+        if( this.lockType == LockMode.READ )
+        {
+            this.lockType = LockMode.WRITE; 
+        }
+    }
 }
