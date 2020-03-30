@@ -12,6 +12,7 @@ import java.util.Hashtable;
 import locking.LockManager;
 import locking.LockMode;
 import transaction.Transaction;
+import transaction_server.TransactionServer;
 
 /**
  *
@@ -39,6 +40,7 @@ public class AccountManager
             numberOfAccounts++;
             accountList.add(newAcc);
         }
+        this.lockMan = TransactionServer.lockMan;
     }
 
     //Constructor specific for preference file use
@@ -79,6 +81,7 @@ public class AccountManager
             trans.log( "Account " + 
                 Integer.toString( trans.getAccount() )
             + " new balance: " + newBalance);
+            lockMan.unsetLock( trans );
             return newBalance;
         } else //Treat any other type as a READ
         {
@@ -87,6 +90,7 @@ public class AccountManager
             );
 
             Account desiredAcc = accountList.get(trans.getAccount());
+            lockMan.unsetLock( trans );
             return desiredAcc.getBalance();
         }
     }

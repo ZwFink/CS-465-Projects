@@ -69,6 +69,8 @@ public class LockingLock implements Lock, LockType
                     " lock for account # " + accNum + "."
                 );
                 wait();
+                trans.log( "[LockingLock.acquire] Notify for lock for account # " + accNum + "."
+                );
             }
             catch(InterruptedException e)
             {
@@ -156,10 +158,7 @@ public class LockingLock implements Lock, LockType
     )
     {
         // read-read
-        if( holders.isEmpty()
-            || (lockType == LockMode.READ 
-            && this.lockType == LockMode.READ )
-          )
+        if( holders.isEmpty())
         {
 
         t.log( "[LockingLock.isConflict] " +
@@ -175,6 +174,16 @@ public class LockingLock implements Lock, LockType
         {
             t.log( "[LockingLock.isConflict] " +
                 "No conflict found for lock promotion" +
+                "account # " + t.getAccount() +
+                "."
+            );
+            return false;
+            
+        }
+        else if(lockType == LockMode.READ && this.lockType == LockMode.READ )
+        {
+            t.log( "[LockingLock.isConflict] " +
+                "No conflict found for read on read" +
                 "account # " + t.getAccount() +
                 "."
             );

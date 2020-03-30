@@ -85,13 +85,23 @@ public class LockManager
     // Used for close transaction 
     public synchronized void unsetLock( Transaction trans )
     {
-        
+        trans.log( "[LockManager.unsetLock] unlocking all locks for account #" +
+                        (trans.getID())
+                    );
         for( Map.Entry<Account,Lock> entry : locks.entrySet() )
         {
             Lock aLock = entry.getValue();
-
+            
             if( aLock.isHeldBy( trans ) )
             {
+                trans.log( "[LockManager.unsetLock] found held lock " +
+                        toUpperCase(
+                        lockModeToString( aLock.getMode() )
+                        )
+                        + " lock for account #" +
+                        ((int)aLock.getItem())
+                    );
+                
                 if( lockCreator.isLocking() )
                 {
                     trans.log( "[LockManager.unsetLock] Release " +
@@ -103,8 +113,10 @@ public class LockManager
                     );
                 }
                 aLock.release(trans);
+
             }
         }
+        
     }
 
     /**

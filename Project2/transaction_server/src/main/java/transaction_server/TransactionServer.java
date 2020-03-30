@@ -78,7 +78,8 @@ public class TransactionServer extends Thread
         } catch (IOException e)
         {
             e.printStackTrace();
-            System.out.println("Unable to connect to the server");
+            System.out.println("Unable to connect to the server, please try a different port");
+            System.exit(1);
         }
 
         int handledClients = 0;

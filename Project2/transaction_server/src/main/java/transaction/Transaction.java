@@ -7,6 +7,7 @@ package transaction;
 
 import java.util.ArrayList;
 import locking.Lock;
+import locking.LockingLock;
 import transaction_server.TransactionServer;
 
 /**
