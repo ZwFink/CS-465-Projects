@@ -46,8 +46,14 @@ public class TransactionServerProxy
             readFrom = new ObjectInputStream(socket.getInputStream());
             writeTo = new ObjectOutputStream(socket.getOutputStream());
             
+            //Create some dummy data for content
+            Object[] newContent = {0, 0};
+            
             // need to handle messages
-            Message openTrans = new Message(OPEN_TRANSACTION);
+            Message openTrans = new Message(OPEN_TRANSACTION, newContent);
+            
+            //push message object thorugh output
+            writeTo.writeObject(openTrans);
         }
         catch(IOException e)
         {
