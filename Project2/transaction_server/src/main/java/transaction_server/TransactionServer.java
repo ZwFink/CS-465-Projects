@@ -71,8 +71,14 @@ public class TransactionServer
             System.out.println("Unable to connect to the server");
         }
 
+        int handledAccounts = 0;
+
+
+        int initialSum = accMan.getBalanceSum();
+        System.out.println( "Initial total balance:" + initialSum );
+
         //Stays open forever
-        while (true)
+        while ( handledAccounts < numAccounts )
         {
             //Waits for proxy ==> .accept()
             System.out.println("Waiting for connections");
@@ -90,6 +96,13 @@ public class TransactionServer
 
             //Got a client, give them to a new worker thread and go back to waiting for a new client
             transMan.runTransaction(client);
+            ++handledAccounts;
         }
+
+        int endingSum = accMan.getBalanceSum();
+        System.out.println( "Ending total balance:" + endingSum );
+        System.out.println( "Total money lost in the ether: " 
+            + Integer.toString(endingSum - initialSum ) 
+        );
     }
 }
