@@ -47,6 +47,7 @@ public class TransactionManager
      */
     public void runTransaction(Socket client)
     {
+        System.out.println("Running Transaction Now");
         (new TransactionManagerWorker(client)).start();
     }
 

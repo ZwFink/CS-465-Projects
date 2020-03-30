@@ -33,6 +33,7 @@ public class TransactionServer extends Thread
     public ServerSocket serverSocket;
     public String host;
     public int portNumber;
+    public int numClients;
     public static boolean transactionView = true;
     //Creates a server socket
 
@@ -53,6 +54,7 @@ public class TransactionServer extends Thread
             numAccounts = Integer.parseInt(propHand.getProperty("NUMBER_ACCOUNTS"));
             initialBal = Integer.parseInt(propHand.getProperty("INITIAL_BALANCE"));
             locking = Boolean.parseBoolean(propHand.getProperty("APPLY_LOCKING"));
+            numClients = Integer.parseInt(propHand.getProperty("NUMBER_CLIENTS"));
             
         } catch (IOException ex)
         {
@@ -83,7 +85,7 @@ public class TransactionServer extends Thread
         System.out.println( "Initial total balance: " + initialSum );
 
         //Stays open forever
-        while ( handledClients < accMan.getAccNum() )
+        while ( handledClients < numClients )
         {
             //Waits for proxy ==> .accept()
             System.out.println("Waiting for connections");
@@ -101,6 +103,7 @@ public class TransactionServer extends Thread
 
             //Got a client, give them to a new worker thread and go back to waiting for a new client
             transMan.runTransaction(client);
+            System.out.println("Transaction Running");
             ++handledClients;
         }
 
