@@ -58,6 +58,7 @@ public class LockingLock implements Lock, LockType
             lockModeToString( lockingMode ) +
             " lock for account # " + accNum + "."
         );
+
         //while another transaction holds the lock in confilciting mode
         while( isConflict( trans, lockingMode ) )
         {
@@ -73,6 +74,7 @@ public class LockingLock implements Lock, LockType
             {
             }
         }
+        this.lockType = lockingMode;
         
         if(holders.isEmpty())
         {
@@ -154,8 +156,9 @@ public class LockingLock implements Lock, LockType
     )
     {
         // read-read
-        if( lockType == LockMode.READ 
-            && this.lockType == LockMode.READ 
+        if( holders.isEmpty()
+            || (lockType == LockMode.READ 
+            && this.lockType == LockMode.READ )
           )
         {
 
@@ -165,6 +168,18 @@ public class LockingLock implements Lock, LockType
             "." 
         );
             return false;
+        }
+        else if( ( this.holders.size() == 1 && this.holders.contains( t )
+            && lockType == LockMode.WRITE && this.lockType == LockMode.READ)
+            )
+        {
+            t.log( "[LockingLock.isConflict] " +
+                "No conflict found for lock promotion" +
+                "account # " + t.getAccount() +
+                "."
+            );
+            return false;
+            
         }
 
         t.log( "[LockingLock.isConflict] " +
@@ -224,6 +239,11 @@ public class LockingLock implements Lock, LockType
     public Object getItem()
     {
         return this.object;
+    }
+
+    public void setItem( Object newObject )
+    {
+        this.object = newObject;
     }
 
     /**
