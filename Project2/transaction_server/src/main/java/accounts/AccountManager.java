@@ -39,6 +39,18 @@ public class AccountManager
             }
 	}
         
+        //Constructor specific for preference file use
+        public AccountManager(int accountAmount, int startBal)
+	{
+            accountList = new ArrayList<>();
+            for(int i = 0; i < accountAmount; i++)
+            {
+                Account newAcc = new Account(startBal, numberOfAccounts);
+                numberOfAccounts++;
+                accountList.add(newAcc);
+            }
+	}
+        
         public AccountManager()
 	{
             ArrayList<Account> accountList = new ArrayList<>();
@@ -59,7 +71,7 @@ public class AccountManager
                 //Return the new balance set
                 return accountList.get(trans.getAccount()).getBalance();
             }
-            else //Treat any opther type as a READ
+            else //Treat any other type as a READ
             {
                 Account desiredAcc = accountList.get(trans.getAccount());
                 return desiredAcc.getBalance();
