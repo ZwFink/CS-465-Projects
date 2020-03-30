@@ -39,6 +39,18 @@ public class AccountManager
             }
 	}
         
+        //Constructor specific for preference file use
+        public AccountManager(int accountAmount, int startBal)
+	{
+            accountList = new ArrayList<>();
+            for(int i = 0; i < accountAmount; i++)
+            {
+                Account newAcc = new Account(startBal, numberOfAccounts);
+                numberOfAccounts++;
+                accountList.add(newAcc);
+            }
+	}
+        
         public AccountManager()
 	{
             ArrayList<Account> accountList = new ArrayList<>();
