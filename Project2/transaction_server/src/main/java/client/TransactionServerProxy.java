@@ -27,6 +27,7 @@ import static transaction.comm.MessageTypes.MsgType.*;
 public class TransactionServerProxy
 {
     private Socket socket = null;
+    private ServerSocket serverSocket = null;
     private ObjectOutputStream writeTo = null;
     private ObjectInputStream readFrom = null;
     private String host;
