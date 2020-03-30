@@ -100,6 +100,7 @@ public class TransactionServer extends Thread
 
             //Got a client, give them to a new worker thread and go back to waiting for a new client
             transMan.runTransaction(client);
+            System.out.println("Transaction Running");
             ++handledClients;
         }
 
