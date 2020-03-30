@@ -1,5 +1,6 @@
 package locking;
 
+import accounts.Account;
 import java.util.ArrayList;
 import transaction.Transaction;
 
@@ -42,7 +43,6 @@ public class LockingLock implements Lock, LockType
         object = null;
     }
     
-
     /**
      * Acquire the lock in a way such that conflicting operations 
      * cannot be done.
@@ -53,11 +53,20 @@ public class LockingLock implements Lock, LockType
     @Override
     public synchronized void acquire( Transaction trans, LockMode lockingMode )
     {
+        int accNum = trans.getAccount();
+        trans.log( "[LockingLock.acquire] Attempt to acquire a " + 
+            lockModeToString( lockingMode ) +
+            " lock for account # " + accNum + "."
+        );
         //while another transaction holds the lock in confilciting mode
         while( isConflict( trans, lockingMode ) )
         {
             try
             {
+                trans.log( "[LockingLock.acquire] Conflict in acquiring a " +
+                    lockModeToString( lockingMode ) +
+                    " lock for account # " + accNum + "."
+                );
                 wait();
             }
             catch(InterruptedException e)
@@ -67,6 +76,14 @@ public class LockingLock implements Lock, LockType
         
         if(holders.isEmpty())
         {
+
+            trans.log( "[LockingLock.acquire] " + 
+                "Successfully added a " +
+                lockModeToString( lockingMode ) +
+                " lock for account # " + accNum + 
+                " as the sole owner."
+            );
+
             holders.add(trans);
             lockType = lockingMode;
 
@@ -75,6 +92,13 @@ public class LockingLock implements Lock, LockType
         {
             if( !this.isHeldBy( trans ) )
             {
+                trans.log( "[LockingLock.acquire] " +
+                    "Successfully added a " +
+                    lockModeToString( lockingMode ) +
+                    " lock for account # " + accNum +
+                    "."
+                );
+
                 holders.add( trans );
             }
             // the lock needs to be promoted 
@@ -83,6 +107,12 @@ public class LockingLock implements Lock, LockType
                      && lockingMode == LockMode.WRITE 
                    )
             {
+                trans.log( "[LockingLock.acquire] " +
+                    "Attempting to promote a " +
+                    lockModeToString( lockingMode ) +
+                    " lock for account # " + accNum +
+                    "."
+                );
                 promote( trans ); 
             }
         }
@@ -96,6 +126,14 @@ public class LockingLock implements Lock, LockType
     public synchronized void release( Transaction trans )
     {
         holders.remove(trans);
+        
+        trans.log( "[LockingLock.release] " +
+            "Removing a " +
+            lockModeToString( this.lockType ) +
+            " lock for account # " + trans.getAccount() +
+            "."
+        );
+        
         //set LockMode to None
         if(holders.isEmpty())
         {
@@ -120,8 +158,20 @@ public class LockingLock implements Lock, LockType
             && this.lockType == LockMode.READ 
           )
         {
+
+        t.log( "[LockingLock.isConflict] " +
+            "No conflict found for " +
+            "account # " + t.getAccount() +
+            "." 
+        );
             return false;
         }
+
+        t.log( "[LockingLock.isConflict] " +
+            "Conflict found for " +
+            "account # " + t.getAccount() +
+            "." 
+        );
 
         // covers write-write and write-read cases
         return true;
@@ -161,4 +211,37 @@ public class LockingLock implements Lock, LockType
             this.acquire( trans, LockMode.WRITE );
         }
     }
+
+    /**
+     * Return the mode of this lock.
+     * @return Either READ, WRITE, or EMPTY
+     */
+    public LockMode getMode()
+    {
+        return this.lockType;
+    }
+
+    public Object getItem()
+    {
+        return this.object;
+    }
+
+    /**
+     * Turn a lock mode into a string equivalent
+     * @param mode The lock mode tog et a string for.
+     * @return A string representation of the lock mode.
+     */
+    private String lockModeToString( LockMode mode )
+    {
+        if( mode == LockMode.EMPTY )
+        {
+            return "empty";
+        }
+        else if( mode == LockMode.READ )
+        {
+            return "read";
+        }
+        return "write";
+    }
+
 }
