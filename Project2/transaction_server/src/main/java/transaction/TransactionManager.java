@@ -47,7 +47,6 @@ public class TransactionManager
      */
     public void runTransaction(Socket client)
     {
-        System.out.println("Running Transaction Now");
         (new TransactionManagerWorker(client)).start();
     }
 
@@ -94,7 +93,6 @@ public class TransactionManager
                 e.printStackTrace();
                 System.exit(1);
             }
-            System.out.println( "Got input stream");
 
             while (activeTrans)
             {
@@ -103,6 +101,7 @@ public class TransactionManager
                     message = (Message) readFrom.readObject();
                 } catch (IOException | ClassNotFoundException e)
                 {
+                    e.printStackTrace();
                     System.out.println("Transaction could not be read");
                     System.exit(1);
                 }
@@ -117,7 +116,8 @@ public class TransactionManager
 			    synchronized (transactions)
                         {
                             //Create a new BLANK transaction to be filled out later
-                            Transaction newTransaction = new Transaction(transCounter);
+                            Transaction newTransaction = new Transaction( transCounter,
+                            (int) message.getContent()[ 0 ] );
                             transCounter++;
                             transactions.add(newTransaction);
                             transaction = newTransaction;
@@ -139,7 +139,10 @@ public class TransactionManager
                     case CLOSE_TRANSACTION:
 
                         TransactionServer.lockMan.unsetLock(transaction);
-                        transaction.finish();
+                        synchronized(transactions)
+                        {
+                            transaction.finish();
+                        }
 
                         try
                         {
@@ -164,7 +167,9 @@ public class TransactionManager
                     case READ_REQUEST:
                         content = message.getContent();
                         accountNumber = ((Integer) content[0]);
-                        transaction.log("READ_REQUEST -> account # " + accountNumber + "->" + transaction.getID());
+                        transaction.log("READ_REQUEST -> account # " + accountNumber + ", transaction " + transaction.getID());
+                        transaction.setAccount( accountNumber );
+                        transaction.setType( "READ" );
                         balance = TransactionServer.accMan.handleTrans(transaction);
 
                         try
@@ -175,27 +180,27 @@ public class TransactionManager
                             System.out.println("READ REQUEST ERROR");
                         }
 
-                        transaction.log("READ_REQUEST " + accountNumber);
-
                         break;
 
                     case WRITE_REQUEST:
 
                         content = message.getContent();
+                        transaction.setType("WRITE");
                         accountNumber = ((Integer) content[0]);
+                        transaction.setAccount( accountNumber );
                         balance = ((Integer) content[1]);
-                        transaction.log("Write Request " + accountNumber);
+                        transaction.setValue( balance );
+                        transaction.log("Write Request account " + accountNumber 
+                        + " writing " + balance );
                         balance = TransactionServer.accMan.handleTrans(transaction);
 
-                        try
-                        {
-                            writeTo.writeObject(balance);
-                        } catch (IOException e)
-                        {
-                            System.out.println("WRITE REQUEST ERROR");
-                        }
-
-                        transaction.log("WRITE REQUEST " + accountNumber);
+//                        try
+//                        {
+//                            writeTo.writeObject(balance);
+//                        } catch (IOException e)
+//                        {
+//                            System.out.println("WRITE REQUEST ERROR");
+//                        }
 
                         break;
 
