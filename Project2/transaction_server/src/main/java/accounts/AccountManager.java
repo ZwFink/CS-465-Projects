@@ -71,7 +71,7 @@ public class AccountManager
                 //Return the new balance set
                 return accountList.get(trans.getAccount()).getBalance();
             }
-            else //Treat any opther type as a READ
+            else //Treat any other type as a READ
             {
                 Account desiredAcc = accountList.get(trans.getAccount());
                 return desiredAcc.getBalance();
