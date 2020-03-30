@@ -77,5 +77,20 @@ public class AccountManager
                 return desiredAcc.getBalance();
             }
         }
+
+        /**
+         * Get the total balance of all the accounts managed by the 
+         * manager.
+         * @return The sum of all the account balances in the account manager.
+         */
+        public int getBalanceSum()
+        {
+            int sum = 0;
+            for( Account acc : accountList )
+            {
+                sum += acc.getBalance();
+            }
+            return sum;
+        }
     
 }
