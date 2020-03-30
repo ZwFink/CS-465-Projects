@@ -72,6 +72,7 @@ public class TransactionServer extends Thread
             serverSocket = new ServerSocket(portNumber);
         } catch (IOException e)
         {
+            e.printStackTrace();
             System.out.println("Unable to connect to the server");
         }
 
