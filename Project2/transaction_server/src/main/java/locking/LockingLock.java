@@ -55,10 +55,6 @@ public class LockingLock implements Lock, LockType
     {
         //while another transaction holds the lock in confilciting mode
         while( isConflict( trans, lockingMode ) )
-            {
-                
-            }
-        while( lockingMode != LockMode.EMPTY /*STUB*/)
         {
             try
             {
@@ -73,9 +69,23 @@ public class LockingLock implements Lock, LockType
         {
             holders.add(trans);
             lockType = lockingMode;
-        } else if(true /*STUB*/) //if another transaction holds a lock then share it
-                {
-                }
+
+        } 
+        else if( !holders.isEmpty() )
+        {
+            if( !holders.contains( trans ) )
+            {
+                holders.add( trans );
+            }
+            // the lock needs to be promoted 
+            else if( holders.contains( trans )
+                     && this.lockType == LockMode.READ
+                     && lockingMode == LockMode.WRITE 
+                   )
+            {
+                promote( trans ); 
+            }
+        }
     }
     
     /**
@@ -96,14 +106,25 @@ public class LockingLock implements Lock, LockType
     
     /**
      * Determine whether this lock is in conflict with another.
-     * @return 
+     * @param t The transaction that is attempting to 
+     * @return True if a read-write or write-write conflict will occur by 
+     *         granting the lock, false otherwise (read-write)
      */
     @Override
-    public synchronized boolean isConflict( Transaction t, 
-                                            LockMode lockType
+    public boolean isConflict( Transaction t, 
+                               LockMode lockType
     )
     {
-        return false;//STUB
+        // read-read
+        if( lockType == LockMode.READ 
+            && this.lockType == LockMode.READ 
+          )
+        {
+            return false;
+        }
+
+        // covers write-write and write-read cases
+        return true;
     }
 
     /**
@@ -125,5 +146,20 @@ public class LockingLock implements Lock, LockType
     public lockType getType()
     {
         return LockType.lockType.LOCKING_LOCK;	    
+    }
+
+    /**
+     * Promote this from a read lock to a write lock.
+     * If this is not a read lock, this method is a noop.
+     * Otherwise, this method sets the lock type accordingly 
+     * and attempts to acquire the lock.
+     */
+    public void promote( Transaction trans ) 
+    {
+        if( this.lockType == LockMode.READ )
+        {
+            this.lockType = LockMode.WRITE; 
+            this.acquire( trans, this.lockType );
+        }
     }
 }
