@@ -1,7 +1,6 @@
 package locking;
 
 import accounts.Account;
-import com.sun.xml.internal.ws.util.StringUtils;
 import java.util.HashMap;
 import java.util.Map;
 import transaction.Transaction;
@@ -67,7 +66,7 @@ public class LockManager
                 if( lockCreator.isLocking() )
                 {
                     trans.log( "[LockManager.setLock] " +
-                        StringUtils.capitalize( 
+                        toUpperCase(
                             lockModeToString( foundLock.getMode() )
                         ) +
                          " Lock created for account #" +
@@ -94,7 +93,7 @@ public class LockManager
                 if( lockCreator.isLocking() )
                 {
                     trans.log( "[LockManager.unsetLock] Release " +
-                        StringUtils.capitalize(
+                        toUpperCase(
                         lockModeToString( aLock.getMode() )
                         )
                         + " lock for account #" +
@@ -122,5 +121,10 @@ public class LockManager
             return "read";
         }
         return "write";
+    }
+
+    private String toUpperCase( String in )
+    {
+        return in.substring(0,1).toUpperCase() + in.substring(1).toLowerCase();
     }
 }
