@@ -5,11 +5,15 @@
  */
 package transaction;
 
+import accounts.AccountManager;
 import java.util.*;
 import java.io.*;
 import java.net.*;
+import locking.LockManager;
 import transaction.comm.Message;
 import transaction_server.TransactionServer;
+import static transaction_server.TransactionServer.accMan;
+import static transaction_server.TransactionServer.lockMan;
 
 /**
  *
@@ -34,11 +38,14 @@ public class TransactionManager
     public class TransactionManagerWorker extends Thread
     {
 
+        public AccountManager accMan;
+        public LockManager lockMan;
+
         Socket client = null;
         ObjectInputStream readFrom = null;
         ObjectOutputStream writeTo = null;
         Message message = null;
-	Boolean active = false;
+        Boolean active = false;
 
         Transaction transaction = null;
         int accountNumber = 0;
@@ -49,26 +56,28 @@ public class TransactionManager
         private TransactionManagerWorker(Socket client)
         {
             this.client = client;
+            lockMan = new LockManager();
+            accMan = new AccountManager();
 
-	while(active)
-	{
-            try
+            while (active)
             {
-		//get input and output streams
-                readFrom = new ObjectInputStream(client.getInputStream());
-                writeTo = new ObjectOutputStream(client.getOutputStream());
+                try
+                {
+                    //get input and output streams
+                    readFrom = new ObjectInputStream(client.getInputStream());
+                    writeTo = new ObjectOutputStream(client.getOutputStream());
 
-                //check for client input, if its the tansaction close then end this loop
-                //Handle client requests using accountManager and LockManager
-                //Write back to client results of transaction
-                //Return to top of loop to wait for next client input
-            } 
-		catch (IOException e)
-            	{
-                   System.out.println("transaction failed");
-                   e.printStackTrace();
-                   System.exit(1);
-            	}
+                    //check for client input, if its the tansaction close then end this loop
+                    //Handle client requests using accountManager and LockManager
+                    //Write back to client results of transaction
+                    //Return to top of loop to wait for next client input
+                } catch (IOException e)
+                {
+                    System.out.println("transaction failed");
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+            }
         }
 
         @Override
@@ -181,6 +190,7 @@ public class TransactionManager
                 }
             }
         }
+
     }
 }
 
@@ -219,4 +229,4 @@ Try-catch
 
 Finally close all the open sockets read,write,client, Boolean-false
 
- */
+     */

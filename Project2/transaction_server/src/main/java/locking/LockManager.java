@@ -1,9 +1,13 @@
 package locking;
 
 import accounts.Account;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import transaction.Transaction;
+import utils.PropertyHandler;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -28,13 +32,20 @@ public class LockManager
     /**
      * Constructor of LockManager that determines whether 
      * locking should be applied or not.
-     * @param applyLocking Boolean specifying whether locking should be 
-     *        applied to account access or not. If true, any read/write 
-     *        operations will acquire non-conflicting exclusive access.
-     *        Otherwise, no locking will be done.
+     * 
      */
-    public LockManager( boolean applyLocking ) 
+    public LockManager() 
     {
+        boolean applyLocking = true;
+        try
+        {
+            PropertyHandler propHand = new PropertyHandler("properties.txt");
+            applyLocking = Boolean.parseBoolean(propHand.getProperty("LOCKING"));
+        } catch (IOException ex)
+        {
+            Logger.getLogger(LockManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         locks = new HashMap();
 
         if( applyLocking )
