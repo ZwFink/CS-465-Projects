@@ -10,6 +10,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import transaction.Transaction;
 import utils.PropertyHandler;
 
 
@@ -106,6 +107,29 @@ public class TransactionServer extends Thread
             System.out.println("Transaction Running");
             ++handledClients;
         }
+        
+        ArrayList<Transaction> transactions = transMan.getTransactions();
+        int numTrans = transactions.size();
+        System.out.println( "Total Transactions: " + numTrans );
+        boolean transRemaining = true;
+        while(transRemaining)
+        {
+            transRemaining = false;
+            for(Transaction tran : transactions)
+            {
+                if(!tran.getState())
+                    {
+                        transRemaining = true;
+                    }
+            
+            }
+        }
+        
+        for(Transaction tran : transactions)
+            {
+                System.out.println(tran.getLog());
+            }
+        
 
         int endingSum = accMan.getBalanceSum();
         System.out.println( "Ending total balance: " + endingSum );

@@ -38,6 +38,7 @@ public class Transaction
     private String transType = "READ"; //Default as read
     private int accountNum; //holds index to account being read/write
     private int value; //holds value to write to the account (direct write over)
+    private boolean isDone;
     
     /**
      * Argument constructor for the transaction.
@@ -53,6 +54,7 @@ public class Transaction
         this.transType = transType;
         this.accountNum = accountNum;
         this.value = value;
+        isDone = false;
     }
 
     /**
@@ -140,6 +142,15 @@ public class Transaction
      public void setType(String transType) 
      {
          this.transType = transType;
+     }
+     
+     public void finish() 
+     {
+         isDone = true;
+     }
+     public boolean getState() 
+     {
+         return isDone;
      }
                    
  }

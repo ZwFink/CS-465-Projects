@@ -116,9 +116,9 @@ public class TransactionManager
                                
 			    synchronized (transactions)
                         {
-                            transCounter++;
                             //Create a new BLANK transaction to be filled out later
                             Transaction newTransaction = new Transaction(transCounter);
+                            transCounter++;
                             transactions.add(newTransaction);
                             transaction = newTransaction;
                         }
@@ -129,6 +129,7 @@ public class TransactionManager
                         } catch (IOException e)
                         {
                             System.out.println("OPEN TRANSACTION ERROR");
+                            transaction.log("ERROR Open transaction #" + transaction.getID());
                         }
 
                         transaction.log("Open transaction #" + transaction.getID());
@@ -138,7 +139,7 @@ public class TransactionManager
                     case CLOSE_TRANSACTION:
 
                         TransactionServer.lockMan.unsetLock(transaction);
-                        transactions.remove(transaction);
+                        transaction.finish();
 
                         try
                         {
@@ -199,7 +200,7 @@ public class TransactionManager
                         break;
 
                     default:
-                        System.out.println("Warning message types not implemented");
+                        System.out.println("Warning message type not implemented");
 
                 }
             }
