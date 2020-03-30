@@ -5,6 +5,7 @@
  */
 package locking;
 
+import accounts.Account;
 import transaction.Transaction;
 
 /**
@@ -21,7 +22,7 @@ public interface Lock
 	 */
 	public void acquire( Transaction trans, LockMode aLockType );
 
-    public void setItem( Object item );
+    public void setAcc( Account account );
 
 	/**
 	 * Release all locks that are held by a transaction.
@@ -51,6 +52,6 @@ public interface Lock
      * @return The item held by the lock, if any.
      * Otherwise, null.
      */
-    public Object getItem();
+    public Account getAcc();
 	
 }

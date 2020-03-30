@@ -31,7 +31,7 @@ public class LockingLock implements Lock, LockType
     /**
      * The object that is being held by the lock.
      */
-    private Object object;
+    private Account account;
 
     /**
      * Default initialization of the lock.
@@ -40,7 +40,7 @@ public class LockingLock implements Lock, LockType
     {
         lockType = LockMode.EMPTY;
         holders = new ArrayList();
-        object = null;
+        account = null;
     }
     
     /**
@@ -245,14 +245,14 @@ public class LockingLock implements Lock, LockType
         return this.lockType;
     }
 
-    public Object getItem()
+    public Account getAcc()
     {
-        return this.object;
+        return this.account;
     }
 
-    public void setItem( Object newObject )
+    public void setAcc( Account account )
     {
-        this.object = newObject;
+        this.account = account;
     }
 
     /**

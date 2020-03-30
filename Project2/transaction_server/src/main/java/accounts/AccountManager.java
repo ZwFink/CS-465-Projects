@@ -114,5 +114,10 @@ public class AccountManager
     {
         return numberOfAccounts;
     }
+    
+    public Account getAccountByID(int id)
+    {
+        return accountList.get(id);
+    }
 
 }

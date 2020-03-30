@@ -61,7 +61,7 @@ public class LockManager
             if( foundLock == null )
             {
                 foundLock = lockCreator.getLock();
-                foundLock.setItem( trans.getAccount() );
+                foundLock.setAcc( account );
 
                 locks.put( account, foundLock );
 
@@ -85,7 +85,7 @@ public class LockManager
     // Used for close transaction 
     public synchronized void unsetLock( Transaction trans )
     {
-        trans.log( "[LockManager.unsetLock] unlocking all locks for account #" +
+        trans.log( "[LockManager.unsetLock] unlocking all locks for transaction #" +
                         (trans.getID())
                     );
         for( Map.Entry<Account,Lock> entry : locks.entrySet() )
@@ -99,7 +99,7 @@ public class LockManager
                         lockModeToString( aLock.getMode() )
                         )
                         + " lock for account #" +
-                        ((int)aLock.getItem())
+                        (aLock.getAcc().getNumber())
                     );
                 
                 if( lockCreator.isLocking() )
@@ -109,7 +109,7 @@ public class LockManager
                         lockModeToString( aLock.getMode() )
                         )
                         + " lock for account #" +
-                        ((int)aLock.getItem())
+                        (aLock.getAcc().getNumber())
                     );
                 }
                 aLock.release(trans);
