@@ -10,6 +10,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import utils.PropertyHandler;
 
 
 /*
@@ -41,6 +42,26 @@ public class TransactionServer
         this.portNumber = port;
 
         transMan = new TransactionManager();
+        
+        //Try to read out properties and pass them to the managers
+        int numAccounts = 3;
+        int initialBal = 100;
+        boolean locking = true;
+        try
+        {
+            PropertyHandler propHand = new PropertyHandler("properties.txt");
+            numAccounts = Integer.parseInt(propHand.getProperty("NUMBER_ACCOUNTS"));
+            initialBal = Integer.parseInt(propHand.getProperty("INITIAL_BALANCE"));
+            locking = Boolean.parseBoolean(propHand.getProperty("LOCKING"));
+            
+        } catch (IOException ex)
+        {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Property file called properties.txt failed to load, switch to defaults");
+        }
+        
+        accMan = new AccountManager(numAccounts, initialBal);
+        lockMan = new LockManager(locking); 
 
         try
         {

@@ -56,8 +56,8 @@ public class TransactionManager
         private TransactionManagerWorker(Socket client)
         {
             this.client = client;
-            lockMan = new LockManager();
-            accMan = new AccountManager();
+            accMan = TransactionServer.accMan;
+            lockMan = TransactionServer.lockMan;
 
             while (active)
             {

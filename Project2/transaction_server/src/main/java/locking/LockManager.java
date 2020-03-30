@@ -34,17 +34,8 @@ public class LockManager
      * locking should be applied or not.
      * 
      */
-    public LockManager() 
+    public LockManager(boolean applyLocking) 
     {
-        boolean applyLocking = true;
-        try
-        {
-            PropertyHandler propHand = new PropertyHandler("properties.txt");
-            applyLocking = Boolean.parseBoolean(propHand.getProperty("LOCKING"));
-        } catch (IOException ex)
-        {
-            Logger.getLogger(LockManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
         
         locks = new HashMap();
 
