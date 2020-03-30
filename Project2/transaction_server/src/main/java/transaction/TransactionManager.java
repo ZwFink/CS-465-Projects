@@ -120,6 +120,7 @@ public class TransactionManager
                             //Create a new BLANK transaction to be filled out later
                             Transaction newTransaction = new Transaction(transCounter);
                             transactions.add(newTransaction);
+                            transaction = newTransaction;
                         }
 
                         try
