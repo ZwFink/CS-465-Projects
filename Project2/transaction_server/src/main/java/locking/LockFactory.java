@@ -26,6 +26,17 @@ public class LockFactory
 		this.productionLockType = lockTypeToProduce;	
 	}
 
+    /**
+     * Determine whether this factory produces locks that are 
+     * or not.
+     * @return True if this factory produces locks that actually lock 
+     * objects, false otherwise.
+     */
+    public boolean isLocking()
+    {
+        return this.productionLockType == LockType.lockType.LOCKING_LOCK;
+    }
+
 	/**
 	 * Retrieve a lock of the type that was set by this factory.
 	 * @return An appropriate lock, as determined by the initialization of 
