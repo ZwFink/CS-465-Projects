@@ -3,6 +3,10 @@ package transaction_server;
 import accounts.AccountManager;
 import locking.LockManager;
 import transaction.TransactionManager;
+import java.io.*;
+import java.util.*;
+import java.nat.*;
+
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -16,16 +20,46 @@ import transaction.TransactionManager;
  *      AccountManager
  *      TransactionManager
  *      LockManager
- * @author caleb
+ * @author caleb, kenny
  */
 public class TransactionServer 
 {
     public static TransactionManager transMan;
     public static AccountManager accMan;
     public static LockManager lockMan;
+    serverSocket serverSocket;
+    public final int portNumber = 2080;
     //Creates a server socket
+	
+  public TransactionServer()
+  {
+    transMan = new TransactionManager();
+    lockMan = new LockManager();
+    accMan = new AccountManager();
+   
+    try
+    {
+	    serverSocket = new Serversocket(portNumber);
+    }
+	catch(IOExcepotion e)
+	{
+		System.out.println("Unable to connect to the server");
+	}
+	
+		
     //Waits for proxy ==> .accept()
+    public void run()
+    {
+	    while(true)
+            System.out.println("Waiting for connections");
+	    Socket socket = serverSocket.accept();
+	    System.out.println("Connection Established");
+	    (new ServerThread(socket)).start();
     //Create input and output streams
+	
+	readFrom = new ObjectInputStream(client.getInputStream());
+	writeTo = new ObjectOutputStream(client.getOutputStream());
+	
         //Handles transaction //THREADS
             // Calls a transaction manager
         //Closes ONLY when client says to
@@ -36,16 +70,14 @@ public class TransactionServer
 		//Run trans accept socket
 		//Transmanager.runtrans(socket accept)
     public static boolean transactionView = true;
+    }
 
     public static boolean transactionView()
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public TransactionServer()
-    {
-        //Constructor wth premade defaults
-    }
+  
 
     
     
