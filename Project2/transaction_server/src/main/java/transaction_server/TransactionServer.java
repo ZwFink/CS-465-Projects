@@ -5,11 +5,12 @@ import locking.LockManager;
 import transaction.TransactionManager;
 import java.io.*;
 import java.util.*;
-import java.nat.*;
+import java.net.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import utils.PropertyHandler;
 
 
 /*
@@ -32,21 +33,35 @@ public class TransactionServer
     public ServerSocket serverSocket;
     public String host;
     public int portNumber;
-    public int accNumber;
-    public boolean locking;
     public static boolean transactionView = true;
     //Creates a server socket
 
-    public TransactionServer(String host, int port, int accNum, boolean locking)
+    public TransactionServer(String host, int port)
     {
-        this.locking = locking;
-        this.accNumber = accNum;
         this.host = host;
         this.portNumber = port;
 
         transMan = new TransactionManager();
-        lockMan = new LockManager(locking);
-        accMan = new AccountManager();
+        
+        //Try to read out properties and pass them to the managers
+        int numAccounts = 3;
+        int initialBal = 100;
+        boolean locking = true;
+        try
+        {
+            PropertyHandler propHand = new PropertyHandler("General.properties");
+            numAccounts = Integer.parseInt(propHand.getProperty("NUMBER_ACCOUNTS"));
+            initialBal = Integer.parseInt(propHand.getProperty("INITIAL_BALANCE"));
+            locking = Boolean.parseBoolean(propHand.getProperty("APPLY_LOCKING"));
+            
+        } catch (IOException ex)
+        {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Property file called properties.txt failed to load, switch to defaults");
+        }
+        
+        accMan = new AccountManager(numAccounts, initialBal);
+        lockMan = new LockManager(locking); 
 
         try
         {
@@ -57,28 +72,24 @@ public class TransactionServer
         }
 
         //Stays open forever
-        while (true /*STUB*/)
+        while (true)
         {
             //Waits for proxy ==> .accept()
             System.out.println("Waiting for connections");
-            Socket client = serverSocket.accept();
-            System.out.println("Connection Established");
-            
+            Socket client = null;
             try
             {
-                //Got a client, give them to a new server worker thread and go back to waiting for a new client
-                //TODO
-                ObjectInputStream readFrom = new ObjectInputStream(client.getInputStream());
-                ObjectOutputStream writeTo = new ObjectOutputStream(client.getOutputStream());
+                client = serverSocket.accept();
             } catch (IOException ex)
             {
                 Logger.getLogger(TransactionServer.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("Server failed to accept client.");
+                continue;
             }
-            
+            System.out.println("Connection Established");
+
+            //Got a client, give them to a new worker thread and go back to waiting for a new client
+            transMan.runTransaction(client);
         }
-    }
-    
-    public class TransactionServerWorker extends Thread
-    {
     }
 }

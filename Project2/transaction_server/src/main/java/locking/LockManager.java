@@ -29,13 +29,11 @@ public class LockManager
     /**
      * Constructor of LockManager that determines whether 
      * locking should be applied or not.
-     * @param applyLocking Boolean specifying whether locking should be 
-     *        applied to account access or not. If true, any read/write 
-     *        operations will acquire non-conflicting exclusive access.
-     *        Otherwise, no locking will be done.
+     * 
      */
-    public LockManager( boolean applyLocking ) 
+    public LockManager(boolean applyLocking) 
     {
+        
         locks = new HashMap();
 
         if( applyLocking )
