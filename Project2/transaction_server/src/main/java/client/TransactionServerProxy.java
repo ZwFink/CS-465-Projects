@@ -67,13 +67,22 @@ public class TransactionServerProxy
     {
         try
         {    
-            // need to handle messages
-            Message readRequest = new Message(READ_REQUEST);
+            //Create some dummy data for contents second part
+            Object[] newContent = {accountFrom, 0};
+            
+            //Create message
+            Message readRequest = new Message(READ_REQUEST, newContent);
+            
+            //Send message
+            writeTo.writeObject(readRequest);
         }
         catch(IOException e)
         {
-            System.out.println("Unable to read transaction");
+            System.out.println("Unable to perfrom read transaction");
         }
+        
+        //Wait for response
+        int balance = (int) readFrom.readObject();
         
         return balance;
     }
@@ -87,7 +96,7 @@ public class TransactionServerProxy
         }
         catch(IOException e)
         {
-            System.out.println("Unable to write transaction");
+            System.out.println("Unable to perform write transaction");
         }
         
         return balance;
