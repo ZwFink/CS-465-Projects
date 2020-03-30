@@ -8,7 +8,11 @@ package client;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import transaction.comm.Message;
@@ -28,11 +32,16 @@ public class TransactionServerProxy
     private String host;
     private int port;
     private int transID = 0;
+    ServerSocket server;
+    String serverHost;
+    int serverPort;
     
-    TransactionServerProxy(String host, int port) 
+    TransactionServerProxy(String host, int port, String serverHost, int serverPort) 
     {
         this.host = host;
         this.port = port;
+        this.serverHost = serverHost;
+        this.serverPort = serverPort;
     }
     // Waits for a client to call for a open connection
         // Connects to the TransactionServer
@@ -47,6 +56,10 @@ public class TransactionServerProxy
             socket = new Socket(host, port);
             readFrom = new ObjectInputStream(socket.getInputStream());
             writeTo = new ObjectOutputStream(socket.getOutputStream());
+            
+            InetAddress inetAddress=InetAddress.getByName(serverHost);  
+            SocketAddress socketAddress = new InetSocketAddress(inetAddress, port);  
+            socket.connect(socketAddress, serverPort);
             
             //Create some dummy data for content
             Object[] newContent = {0, 0};
