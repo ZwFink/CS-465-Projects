@@ -32,13 +32,11 @@ public class TransactionServer
     public ServerSocket serverSocket;
     public String host;
     public int portNumber;
-    public int accNumber;
     public static boolean transactionView = true;
     //Creates a server socket
 
-    public TransactionServer(String host, int port, int accNum)
+    public TransactionServer(String host, int port)
     {
-        this.accNumber = accNum;
         this.host = host;
         this.portNumber = port;
 
