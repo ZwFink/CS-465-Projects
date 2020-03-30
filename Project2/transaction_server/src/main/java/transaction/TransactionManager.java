@@ -140,6 +140,7 @@ public class TransactionManager
 
                         TransactionServer.lockMan.unsetLock(transaction);
                         transaction.finish();
+                        System.out.println("Transaction Finished");
 
                         try
                         {

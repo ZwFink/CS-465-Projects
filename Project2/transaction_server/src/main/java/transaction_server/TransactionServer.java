@@ -105,12 +105,16 @@ public class TransactionServer extends Thread
             //Got a client, give them to a new worker thread and go back to waiting for a new client
             transMan.runTransaction(client);
             System.out.println("Transaction Running");
-            ++handledClients;
+            if(client.isClosed())
+            {
+                handledClients++;
+            }
         }
         
         ArrayList<Transaction> transactions = transMan.getTransactions();
         int numTrans = transactions.size();
         System.out.println( "Total Transactions: " + numTrans );
+        /**/
         boolean transRemaining = true;
         while(transRemaining)
         {
@@ -135,5 +139,14 @@ public class TransactionServer extends Thread
         System.out.println( "Ending total balance: " + endingSum );
         System.out.println( "Total money lost in the ether: " 
             + Integer.toString(endingSum - initialSum ));
+        
+        
+        try
+        {
+            serverSocket.close();
+        } catch (IOException ex)
+        {
+            Logger.getLogger(TransactionServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
