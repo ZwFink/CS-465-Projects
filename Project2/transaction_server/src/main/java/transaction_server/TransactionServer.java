@@ -108,12 +108,9 @@ public class TransactionServer extends Thread
             //Got a client, give them to a new worker thread and go back to waiting for a new client
             transMan.runTransaction(client);
             System.out.println("Transaction Running");
-            if(client.isClosed())
-            {
-                handledClients++;
-            }
+            
+            handledClients++;
         }
-        
         ArrayList<Transaction> transactions = transMan.getTransactions();
         int numTrans = transactions.size();
         System.out.println( "Total Transactions: " + numTrans );
