@@ -57,6 +57,8 @@ public class Main
         {
             Client newClient = new Client(defaultHost,
                     startPort + i,
+                    defaultHost, //Server host matches client
+                    serverPort,
                     numTestAccounts,
                     maxBalance,
                     numTransactions);

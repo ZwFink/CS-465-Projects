@@ -16,6 +16,8 @@ public class Client extends Thread
     //save host and port number as variables
     private String host;
     private int port;
+    private String serverHost;
+    private int serverPort;
     private int totalAccounts;
     private int maxBalance;
     private int randTransNum;
@@ -29,10 +31,18 @@ public class Client extends Thread
         randTransNum = 10;
     }
     
-    public Client(String host, int port, int totalAccounts, int maxBalance, int randTransNum)
+    public Client(String host,
+            int port,
+            String serverHost,
+            int serverPort,
+            int totalAccounts,
+            int maxBalance,
+            int randTransNum)
     {
         this.host = host;
         this.port = port;
+        this.host = serverHost;
+        this.port = serverPort;
         this.totalAccounts = totalAccounts;
         this.maxBalance = maxBalance;
         this.randTransNum = randTransNum;
@@ -50,7 +60,7 @@ public class Client extends Thread
         
     public void randomReadWrite(int numberAccounts, int initialBalance)
     {
-        TransactionServerProxy transaction = new TransactionServerProxy(host, port);
+        TransactionServerProxy transaction = new TransactionServerProxy(host, port, serverHost, serverPort);
         int transID = transaction.openTransaction();
         System.out.println("transaction number" + transID + " started");
                 
