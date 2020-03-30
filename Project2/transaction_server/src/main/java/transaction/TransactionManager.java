@@ -12,8 +12,6 @@ import java.net.*;
 import locking.LockManager;
 import transaction.comm.Message;
 import transaction_server.TransactionServer;
-import static transaction_server.TransactionServer.accMan;
-import static transaction_server.TransactionServer.lockMan;
 
 /**
  *
@@ -152,7 +150,7 @@ public class TransactionManager
                             System.out.println("READ REQUEST ERROR");
                         }
 
-                        transaction.log("READ_REQUEST" + accountNumber);
+                        transaction.log("READ_REQUEST " + accountNumber);
 
                         break;
 
@@ -161,7 +159,7 @@ public class TransactionManager
                         content = message.getContent();
                         accountNumber = ((Integer) content[0]);
                         balance = ((Integer) content[1]);
-                        transaction.log("Write Request" + accountNumber);
+                        transaction.log("Write Request " + accountNumber);
                         balance = TransactionServer.accMan.handleTrans(transaction);
 
                         try
@@ -172,7 +170,7 @@ public class TransactionManager
                             System.out.println("WRITE REQUEST ERROR");
                         }
 
-                        transaction.log("WRITE REQUEST" + accountNumber);
+                        transaction.log("WRITE REQUEST " + accountNumber);
 
                         break;
 
