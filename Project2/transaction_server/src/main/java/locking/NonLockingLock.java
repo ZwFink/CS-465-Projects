@@ -67,4 +67,18 @@ public class NonLockingLock implements Lock, LockType
         return false;
     }
 
+    /**
+     * Get the mode of the lock.
+     * @return EMPTY lock mode.
+     */
+    public LockMode getMode()
+    {
+        return LockMode.EMPTY;
+    }
+
+    public Object getItem()
+    {
+        return null;    
+    }
+
 }
