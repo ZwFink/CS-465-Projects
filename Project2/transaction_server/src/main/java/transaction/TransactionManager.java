@@ -27,11 +27,6 @@ public class TransactionManager
     private static final ArrayList<Transaction> transactions = new ArrayList<>();
 
     /**
-     * Count of the number of transactions.
-     */
-    private static int transCounter = 0;
-
-    /**
      * Return the transactions that have been managed up to this point.
      * @return the list of transactions that have been managed up to this point.
      * @note this method is not synchronized.
@@ -118,7 +113,6 @@ public class TransactionManager
                         {
                             //Create a new BLANK transaction to be filled out later
                             Transaction newTransaction = new Transaction(transactions.size());
-                            //transCounter++;
                             transactions.add(newTransaction);
                             transaction = newTransaction;
                         }
