@@ -120,6 +120,7 @@ public class TransactionManager
                             Transaction newTransaction = new Transaction(transCounter);
                             transCounter++;
                             transactions.add(newTransaction);
+                            transaction = newTransaction;
                         }
 
                         try
