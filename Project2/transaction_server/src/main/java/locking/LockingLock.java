@@ -73,12 +73,12 @@ public class LockingLock implements Lock, LockType
         } 
         else if( !holders.isEmpty() )
         {
-            if( !holders.contains( trans ) )
+            if( !this.isHeldBy( trans ) )
             {
                 holders.add( trans );
             }
             // the lock needs to be promoted 
-            else if( holders.contains( trans )
+            else if( this.isHeldBy( trans )
                      && this.lockType == LockMode.READ
                      && lockingMode == LockMode.WRITE 
                    )
