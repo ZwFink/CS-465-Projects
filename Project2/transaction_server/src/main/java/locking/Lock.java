@@ -37,5 +37,18 @@ public interface Lock
 
 
     public boolean isHeldBy( Transaction trans );
+
+    /**
+     * Get the mode a lock is currently in.
+     * @return READ, WRITE, or EMPTY.
+     */
+    public LockMode getMode();
+
+    /**
+     * Return the item held by the lock.
+     * @return The item held by the lock, if any.
+     * Otherwise, null.
+     */
+    public Object getItem();
 	
 }

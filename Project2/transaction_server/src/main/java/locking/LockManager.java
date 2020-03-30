@@ -1,13 +1,10 @@
 package locking;
 
 import accounts.Account;
-import java.io.IOException;
+import com.sun.xml.internal.ws.util.StringUtils;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import transaction.Transaction;
-import utils.PropertyHandler;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -66,6 +63,18 @@ public class LockManager
             {
                 foundLock = lockCreator.getLock();
                 locks.put( account, foundLock );
+
+                if( lockCreator.isLocking() )
+                {
+                    trans.log( "[LockManager.setLock] " +
+                        StringUtils.capitalize( 
+                            lockModeToString( foundLock.getMode() )
+                        ) +
+                         " Lock created for account #" +
+                        + account.getNumber() 
+                    );
+                }
+                
             }
         }
 
@@ -82,8 +91,36 @@ public class LockManager
 
             if( aLock.isHeldBy( trans ) )
             {
+                if( lockCreator.isLocking() )
+                {
+                    trans.log( "[LockManager.unsetLock] Release " +
+                        StringUtils.capitalize(
+                        lockModeToString( aLock.getMode() )
+                        )
+                        + " lock for account #" +
+                        ((Account)aLock.getItem()).getNumber()
+                    );
+                }
                 aLock.release(trans);
             }
         }
+    }
+
+    /**
+     * Turn a lock mode into a string equivalent
+     * @param mode The lock mode tog et a string for.
+     * @return A string representation of the lock mode.
+     */
+    private String lockModeToString( LockMode mode )
+    {
+        if( mode == LockMode.EMPTY )
+        {
+            return "empty";
+        }
+        else if( mode == LockMode.READ )
+        {
+            return "read";
+        }
+        return "write";
     }
 }
