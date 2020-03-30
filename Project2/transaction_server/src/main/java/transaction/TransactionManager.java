@@ -125,7 +125,7 @@ public class TransactionManager
 
                         transaction.log("Close transaction #" + transaction.getID());
 
-                        if (TransactionServer.transactionView())
+                        if (TransactionServer.transactionView)
                         {
                             System.out.println(transaction.getLog());
                         }
