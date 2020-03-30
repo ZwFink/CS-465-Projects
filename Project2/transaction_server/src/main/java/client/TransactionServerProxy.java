@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.ServerSocket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import transaction.comm.Message;
@@ -23,6 +24,7 @@ import static transaction.comm.MessageTypes.MsgType.*;
 public class TransactionServerProxy
 {
     private Socket socket = null;
+    private ServerSocket serverSocket = null;
     private ObjectOutputStream writeTo = null;
     private ObjectInputStream readFrom = null;
     private String host;
@@ -47,6 +49,8 @@ public class TransactionServerProxy
             socket = new Socket(host, port);
             readFrom = new ObjectInputStream(socket.getInputStream());
             writeTo = new ObjectOutputStream(socket.getOutputStream());
+            
+            serverSocket = new ServerSocket(port);
             
             //Create some dummy data for content
             Object[] newContent = {0, 0};
