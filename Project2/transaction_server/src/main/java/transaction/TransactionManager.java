@@ -9,6 +9,8 @@ import accounts.AccountManager;
 import java.util.*;
 import java.io.*;
 import java.net.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import locking.LockManager;
 import transaction.comm.Message;
 import transaction_server.TransactionServer;
@@ -99,7 +101,18 @@ public class TransactionManager
                 } catch (IOException | ClassNotFoundException e)
                 {
                     System.out.println("Transaction could not be read");
-                    System.exit(1);
+                    try
+                    {
+                        client.close();
+                        readFrom.close();
+                        writeTo.close();
+                    } catch (IOException ex)
+                    {
+                        Logger.getLogger(TransactionManager.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    activeTrans = false;
+                    //System.exit(1);
+                    continue;
                 }
 
                 Object[] content; // Object list for the content of the msg being parsed

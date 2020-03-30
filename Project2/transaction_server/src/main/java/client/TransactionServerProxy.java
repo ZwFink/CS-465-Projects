@@ -13,6 +13,7 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.net.SocketTimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import transaction.comm.Message;
@@ -57,10 +58,9 @@ public class TransactionServerProxy
             socket = new Socket();
             
             InetAddress inetAddress=InetAddress.getByName(serverHost);  
-            SocketAddress socketAddress = new InetSocketAddress(inetAddress, port);  
-            socket.connect(socketAddress, serverPort);
-
-
+            SocketAddress socketAddress = new InetSocketAddress(inetAddress, serverPort);
+            socket.connect(socketAddress);
+            
             readFrom = new ObjectInputStream(socket.getInputStream());
             writeTo = new ObjectOutputStream(socket.getOutputStream());
             
@@ -97,7 +97,7 @@ public class TransactionServerProxy
         }
         catch(IOException e)
         {
-            System.out.println("Unable to perfrom read transaction");
+            System.out.println("Unable to perform read transaction");
         }
         
         //Wait for response

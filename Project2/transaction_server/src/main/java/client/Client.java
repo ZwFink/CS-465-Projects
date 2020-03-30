@@ -41,8 +41,8 @@ public class Client extends Thread
     {
         this.host = host;
         this.port = port;
-        this.host = serverHost;
-        this.port = serverPort;
+        this.serverHost = serverHost;
+        this.serverPort = serverPort;
         this.totalAccounts = totalAccounts;
         this.maxBalance = maxBalance;
         this.randTransNum = randTransNum;
