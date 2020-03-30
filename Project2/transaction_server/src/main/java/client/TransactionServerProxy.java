@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import transaction.comm.Message;
 import static transaction.comm.MessageTypes.MsgType.*;
 
@@ -82,21 +84,50 @@ public class TransactionServerProxy
         }
         
         //Wait for response
-        int balance = (int) readFrom.readObject();
+        int balance = -1;
+        try
+        {
+            balance = (int) readFrom.readObject();
+        } catch (IOException ex)
+        {
+            Logger.getLogger(TransactionServerProxy.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex)
+        {
+            Logger.getLogger(TransactionServerProxy.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         return balance;
     }
 
-    void write(int accountTo, int toBalance) 
+    int write(int accountTo, int toBalance) 
     {
         try
         {    
-            // need to handle messages
-            Message writeRequest = new Message(WRITE_REQUEST);
+            //Create some dummy data for contents second part
+            Object[] newContent = {accountTo, toBalance};
+            
+            //Create message
+            Message writeRequest = new Message(WRITE_REQUEST, newContent);
+            
+            //Send message
+            writeTo.writeObject(writeRequest);
         }
         catch(IOException e)
         {
-            System.out.println("Unable to perform write transaction");
+            System.out.println("Unable to perfrom read transaction");
+        }
+        
+        //Wait for response
+        int balance = -1;
+        try
+        {
+            balance = (int) readFrom.readObject();
+        } catch (IOException ex)
+        {
+            Logger.getLogger(TransactionServerProxy.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex)
+        {
+            Logger.getLogger(TransactionServerProxy.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         return balance;
@@ -106,10 +137,12 @@ public class TransactionServerProxy
     {
         try
         {       
-            // need to handle messages
-            Message closeTrans = new Message(CLOSE_TRANSACTION);
+            //Create some dummy data for content
+            Object[] newContent = {0, 0};
+            //make message
+            Message closeTrans = new Message(CLOSE_TRANSACTION, newContent);
             
-            writeTo.writeObject(closeMessage);
+            writeTo.writeObject(closeTrans);
             
             //close the connection
             socket.close();
