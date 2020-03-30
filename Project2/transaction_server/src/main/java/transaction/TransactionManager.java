@@ -38,6 +38,7 @@ public class TransactionManager
         ObjectInputStream readFrom = null;
         ObjectOutputStream writeTo = null;
         Message message = null;
+	Boolean active = false;
 
         Transaction transaction = null;
         int accountNumber = 0;
@@ -49,8 +50,11 @@ public class TransactionManager
         {
             this.client = client;
 
+	while(active)
+	{
             try
             {
+		//get input and output streams
                 readFrom = new ObjectInputStream(client.getInputStream());
                 writeTo = new ObjectOutputStream(client.getOutputStream());
 
@@ -58,12 +62,13 @@ public class TransactionManager
                 //Handle client requests using accountManager and LockManager
                 //Write back to client results of transaction
                 //Return to top of loop to wait for next client input
-            } catch (IOException e)
-            {
-                System.out.println("transaction failed");
-                e.printStackTrace();
-                System.exit(1);
-            }
+            } 
+		catch (IOException e)
+            	{
+                   System.out.println("transaction failed");
+                   e.printStackTrace();
+                   System.exit(1);
+            	}
         }
 
         @Override
