@@ -92,5 +92,10 @@ public class AccountManager
             }
             return sum;
         }
+
+    public int getAccNum()
+    {
+        return numberOfAccounts;
+    }
     
 }

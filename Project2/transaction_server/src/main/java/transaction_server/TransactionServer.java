@@ -24,7 +24,7 @@ import utils.PropertyHandler;
  * No threading, only one server is needed to handle all clients as only one client may be on at a time
  * @author caleb, kenny
  */
-public class TransactionServer
+public class TransactionServer extends Thread
 {
 
     public static TransactionManager transMan;
@@ -62,7 +62,11 @@ public class TransactionServer
         
         accMan = new AccountManager(numAccounts, initialBal);
         lockMan = new LockManager(locking); 
-
+    }
+    
+    @Override
+    public void run()
+    {
         try
         {
             serverSocket = new ServerSocket(portNumber);
@@ -78,7 +82,7 @@ public class TransactionServer
         System.out.println( "Initial total balance: " + initialSum );
 
         //Stays open forever
-        while ( handledClients < numAccounts )
+        while ( handledClients < accMan.getAccNum() )
         {
             //Waits for proxy ==> .accept()
             System.out.println("Waiting for connections");
@@ -102,7 +106,6 @@ public class TransactionServer
         int endingSum = accMan.getBalanceSum();
         System.out.println( "Ending total balance: " + endingSum );
         System.out.println( "Total money lost in the ether: " 
-            + Integer.toString(endingSum - initialSum ) 
-        );
+            + Integer.toString(endingSum - initialSum ));
     }
 }
