@@ -6,6 +6,10 @@ import transaction.TransactionManager;
 import java.io.*;
 import java.util.*;
 import java.nat.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /*
@@ -13,80 +17,68 @@ import java.nat.*;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
- * This server handles the requests from the proxy server
- * Utilizes the following
- *      AccountManager
- *      TransactionManager
- *      LockManager
+ * This server handles the requests from the proxy server Utilizes the following
+ * AccountManager TransactionManager LockManager
+ * No threading, only one server is needed to handle all clients as only one client may be on at a time
  * @author caleb, kenny
  */
-public class TransactionServer 
+public class TransactionServer
 {
+
     public static TransactionManager transMan;
     public static AccountManager accMan;
     public static LockManager lockMan;
-    serverSocket serverSocket;
-    public final int portNumber = 2080;
+    public ServerSocket serverSocket;
+    public String host;
+    public int portNumber;
+    public int accNumber;
+    public boolean locking;
     public static boolean transactionView = true;
     //Creates a server socket
-	
-  public TransactionServer()
-  {
-    transMan = new TransactionManager();
-    lockMan = new LockManager();
-    accMan = new AccountManager();
-   
-    try
+
+    public TransactionServer(String host, int port, int accNum, boolean locking)
     {
-	    serverSocket = new Serversocket(portNumber);
-    }
-	catch(IOExcepotion e)
-	{
-		System.out.println("Unable to connect to the server");
-	}
-	
-		
-    //Waits for proxy ==> .accept()
-    public void run()
-    {
-	    while(true)
+        this.locking = locking;
+        this.accNumber = accNum;
+        this.host = host;
+        this.portNumber = port;
+
+        transMan = new TransactionManager();
+        lockMan = new LockManager(locking);
+        accMan = new AccountManager();
+
+        try
+        {
+            serverSocket = new ServerSocket(portNumber);
+        } catch (IOException e)
+        {
+            System.out.println("Unable to connect to the server");
+        }
+
+        //Stays open forever
+        while (true /*STUB*/)
+        {
+            //Waits for proxy ==> .accept()
             System.out.println("Waiting for connections");
-	    Socket socket = serverSocket.accept();
-	    System.out.println("Connection Established");
-	    (new ServerThread(socket)).start();
-    //Create input and output streams
-	
-	readFrom = new ObjectInputStream(client.getInputStream());
-	writeTo = new ObjectOutputStream(client.getOutputStream());
-	    
-	@Override
-	public void run()
-	{
-		try
-		{
-		
-	
-        //Handles transaction //THREADS
-            // Calls a transaction manager
-        //Closes ONLY when client says to
-    
-    // option when locking isnt used. 
-    
-    	//Simple run while true 
-		//Run trans accept socket
-		//Transmanager.runtrans(socket accept)
-   
+            Socket client = serverSocket.accept();
+            System.out.println("Connection Established");
+            
+            try
+            {
+                //Got a client, give them to a new server worker thread and go back to waiting for a new client
+                //TODO
+                ObjectInputStream readFrom = new ObjectInputStream(client.getInputStream());
+                ObjectOutputStream writeTo = new ObjectOutputStream(client.getOutputStream());
+            } catch (IOException ex)
+            {
+                Logger.getLogger(TransactionServer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }
     }
-
-    public static boolean transactionView()
+    
+    public class TransactionServerWorker extends Thread
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-  
-
-    
-    
 }
