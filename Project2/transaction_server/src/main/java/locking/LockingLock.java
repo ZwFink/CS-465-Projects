@@ -158,8 +158,7 @@ public class LockingLock implements Lock, LockType
     {
         if( this.lockType == LockMode.READ )
         {
-            this.lockType = LockMode.WRITE; 
-            this.acquire( trans, this.lockType );
+            this.acquire( trans, LockMode.WRITE );
         }
     }
 }
