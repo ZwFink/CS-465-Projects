@@ -11,17 +11,41 @@ import transaction_server.TransactionServer;
 
 /**
  * Holds low level values
+ * pertinent to a transaction.
  * @author caleb, kenny
  */
 public class Transaction 
 {
+    /**
+     * The unique identifier of this transaction.
+     */
     private int transID;
+
+    /**
+     * The locks that are held by this transaction.
+     */
     private ArrayList<Lock> locks = null;
+
+    /**
+     * A log containing messages that have been output as part of this 
+     * transaction's operations.
+     */
     private StringBuffer log = new StringBuffer("");
+
+    /**
+     * The type of transaction this is.
+     */
     private String transType = "READ"; //Default as read
     private int accountNum; //holds index to account being read/write
     private int value; //holds value to write to the account (direct write over)
     
+    /**
+     * Argument constructor for the transaction.
+     * @param transID The ID for this transaction.
+     * @param transType The type of transaction.
+     * @param accountNum The number of the account being modified by the 
+     * transaction.
+     */
     public Transaction(int transID, String transType, int accountNum, int value)
     {
         this.transID = transID;
@@ -30,27 +54,48 @@ public class Transaction
         this.accountNum = accountNum;
         this.value = value;
     }
+
+    /**
+     * Constructor with just a transaction ID.
+     * @param transID The ID of this transaction.
+     */
     public Transaction(int transID)
     {
         this.transID = transID;
         this.locks = new ArrayList();
     }
     
+    /**
+     * Retrieve this transaction's ID.
+     * @return the ID of this transaction
+     */
     public int getID()
     {
         return transID;
     }
     
+    /**
+     * 
+     * @return all of the locks held by this transaction
+     */
     public ArrayList<Lock> getLocks()
     {
         return locks;
     }
     
+    /**
+     * Add a lock to this transaction.
+     * @param lock The lock to add.
+     */
     public void addLock(Lock lock)
     {
         locks.add(lock);
     }
     
+    /**
+     * Add a string to the log
+     * @param logString The string to add.
+     */
     public void log (String logString)
     {
         log.append("\n").append(logString);
@@ -61,6 +106,10 @@ public class Transaction
         }
      }
      
+    /**
+     * Get this transaction's log.
+     * @return The log for this transaction.
+     */
      public StringBuffer getLog() 
      {
          return log;
@@ -94,11 +143,3 @@ public class Transaction
      }
                    
  }
-    // note from otte
-        // make transaction a bit more elaborate attach messages to the transactions
-        // put comments with transactions themselves
-    
-    //Holds a reference to the account it wants to perform a transaction
-    //Defines itself as Read OR Write
-    //POSSIBILITY ==> Holds its own locks, suggested by Otte
-
