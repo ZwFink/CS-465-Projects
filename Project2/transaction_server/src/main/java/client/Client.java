@@ -68,7 +68,7 @@ public class Client extends Thread
         int accountTo = (int) Math.floor(Math.random() * numberAccounts);
         int amount = (int) Math.ceil(Math.random() * initialBalance);
         int balance;
-        System.out.println("\n transaction # " + transID + ", $ " + amount + " from " + accountFrom + " to " + accountTo);
+        System.out.println("\n transaction #" + transID + ", $" + amount + " from " + accountFrom + " to " + accountTo);
                 
         balance = transaction.read(accountFrom);
         int fromBalance = balance - amount;

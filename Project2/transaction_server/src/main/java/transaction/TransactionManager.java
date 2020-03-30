@@ -85,8 +85,8 @@ public class TransactionManager
             try
             {
                 //get input and output streams
-                readFrom = new ObjectInputStream(client.getInputStream());
                 writeTo = new ObjectOutputStream(client.getOutputStream());
+                readFrom = new ObjectInputStream(client.getInputStream());
                 
             } catch (IOException e)
             {
@@ -94,6 +94,7 @@ public class TransactionManager
                 e.printStackTrace();
                 System.exit(1);
             }
+            System.out.println( "Got input stream");
 
             while (activeTrans)
             {
