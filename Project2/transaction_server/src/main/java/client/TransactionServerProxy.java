@@ -13,9 +13,12 @@ package client;
 public class TransactionServerProxy 
 {
 
+    private String host;
+    private int port;
     TransactionServerProxy(String host, int port) 
     {
-        
+        this.host = host;
+        this.port = port;
     }
     // Waits for a client to call for a open connection
         // Connects to the TransactionServer
