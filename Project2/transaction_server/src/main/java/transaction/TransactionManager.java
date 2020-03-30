@@ -113,12 +113,12 @@ public class TransactionManager
                 {
                     case OPEN_TRANSACTION:
 			    //A new transaction was created so this case should parse it
-                               
-			    synchronized (transactions)
+                        
+			synchronized (transactions)
                         {
                             //Create a new BLANK transaction to be filled out later
-                            Transaction newTransaction = new Transaction(transCounter);
-                            transCounter++;
+                            Transaction newTransaction = new Transaction(transactions.size());
+                            //transCounter++;
                             transactions.add(newTransaction);
                             transaction = newTransaction;
                         }
@@ -129,10 +129,10 @@ public class TransactionManager
                         } catch (IOException e)
                         {
                             System.out.println("OPEN TRANSACTION ERROR");
-                            transaction.log("ERROR Open transaction #" + transaction.getID());
+                            transaction.log("ERROR Open transaction # " + transaction.getID());
                         }
 
-                        transaction.log("Open transaction #" + transaction.getID());
+                        transaction.log("Open transaction # " + transaction.getID());
 
                         break;
 
