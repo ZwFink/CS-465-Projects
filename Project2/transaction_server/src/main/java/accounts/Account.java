@@ -36,4 +36,13 @@ public class Account
     {
         this.balance = balance;
     }
+
+    public boolean equals( Object other )
+    {
+        return this.accountNumber == ((Account)other).accountNumber;
+    }
+    public int hashCode()
+    {
+        return Integer.hashCode( this.accountNumber );
+    }
 }
