@@ -12,29 +12,48 @@ import java.net.*;
 import locking.LockManager;
 import transaction.comm.Message;
 import transaction_server.TransactionServer;
-import static transaction_server.TransactionServer.accMan;
-import static transaction_server.TransactionServer.lockMan;
 
 /**
- *
+ * A transaction manager that handles a transaction
+ * from beginning to end.
  * @author caleb, kenny
  */
 public class TransactionManager
 {
 
+    /**
+     * A list of transactions that are managed by this.
+     */
     private static final ArrayList<Transaction> transactions = new ArrayList<>();
+
+    /**
+     * Count of the number of transactions.
+     */
     private static int transCounter = 0;
 
+    /**
+     * Return the transactions that have been managed up to this point.
+     * @return the list of transactions that have been managed up to this point.
+     * @note this method is not synchronized.
+     */
     public ArrayList<Transaction> getTransactions()
     {
         return transactions;
     }
 
+    /**
+     * Run a transaction for a client.  
+     * @param client A socket that is connected to a client
+     */
     public void runTransaction(Socket client)
     {
         (new TransactionManagerWorker(client)).start();
     }
 
+    /**
+     * A worker thread that manages the message operations of a 
+     * transaction.
+     */
     public class TransactionManagerWorker extends Thread
     {
 
@@ -152,7 +171,7 @@ public class TransactionManager
                             System.out.println("READ REQUEST ERROR");
                         }
 
-                        transaction.log("READ_REQUEST" + accountNumber);
+                        transaction.log("READ_REQUEST " + accountNumber);
 
                         break;
 
@@ -161,7 +180,7 @@ public class TransactionManager
                         content = message.getContent();
                         accountNumber = ((Integer) content[0]);
                         balance = ((Integer) content[1]);
-                        transaction.log("Write Request" + accountNumber);
+                        transaction.log("Write Request " + accountNumber);
                         balance = TransactionServer.accMan.handleTrans(transaction);
 
                         try
@@ -172,7 +191,7 @@ public class TransactionManager
                             System.out.println("WRITE REQUEST ERROR");
                         }
 
-                        transaction.log("WRITE REQUEST" + accountNumber);
+                        transaction.log("WRITE REQUEST " + accountNumber);
 
                         break;
 
@@ -185,40 +204,3 @@ public class TransactionManager
 
     }
 }
-
-// Handles a transaction by calling an Account Manager to handle alterations to the account
-// Threads respond to messages from a clients proxy
-// spawns off threads handles clients locking
-/*
-    Third object does work in a semantical area deals with the transactions.  
-
-Workers open up one connection then don’t shut it down makes it easier. 
-
-		Request -> open connection and keep it open
-		
-		Reads and writes handled by transaction worker.
-				Threads are used
-
-				Transaction manager extends thread
-					Socket
-					Inputstream	outputstream
-					Message
-			
-					Pass in client start the thread
-
-Take care of read and write requests.
-	Write creates new object
-	Acc num
-		Balance
-	Trans log
-		Balance
-Try - catch
-
-	Read
-		Acc#
-		Transaction
-Try-catch
-
-Finally close all the open sockets read,write,client, Boolean-false
-
-     */

@@ -73,30 +73,3 @@ public class Client extends Thread
         System.out.println("Transaction # " + transID + " Completed ");
     }
 }
-  
-  
-  
-/**  
-        try
-        {
-            //connect to the server given the host and port number
-            Socket socket = new Socket(host, port);
-            
-            //set up read and write streams
-            ObjectInputStream read = new ObjectInputStream(socket.getInputStream);
-            ObjectOutputStream write = new ObjectOutputStream(socket.getInputStream);
-            
-            // handle transactions & proper locks
-                //reading -- viewing account
-                //writing
-                    //Depositing
-                    //Withdrawling
-        }
-    }
-    
-    
-        // Issues read and write commands
-    // Closes the proxy server
-}
-
-**/
