@@ -158,32 +158,23 @@ public class LockingLock implements Lock, LockType
     )
     {
         // read-read
-        if( holders.isEmpty())
+        if( holders.isEmpty()
+            || (lockType == LockMode.READ 
+            && this.lockType == LockMode.READ))
         {
 
         t.log( "[LockingLock.isConflict] " +
-            "No conflict found for " +
+            "No conflict found for read on read " +
             "account # " + t.getAccount() +
             "." 
         );
             return false;
         }
-        else if( ( this.holders.size() == 1 && this.holders.contains( t )
-            && lockType == LockMode.WRITE && this.lockType == LockMode.READ)
-            )
+        else if(( this.holders.size() == 1 && this.holders.contains( t )
+            && lockType == LockMode.WRITE && this.lockType == LockMode.READ) )
         {
             t.log( "[LockingLock.isConflict] " +
-                "No conflict found for lock promotion" +
-                "account # " + t.getAccount() +
-                "."
-            );
-            return false;
-            
-        }
-        else if(lockType == LockMode.READ && this.lockType == LockMode.READ )
-        {
-            t.log( "[LockingLock.isConflict] " +
-                "No conflict found for read on read" +
+                "No conflict found for lock promote" +
                 "account # " + t.getAccount() +
                 "."
             );

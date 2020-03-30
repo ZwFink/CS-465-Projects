@@ -84,7 +84,6 @@ public class TransactionServer extends Thread
 
         int handledClients = 0;
 
-
         int initialSum = accMan.getBalanceSum();
         System.out.println( "Initial total balance: " + initialSum );
 
