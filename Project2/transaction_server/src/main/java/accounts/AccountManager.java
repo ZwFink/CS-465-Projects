@@ -72,12 +72,15 @@ public class AccountManager
     {
         if (trans.getType().equals("WRITE"))
         {
-            lockMan.setLock( new Account( 0, trans.getAccount() ), 
+            lockMan.setLock( accountList.get(trans.getAccount()), 
                 trans, LockMode.WRITE 
             );
             accountList.get(trans.getAccount()).setBalance(trans.getValue());
+            
             //Return the new balance set
+            
             int newBalance = accountList.get(trans.getAccount()).getBalance();
+            
             trans.log( "Account " + 
                 Integer.toString( trans.getAccount() )
             + " new balance: " + newBalance);
@@ -85,7 +88,7 @@ public class AccountManager
             return newBalance;
         } else //Treat any other type as a READ
         {
-            lockMan.setLock( new Account( 0, trans.getAccount() ), 
+            lockMan.setLock( accountList.get(trans.getAccount()), 
                 trans, LockMode.READ 
             );
 
