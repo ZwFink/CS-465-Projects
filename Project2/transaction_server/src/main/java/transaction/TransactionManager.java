@@ -145,9 +145,9 @@ public class TransactionManager
 
                     case CLOSE_TRANSACTION:
 
-                        TransactionServer.lockMan.unsetLock(transaction);
                         synchronized(transactions)
                         {
+                            TransactionServer.lockMan.unsetLock(transaction);
                             transaction.finish();
                         }
 

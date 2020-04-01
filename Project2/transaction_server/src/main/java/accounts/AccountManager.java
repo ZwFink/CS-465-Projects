@@ -84,7 +84,7 @@ public class AccountManager
             trans.log( "Account " + 
                 Integer.toString( trans.getAccount() )
             + " new balance: " + newBalance);
-            lockMan.unsetLock( trans );
+            //lockMan.unsetLock( trans );
             return newBalance;
         } else //Treat any other type as a READ
         {
@@ -93,7 +93,7 @@ public class AccountManager
             );
 
             Account desiredAcc = accountList.get(trans.getAccount());
-            lockMan.unsetLock( trans );
+            //lockMan.unsetLock( trans );
             return desiredAcc.getBalance();
         }
     }
