@@ -61,6 +61,7 @@ public class Transaction
     {
         this.accountNum = accountNum;
         this.transID = transID;
+        this.locks = new ArrayList();
     }
 
     /**
@@ -70,6 +71,11 @@ public class Transaction
     public Transaction(int transID)
     {
         this.transID = transID;
+        this.locks = new ArrayList();
+    }
+
+    public void resetLocks()
+    {
         this.locks = new ArrayList();
     }
     
@@ -164,6 +170,12 @@ public class Transaction
      public boolean equals( Object other )
      {
          return this.transID == ((Transaction)other).transID;
+     }
+
+     @Override 
+     public int hashCode()
+     {
+         return Integer.hashCode( this.transID );
      }
                    
  }

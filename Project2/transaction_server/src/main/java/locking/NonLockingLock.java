@@ -62,6 +62,12 @@ public class NonLockingLock implements Lock, LockType
 	    return LockType.lockType.NON_LOCKING_LOCK;
     }
 
+    @Override
+    public boolean isEmpty()
+    {
+        return true;
+    }
+
     /**
      * Determine whether this lock is held by a transaction.
      * @param trans The transaction to test.

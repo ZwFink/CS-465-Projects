@@ -65,16 +65,22 @@ public class Client extends Thread
                 
         int accountFrom = (int) Math.floor(Math.random() * numberAccounts);
         int accountTo = (int) Math.floor(Math.random() * numberAccounts);
+
+        while( accountTo == accountFrom )
+        {
+            accountFrom = (int) Math.floor(Math.random() * numberAccounts);
+            accountTo = (int) Math.floor(Math.random() * numberAccounts);
+        }
         int amount = (int) Math.ceil(Math.random() * initialBalance);
         int balance;
         System.out.println("\n transaction #" + transID + "transferring $" + amount + " from account #" + accountFrom + " to account #" + accountTo);
         balance = transaction.read(accountFrom);
         int fromBalance = balance - amount;
+        transaction.write(accountFrom, fromBalance);
                 
         balance = transaction.read(accountTo);
         int toBalance = balance + amount;
         transaction.write(accountTo, toBalance);
-        transaction.write(accountFrom, fromBalance);
                 
         transaction.closeTransaction();
     }

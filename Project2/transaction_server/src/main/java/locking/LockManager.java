@@ -69,7 +69,7 @@ public class LockManager
                 {
                     trans.log( "[LockManager.setLock] " +
                         toUpperCase(
-                            lockModeToString( foundLock.getMode() )
+                            lockModeToString( lockType )
                         ) +
                          " Lock created for account #" +
                         + account.getNumber() 
@@ -80,31 +80,22 @@ public class LockManager
         }
 
         foundLock.acquire( trans, lockType );
+        trans.addLock( foundLock );
     }
     
     // Used for close transaction 
-    public synchronized void unsetLock( Transaction trans )
+    public void unsetLock( Transaction trans )
     {
         
-        for( Map.Entry<Account,Lock> entry : locks.entrySet() )
+        synchronized(this)
         {
-            Lock aLock = entry.getValue();
-
-            if( aLock.isHeldBy( trans ) )
-            {
-                if( lockCreator.isLocking() )
-                {
-                    trans.log( "[LockManager.unsetLock] Release " +
-                        toUpperCase(
-                        lockModeToString( aLock.getMode() )
-                        )
-                        + " lock for account #" +
-                        ((int)aLock.getItem())
-                    );
-                }
-                aLock.release(trans);
-            }
+        for( Lock l : trans.getLocks() )
+        {
+            l.release( trans );
         }
+
+        }
+        trans.resetLocks();
     }
 
     /**

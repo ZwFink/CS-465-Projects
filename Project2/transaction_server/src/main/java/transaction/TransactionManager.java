@@ -123,18 +123,18 @@ public class TransactionManager
                             transaction = newTransaction;
                         }
 
-                        try
-                        {
-                            writeTo.writeObject(transaction.getID());
-                        } catch (IOException e)
-                        {
-                            System.out.println("OPEN TRANSACTION ERROR");
-                            transaction.log("ERROR Open transaction #" + transaction.getID());
-                        }
+                try
+                {
+                    writeTo.writeObject( transCounter - 1 );
+                }
+                catch( IOException e )
+                {
+                    e.printStackTrace();
+                }
 
-                        transaction.log("Open transaction #" + transaction.getID());
-
-                        break;
+                transaction.log("Open transaction #" + transaction.getID());
+                
+                break;
 
                     case CLOSE_TRANSACTION:
 
@@ -146,12 +146,14 @@ public class TransactionManager
 
                         try
                         {
+                            writeTo.writeObject(0);
                             readFrom.close();
                             writeTo.close();
                             client.close();
                             activeTrans = false;
                         } catch (IOException e)
                         {
+                            e.printStackTrace();
                             System.out.println("CLOSE TRANSACTION ERROR");
                         }
 
@@ -177,6 +179,7 @@ public class TransactionManager
                             writeTo.writeObject(balance);
                         } catch (IOException e)
                         {
+                            e.printStackTrace();
                             System.out.println("READ REQUEST ERROR");
                         }
 
@@ -193,14 +196,15 @@ public class TransactionManager
                         transaction.log("Write Request account " + accountNumber 
                         + " writing " + balance );
                         balance = TransactionServer.accMan.handleTrans(transaction);
+                        try
+                        {
+                            writeTo.writeObject(balance);
+                        } catch (IOException e)
+                        {
+                            e.printStackTrace();
+                            System.out.println("READ REQUEST ERROR");
+                        }
 
-//                        try
-//                        {
-//                            writeTo.writeObject(balance);
-//                        } catch (IOException e)
-//                        {
-//                            System.out.println("WRITE REQUEST ERROR");
-//                        }
 
                         break;
 

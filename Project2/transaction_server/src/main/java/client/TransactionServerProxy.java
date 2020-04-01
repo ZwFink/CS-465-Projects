@@ -72,14 +72,15 @@ public class TransactionServerProxy
             
             //push message object thorugh output
             writeTo.writeObject(openTrans);
+            transID = (int) readFrom.readObject();
         }
-        catch(IOException e)
+        catch(IOException | ClassNotFoundException e)
         {
             e.printStackTrace();
             System.out.println("Unable to open transaction");
         }
         
-        return ++transID;
+        return transID;
     }
 
     int read(int accountFrom) 
@@ -97,6 +98,7 @@ public class TransactionServerProxy
         }
         catch(IOException e)
         {
+            e.printStackTrace();
             System.out.println("Unable to perfrom read transaction");
         }
         
@@ -107,9 +109,11 @@ public class TransactionServerProxy
             balance = (int) readFrom.readObject();
         } catch (IOException ex)
         {
+            ex.printStackTrace();
             Logger.getLogger(TransactionServerProxy.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex)
         {
+            ex.printStackTrace();
             Logger.getLogger(TransactionServerProxy.class.getName()).log(Level.SEVERE, null, ex);
         }
         
@@ -128,9 +132,11 @@ public class TransactionServerProxy
             
             //Send message
             writeTo.writeObject(writeRequest);
+            readFrom.readObject();
         }
-        catch(IOException e)
+        catch(IOException | ClassNotFoundException e )
         {
+            e.printStackTrace();
             System.out.println("Unable to perfrom read transaction");
         }
         
@@ -146,12 +152,14 @@ public class TransactionServerProxy
             Message closeTrans = new Message(CLOSE_TRANSACTION, newContent);
             
             writeTo.writeObject(closeTrans);
+            readFrom.readObject();
             
             //close the connection
-//            socket.close();
+            socket.close();
         }
-        catch(IOException e)
+        catch(IOException | ClassNotFoundException e )
         {
+            e.printStackTrace();
             System.out.println("Unable to close transaction");
         }
     }

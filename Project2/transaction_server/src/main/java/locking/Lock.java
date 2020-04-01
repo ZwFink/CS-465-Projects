@@ -52,5 +52,7 @@ public interface Lock
      * Otherwise, null.
      */
     public Object getItem();
+
+    public boolean isEmpty();
 	
 }
