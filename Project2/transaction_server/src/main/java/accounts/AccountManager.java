@@ -115,6 +115,11 @@ public class AccountManager
         return numberOfAccounts;
     }
     
+    public ArrayList<Account> getAccList()
+    {
+        return accountList;
+    }
+    
     public Account getAccountByID(int id)
     {
         return accountList.get(id);

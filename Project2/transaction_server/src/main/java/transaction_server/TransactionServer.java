@@ -1,5 +1,6 @@
 package transaction_server;
 
+import accounts.Account;
 import accounts.AccountManager;
 import locking.LockManager;
 import transaction.TransactionManager;
@@ -136,6 +137,12 @@ public class TransactionServer extends Thread
         System.out.println( "Ending total balance: " + endingSum );
         System.out.println( "Total money lost in the ether: " 
             + Integer.toString(endingSum - initialSum ));
+        
+        ArrayList<Account> accList = accMan.getAccList();
+        for(Account acc : accList)
+        {
+            System.out.println( "Account #" + acc.getNumber() + " BALANCE: " + acc.getBalance() );
+        }
         
         
         try
