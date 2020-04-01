@@ -80,6 +80,7 @@ public class LockManager
         }
 
         foundLock.acquire( trans, lockType );
+        trans.addLock(foundLock);
     }
     
     // Used for close transaction 
@@ -113,6 +114,7 @@ public class LockManager
                     );
                 }
                 aLock.release(trans);
+                trans.removeLock(aLock);
 
             }
         }

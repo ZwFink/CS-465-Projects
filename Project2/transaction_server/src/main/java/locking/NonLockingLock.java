@@ -16,7 +16,7 @@ import transaction.Transaction;
  */
 public class NonLockingLock implements Lock, LockType
 {
-	
+    Account dummy = new Account(0, 0);
     /**
      * "Acquire" a lock--does nothing.
      */
@@ -27,7 +27,7 @@ public class NonLockingLock implements Lock, LockType
     
     public Account getAcc()
     {
-        return null;
+        return dummy;
     }
 
     public void setAcc( Account account )

@@ -62,6 +62,7 @@ public class Transaction
     {
         this.accountNum = accountNum;
         this.transID = transID;
+        this.locks = new ArrayList();
     }
 
     /**
@@ -98,7 +99,26 @@ public class Transaction
      */
     public void addLock(Lock lock)
     {
-        locks.add(lock);
+        if(lock != null)
+        {
+            locks.add(lock);
+        }
+        else
+        {
+            log("Failed to add lock");
+        }
+    }
+    
+    public void removeLock(Lock lock)
+    {
+        if(lock != null)
+        {
+            locks.remove(lock);
+        }
+        else
+        {
+            log("Failed to remove lock");
+        }
     }
     
     /**
