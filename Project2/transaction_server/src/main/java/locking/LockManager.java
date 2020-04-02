@@ -61,7 +61,7 @@ public class LockManager
             if( foundLock == null )
             {
                 foundLock = lockCreator.getLock();
-                foundLock.setItem( trans.getAccount() );
+                foundLock.setAcc( account );
 
                 locks.put( account, foundLock );
 
@@ -80,7 +80,7 @@ public class LockManager
         }
 
         foundLock.acquire( trans, lockType );
-        trans.addLock( foundLock );
+        trans.addLock(foundLock);
     }
     
     // Used for close transaction 
@@ -96,6 +96,39 @@ public class LockManager
 
         }
         trans.resetLocks();
+        trans.log( "[LockManager.unsetLock] unlocking all locks for transaction #" +
+                        (trans.getID())
+                    );
+        for( Map.Entry<Account,Lock> entry : locks.entrySet() )
+        {
+            Lock aLock = entry.getValue();
+            
+            if( aLock.isHeldBy( trans ) )
+            {
+                trans.log( "[LockManager.unsetLock] found held lock " +
+                        toUpperCase(
+                        lockModeToString( aLock.getMode() )
+                        )
+                        + " lock for account #" +
+                        (aLock.getAcc().getNumber())
+                    );
+                
+                if( lockCreator.isLocking() )
+                {
+                    trans.log( "[LockManager.unsetLock] Release " +
+                        toUpperCase(
+                        lockModeToString( aLock.getMode() )
+                        )
+                        + " lock for account #" +
+                        (aLock.getAcc().getNumber())
+                    );
+                }
+                aLock.release(trans);
+                trans.removeLock(aLock);
+
+            }
+        }
+        
     }
 
     /**

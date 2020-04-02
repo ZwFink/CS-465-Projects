@@ -12,6 +12,7 @@ import java.util.Hashtable;
 import locking.LockManager;
 import locking.LockMode;
 import transaction.Transaction;
+import transaction_server.TransactionServer;
 
 /**
  *
@@ -39,6 +40,7 @@ public class AccountManager
             numberOfAccounts++;
             accountList.add(newAcc);
         }
+        this.lockMan = TransactionServer.lockMan;
     }
 
     //Constructor specific for preference file use
@@ -70,23 +72,28 @@ public class AccountManager
     {
         if (trans.getType().equals("WRITE"))
         {
-            lockMan.setLock( new Account( 0, trans.getAccount() ), 
+            lockMan.setLock( accountList.get(trans.getAccount()), 
                 trans, LockMode.WRITE 
             );
             accountList.get(trans.getAccount()).setBalance(trans.getValue());
+            
             //Return the new balance set
+            
             int newBalance = accountList.get(trans.getAccount()).getBalance();
+            
             trans.log( "Account " + 
                 Integer.toString( trans.getAccount() )
             + " new balance: " + newBalance);
+            //lockMan.unsetLock( trans );
             return newBalance;
         } else //Treat any other type as a READ
         {
-            lockMan.setLock( new Account( 0, trans.getAccount() ), 
+            lockMan.setLock( accountList.get(trans.getAccount()), 
                 trans, LockMode.READ 
             );
 
             Account desiredAcc = accountList.get(trans.getAccount());
+            //lockMan.unsetLock( trans );
             return desiredAcc.getBalance();
         }
     }
@@ -109,6 +116,16 @@ public class AccountManager
     public int getAccNum()
     {
         return numberOfAccounts;
+    }
+    
+    public ArrayList<Account> getAccList()
+    {
+        return accountList;
+    }
+    
+    public Account getAccountByID(int id)
+    {
+        return accountList.get(id);
     }
 
 }

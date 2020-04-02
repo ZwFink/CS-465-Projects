@@ -7,6 +7,7 @@ package transaction;
 
 import java.util.ArrayList;
 import locking.Lock;
+import locking.LockingLock;
 import transaction_server.TransactionServer;
 
 /**
@@ -103,7 +104,26 @@ public class Transaction
      */
     public void addLock(Lock lock)
     {
-        locks.add(lock);
+        if(lock != null)
+        {
+            locks.add(lock);
+        }
+        else
+        {
+            log("Failed to add lock");
+        }
+    }
+    
+    public void removeLock(Lock lock)
+    {
+        if(lock != null)
+        {
+            locks.remove(lock);
+        }
+        else
+        {
+            log("Failed to remove lock");
+        }
     }
     
     /**

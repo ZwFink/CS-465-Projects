@@ -41,8 +41,8 @@ public class Client extends Thread
     {
         this.host = host;
         this.port = port;
-        this.host = serverHost;
-        this.port = serverPort;
+        this.serverHost = serverHost;
+        this.serverPort = serverPort;
         this.totalAccounts = totalAccounts;
         this.maxBalance = maxBalance;
         this.randTransNum = randTransNum;
@@ -73,14 +73,19 @@ public class Client extends Thread
         }
         int amount = (int) Math.ceil(Math.random() * initialBalance);
         int balance;
-        System.out.println("\n transaction #" + transID + "transferring $" + amount + " from account #" + accountFrom + " to account #" + accountTo);
+        System.out.println("\n transaction #" + transID + " transferring $" + amount + " from account #" + accountFrom + " to account #" + accountTo);
+        
+        //Take from first account
         balance = transaction.read(accountFrom);
+        System.out.println("\n transaction #" + transID + " read the amount of $" + balance + " from account #" + accountFrom);
         int fromBalance = balance - amount;
         transaction.write(accountFrom, fromBalance);
-                
+
         balance = transaction.read(accountTo);
+        System.out.println("\n transaction #" + transID + " read the amount of $" + balance + " from account #" + accountTo);
         int toBalance = balance + amount;
         transaction.write(accountTo, toBalance);
+
                 
         transaction.closeTransaction();
     }

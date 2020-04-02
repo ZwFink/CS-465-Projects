@@ -1,5 +1,6 @@
 package transaction_server;
 
+import accounts.Account;
 import accounts.AccountManager;
 import locking.LockManager;
 import transaction.TransactionManager;
@@ -37,6 +38,7 @@ public class TransactionServer extends Thread
     public int numClients;
     public int numTransactions;
     public static boolean transactionView = true;
+    public ArrayList<Socket> clientList = new ArrayList();
     //Creates a server socket
 
     public TransactionServer(String host, int port)
@@ -78,11 +80,11 @@ public class TransactionServer extends Thread
         } catch (IOException e)
         {
             e.printStackTrace();
-            System.out.println("Unable to connect to the server");
+            System.out.println("Unable to connect to the server, please try a different port");
+            System.exit(1);
         }
 
         int handledClients = 0;
-
 
         int initialSum = accMan.getBalanceSum();
         System.out.println( "Initial total balance: " + initialSum );
@@ -101,46 +103,53 @@ public class TransactionServer extends Thread
                 System.out.println("Server failed to accept client.");
                 continue;
             }
+            clientList.add(client);
             System.out.println("Connection Established");
 
             //Got a client, give them to a new worker thread and go back to waiting for a new client
             transMan.runTransaction(client);
             System.out.println("Transaction Running");
-            ++handledClients;
+            
+            handledClients++;
+        }
+        
+        //Waiting loop to make sure all clients close before server does
+        boolean clientsRunning = true;
+        while(clientsRunning)
+        {
+            clientsRunning = false;
+            for(Socket client: clientList)
+            {
+                if(!client.isClosed())
+                {
+                    clientsRunning = true;
+                }
+            }
         }
         
         ArrayList<Transaction> transactions = transMan.getTransactions();
         int numTrans = transactions.size();
         System.out.println( "Total Transactions: " + numTrans );
-        boolean transRemaining = true;
-        while(transRemaining)
-        {
-            synchronized( transactions )
-                {
-                    transRemaining = false;
-                    for(Transaction tran : transactions)
-                    {
-                        if(!tran.getState())
-                        {
-                            transRemaining = true;
-                        }
-                        
-                    }
-                }
-        }
-        
-        synchronized( transactions )
-        {
-            for(Transaction tran : transactions)
-            {
-                System.out.println(tran.getLog());
-            }
-        }
         
 
         int endingSum = accMan.getBalanceSum();
         System.out.println( "Ending total balance: " + endingSum );
         System.out.println( "Total money lost in the ether: " 
             + Integer.toString(endingSum - initialSum ));
+        
+        ArrayList<Account> accList = accMan.getAccList();
+        for(Account acc : accList)
+        {
+            System.out.println( "Account #" + acc.getNumber() + " BALANCE: " + acc.getBalance() );
+        }
+        
+        
+        try
+        {
+            serverSocket.close();
+        } catch (IOException ex)
+        {
+            Logger.getLogger(TransactionServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

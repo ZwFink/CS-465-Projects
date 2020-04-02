@@ -5,6 +5,7 @@
  */
 package locking;
 
+import accounts.Account;
 import transaction.Transaction;
 
 /**
@@ -15,7 +16,7 @@ import transaction.Transaction;
  */
 public class NonLockingLock implements Lock, LockType
 {
-	
+    Account dummy = new Account(0, 0);
     /**
      * "Acquire" a lock--does nothing.
      */
@@ -24,8 +25,14 @@ public class NonLockingLock implements Lock, LockType
     {
     }
     
-   public void setItem( Object newObject )
+    public Account getAcc()
     {
+        return dummy;
+    }
+
+    public void setAcc( Account account )
+    {
+
     }
 
 
@@ -85,11 +92,6 @@ public class NonLockingLock implements Lock, LockType
     public LockMode getMode()
     {
         return LockMode.EMPTY;
-    }
-
-    public Object getItem()
-    {
-        return null;    
     }
 
 }

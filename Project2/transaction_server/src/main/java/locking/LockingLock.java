@@ -31,7 +31,7 @@ public class LockingLock implements Lock, LockType
     /**
      * The object that is being held by the lock.
      */
-    private Object object;
+    private Account account;
 
     /**
      * Default initialization of the lock.
@@ -40,7 +40,7 @@ public class LockingLock implements Lock, LockType
     {
         lockType = LockMode.EMPTY;
         holders = new ArrayList();
-        object = null;
+        account = null;
     }
     
     /**
@@ -74,6 +74,8 @@ public class LockingLock implements Lock, LockType
                     " lock for account # " + accNum + "."
                 );
                 wait();
+                trans.log( "[LockingLock.acquire] Notify for lock for account # " + accNum + "."
+                );
             }
             catch(InterruptedException e)
             {
@@ -186,8 +188,7 @@ public class LockingLock implements Lock, LockType
         // read-read
         if( holders.isEmpty()
             || (lockType == LockMode.READ 
-            && this.lockType == LockMode.READ )
-          )
+            && this.lockType == LockMode.READ))
         {
 
         t.log( "[LockingLock.isConflict] " +
@@ -198,9 +199,8 @@ public class LockingLock implements Lock, LockType
         );
             return false;
         }
-        else if( ( this.holders.size() == 1 && this.holders.contains( t )
-            && lockType == LockMode.WRITE && this.lockType == LockMode.READ)
-            )
+        else if(( this.holders.size() == 1 && this.holders.contains( t )
+            && lockType == LockMode.WRITE && this.lockType == LockMode.READ) )
         {
             t.log( "[LockingLock.isConflict] " +
                 "[" + t.getID() + "] " +
@@ -272,14 +272,14 @@ public class LockingLock implements Lock, LockType
         return this.lockType;
     }
 
-    public Object getItem()
+    public Account getAcc()
     {
-        return this.object;
+        return this.account;
     }
 
-    public void setItem( Object newObject )
+    public void setAcc( Account account )
     {
-        this.object = newObject;
+        this.account = account;
     }
 
     /**

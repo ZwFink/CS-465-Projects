@@ -9,6 +9,8 @@ import accounts.AccountManager;
 import java.util.*;
 import java.io.*;
 import java.net.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import locking.LockManager;
 import transaction.comm.Message;
 import transaction_server.TransactionServer;
@@ -25,11 +27,6 @@ public class TransactionManager
      * A list of transactions that are managed by this.
      */
     private static final ArrayList<Transaction> transactions = new ArrayList<>();
-
-    /**
-     * Count of the number of transactions.
-     */
-    private static int transCounter = 0;
 
     /**
      * Return the transactions that have been managed up to this point.
@@ -103,7 +100,18 @@ public class TransactionManager
                 {
                     e.printStackTrace();
                     System.out.println("Transaction could not be read");
-                    System.exit(1);
+                    try
+                    {
+                        client.close();
+                        readFrom.close();
+                        writeTo.close();
+                    } catch (IOException ex)
+                    {
+                        Logger.getLogger(TransactionManager.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    activeTrans = false;
+                    //System.exit(1);
+                    continue;
                 }
 
                 Object[] content; // Object list for the content of the msg being parsed
@@ -112,13 +120,12 @@ public class TransactionManager
                 {
                     case OPEN_TRANSACTION:
 			    //A new transaction was created so this case should parse it
-                               
-			    synchronized (transactions)
+                        
+			synchronized (transactions)
                         {
                             //Create a new BLANK transaction to be filled out later
-                            Transaction newTransaction = new Transaction( transCounter,
-                            (int) message.getContent()[ 0 ] );
-                            transCounter++;
+                            Transaction newTransaction = new Transaction(transactions.size(),
+                                (int) message.getContent()[ 0 ] );
                             transactions.add(newTransaction);
                             transaction = newTransaction;
                         }
@@ -138,9 +145,9 @@ public class TransactionManager
 
                     case CLOSE_TRANSACTION:
 
-                        TransactionServer.lockMan.unsetLock(transaction);
                         synchronized(transactions)
                         {
+                            TransactionServer.lockMan.unsetLock(transaction);
                             transaction.finish();
                         }
 
@@ -204,7 +211,6 @@ public class TransactionManager
                             e.printStackTrace();
                             System.out.println("READ REQUEST ERROR");
                         }
-
 
                         break;
 
