@@ -74,6 +74,11 @@ public class Transaction
         this.transID = transID;
         this.locks = new ArrayList();
     }
+
+    public void resetLocks()
+    {
+        this.locks = new ArrayList();
+    }
     
     /**
      * Retrieve this transaction's ID.
@@ -185,6 +190,12 @@ public class Transaction
      public boolean equals( Object other )
      {
          return this.transID == ((Transaction)other).transID;
+     }
+
+     @Override 
+     public int hashCode()
+     {
+         return Integer.hashCode( this.transID );
      }
                    
  }

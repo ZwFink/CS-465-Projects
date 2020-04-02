@@ -69,7 +69,7 @@ public class LockManager
                 {
                     trans.log( "[LockManager.setLock] " +
                         toUpperCase(
-                            lockModeToString( foundLock.getMode() )
+                            lockModeToString( lockType )
                         ) +
                          " Lock created for account #" +
                         + account.getNumber() 
@@ -84,8 +84,18 @@ public class LockManager
     }
     
     // Used for close transaction 
-    public synchronized void unsetLock( Transaction trans )
+    public void unsetLock( Transaction trans )
     {
+        
+        synchronized(this)
+        {
+        for( Lock l : trans.getLocks() )
+        {
+            l.release( trans );
+        }
+
+        }
+        trans.resetLocks();
         trans.log( "[LockManager.unsetLock] unlocking all locks for transaction #" +
                         (trans.getID())
                     );

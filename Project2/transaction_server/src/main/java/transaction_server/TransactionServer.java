@@ -93,7 +93,6 @@ public class TransactionServer extends Thread
         while ( handledClients < numClients * numTransactions )
         {
             //Waits for proxy ==> .accept()
-            System.out.println("Waiting for connections");
             Socket client = null;
             try
             {

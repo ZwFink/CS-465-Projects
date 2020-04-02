@@ -54,7 +54,10 @@ public class LockingLock implements Lock, LockType
     public synchronized void acquire( Transaction trans, LockMode lockingMode )
     {
         int accNum = trans.getAccount();
-        trans.log( "[LockingLock.acquire] Attempt to acquire a " + 
+        this.object = accNum;
+        trans.log( "[LockingLock.acquire] " + 
+            "[" + trans.getID() + "] " +
+            "Attempt to acquire a " + 
             lockModeToString( lockingMode ) +
             " lock for account # " + accNum + "."
         );
@@ -64,7 +67,9 @@ public class LockingLock implements Lock, LockType
         {
             try
             {
-                trans.log( "[LockingLock.acquire] Conflict in acquiring a " +
+                trans.log( "[LockingLock.acquire] " + 
+                    "[" + trans.getID() + "] " +
+                    "Conflict in acquiring a " +
                     lockModeToString( lockingMode ) +
                     " lock for account # " + accNum + "."
                 );
@@ -76,20 +81,23 @@ public class LockingLock implements Lock, LockType
             {
             }
         }
-        this.lockType = lockingMode;
         
         if(holders.isEmpty())
         {
 
             trans.log( "[LockingLock.acquire] " + 
+                "[" + trans.getID() + "] " +
                 "Successfully added a " +
                 lockModeToString( lockingMode ) +
                 " lock for account # " + accNum + 
                 " as the sole owner."
             );
 
+            synchronized(holders)
+            {
             holders.add(trans);
-            lockType = lockingMode;
+            }
+            this.lockType = lockingMode;
 
         } 
         else if( !holders.isEmpty() )
@@ -97,13 +105,18 @@ public class LockingLock implements Lock, LockType
             if( !this.isHeldBy( trans ) )
             {
                 trans.log( "[LockingLock.acquire] " +
+                    "[" + trans.getID() + "] " +
                     "Successfully added a " +
                     lockModeToString( lockingMode ) +
                     " lock for account # " + accNum +
                     "."
                 );
 
-                holders.add( trans );
+                synchronized(holders)
+                {
+                holders.add( trans);
+                }
+                this.lockType = lockingMode;
             }
             // the lock needs to be promoted 
             else if( this.isHeldBy( trans )
@@ -112,8 +125,9 @@ public class LockingLock implements Lock, LockType
                    )
             {
                 trans.log( "[LockingLock.acquire] " +
+                    "[" + trans.getID() + "] " +
                     "Attempting to promote a " +
-                    lockModeToString( lockingMode ) +
+                    lockModeToString( this.lockType ) +
                     " lock for account # " + accNum +
                     "."
                 );
@@ -129,21 +143,33 @@ public class LockingLock implements Lock, LockType
     @Override
     public synchronized void release( Transaction trans )
     {
-        holders.remove(trans);
+        synchronized( holders )
+        {
+            holders.remove( trans );
+        }
         
         trans.log( "[LockingLock.release] " +
+            "[" + trans.getID() + "] " +
             "Removing a " +
             lockModeToString( this.lockType ) +
-            " lock for account # " + trans.getAccount() +
+            " lock for account # " + ((int)object) +
             "."
         );
         
-        //set LockMode to None
-        if(holders.isEmpty())
+        if( this.isEmpty() )
         {
             lockType = LockMode.EMPTY;
         }
         notifyAll();
+    }
+
+    @Override
+    public boolean isEmpty()
+    {
+        synchronized(holders)
+        {
+            return holders.isEmpty();
+        }
     }
     
     /**
@@ -157,6 +183,8 @@ public class LockingLock implements Lock, LockType
                                LockMode lockType
     )
     {
+        synchronized( holders )
+        {
         // read-read
         if( holders.isEmpty()
             || (lockType == LockMode.READ 
@@ -164,8 +192,9 @@ public class LockingLock implements Lock, LockType
         {
 
         t.log( "[LockingLock.isConflict] " +
-            "No conflict found for read on read " +
-            "account # " + t.getAccount() +
+            "[" + t.getID() + "] " +
+            "No conflict found for " +
+            "account # " + ((int)object) +
             "." 
         );
             return false;
@@ -174,22 +203,31 @@ public class LockingLock implements Lock, LockType
             && lockType == LockMode.WRITE && this.lockType == LockMode.READ) )
         {
             t.log( "[LockingLock.isConflict] " +
-                "No conflict found for lock promote" +
-                "account # " + t.getAccount() +
+                "[" + t.getID() + "] " +
+                "No conflict found for lock promotion" +
+                "account # " + ((int)object) +
                 "."
             );
             return false;
             
         }
+        else if( ( this.holders.size() != 1 && this.holders.contains( t )
+            && lockType == LockMode.WRITE && this.lockType == LockMode.READ)
+            )
+        {
+            return false;
+        }
 
         t.log( "[LockingLock.isConflict] " +
+            "[" + t.getID() + "] " +
             "Conflict found for " +
-            "account # " + t.getAccount() +
+            "account # " + ((int)object) +
             "." 
         );
 
-        // covers write-write and write-read cases
+        // covers write-write and write-read (non-promotion) cases
         return true;
+        }
     }
 
     /**
@@ -221,10 +259,8 @@ public class LockingLock implements Lock, LockType
      */
     public void promote( Transaction trans ) 
     {
-        if( this.lockType == LockMode.READ )
-        {
-            this.acquire( trans, LockMode.WRITE );
-        }
+        this.release( trans );
+        this.acquire( trans, LockMode.WRITE );
     }
 
     /**
