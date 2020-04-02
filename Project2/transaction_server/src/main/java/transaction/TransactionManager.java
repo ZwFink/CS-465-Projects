@@ -132,7 +132,7 @@ public class TransactionManager
 
                 try
                 {
-                    writeTo.writeObject( transCounter - 1 );
+                    writeTo.writeObject( transaction.getID() );
                 }
                 catch( IOException e )
                 {

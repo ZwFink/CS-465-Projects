@@ -3,6 +3,7 @@ package locking;
 import accounts.Account;
 import java.util.ArrayList;
 import transaction.Transaction;
+import static transaction_server.TransactionServer.accMan;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -54,7 +55,7 @@ public class LockingLock implements Lock, LockType
     public synchronized void acquire( Transaction trans, LockMode lockingMode )
     {
         int accNum = trans.getAccount();
-        this.object = accNum;
+        this.account = accMan.getAccountByID(accNum);
         trans.log( "[LockingLock.acquire] " + 
             "[" + trans.getID() + "] " +
             "Attempt to acquire a " + 
@@ -152,7 +153,7 @@ public class LockingLock implements Lock, LockType
             "[" + trans.getID() + "] " +
             "Removing a " +
             lockModeToString( this.lockType ) +
-            " lock for account # " + ((int)object) +
+            " lock for account # " + trans.getAccount() +
             "."
         );
         
@@ -194,7 +195,7 @@ public class LockingLock implements Lock, LockType
         t.log( "[LockingLock.isConflict] " +
             "[" + t.getID() + "] " +
             "No conflict found for " +
-            "account # " + ((int)object) +
+            "account # " + t.getAccount() +
             "." 
         );
             return false;
@@ -205,7 +206,7 @@ public class LockingLock implements Lock, LockType
             t.log( "[LockingLock.isConflict] " +
                 "[" + t.getID() + "] " +
                 "No conflict found for lock promotion" +
-                "account # " + ((int)object) +
+                "account # " + t.getAccount() +
                 "."
             );
             return false;
@@ -221,7 +222,7 @@ public class LockingLock implements Lock, LockType
         t.log( "[LockingLock.isConflict] " +
             "[" + t.getID() + "] " +
             "Conflict found for " +
-            "account # " + ((int)object) +
+            "account # " + t.getAccount() +
             "." 
         );
 
@@ -271,12 +272,13 @@ public class LockingLock implements Lock, LockType
     {
         return this.lockType;
     }
-
+    
+    @Override
     public Account getAcc()
     {
         return this.account;
     }
-
+    @Override
     public void setAcc( Account account )
     {
         this.account = account;

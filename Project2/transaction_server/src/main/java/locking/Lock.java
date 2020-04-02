@@ -52,10 +52,8 @@ public interface Lock
      * @return The item held by the lock, if any.
      * Otherwise, null.
      */
-    public Object getItem();
+    public Account getAcc();
 
     public boolean isEmpty();
-
-    public Account getAcc();
 	
 }
