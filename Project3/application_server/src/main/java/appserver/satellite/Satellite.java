@@ -8,6 +8,7 @@ import static appserver.comm.MessageTypes.JOB_REQUEST;
 import static appserver.comm.MessageTypes.REGISTER_SATELLITE;
 import appserver.job.Tool;
 import java.io.DataInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -33,6 +34,7 @@ public class Satellite extends Thread {
     private ConnectivityInfo satelliteInfo = new ConnectivityInfo();
     private ConnectivityInfo serverInfo = new ConnectivityInfo();
     private HTTPClassLoader classLoader = null;
+    String docRoot = null;
     private Hashtable toolsCache = null;
 
     public Satellite(String satellitePropertiesFile, String classLoaderPropertiesFile, String serverPropertiesFile) {
@@ -40,21 +42,57 @@ public class Satellite extends Thread {
         // read this satellite's properties and populate satelliteInfo object,
         // which later on will be sent to the server
         // ...
+        PropertyHandler satelliteProperties = null;
+        PropertyHandler classLoaderProperties = null;
+        PropertyHandler serverProperties = null;
+
+        try
+        {
+            satelliteProperties = new PropertyHandler( satellitePropertiesFile );
+            classLoaderProperties = new PropertyHandler( classLoaderPropertiesFile );
+            serverProperties = new PropertyHandler( serverPropertiesFile );
+        }
+        catch( FileNotFoundException e )
+        {
+            System.out.println( "ERROR: Configuration file not found." );
+            e.printStackTrace();
+            System.exit( 1 );
+        }
+        catch( IOException e )
+        {
+            System.out.println( "ERROR: An unknown IO exception occurred." );
+            e.printStackTrace();
+            System.exit( 1 );
+        }
+
         
-        
+        satelliteInfo.setName( satelliteProperties.getProperty( "NAME" ) );
+        satelliteInfo.setPort( Integer.parseInt( satelliteProperties.getProperty( "PORT" ) ) );
+        satelliteInfo.setHost( "127.0.0.1" );
+
         // read properties of the application server and populate serverInfo object
         // other than satellites, the as doesn't have a human-readable name, so leave it out
         // ...
-        
+        serverInfo.setHost( serverProperties.getProperty( "HOST" ) );
+        serverInfo.setPort( Integer.parseInt( serverProperties.getProperty( "PORT" ) ) );
+
         
         // read properties of the code server and create class loader
         // -------------------
         // ...
+        int classLoaderPort = Integer.parseInt( classLoaderProperties.getProperty( "PORT" ) );
+        classLoader = new HTTPClassLoader( classLoaderProperties.getProperty( "HOST" ),
+                                           classLoaderPort
+        );
+        docRoot = classLoaderProperties.getProperty( "DOC_ROOT" );
+        
+
 
         
         // create tools cache
         // -------------------
         // ...
+        toolsCache = new Hashtable<String,Tool>();
         
     }
 
