@@ -61,19 +61,34 @@ public class Satellite extends Thread {
     @Override
     public void run() {
 
-        // register this satellite with the SatelliteManager on the server
-        // ---------------------------------------------------------------
-        // ...
-        
-        
-        // create server socket
-        // ---------------------------------------------------------------
-        // ...
-        
-        
-        // start taking job requests in a server loop
-        // ---------------------------------------------------------------
-        // ...
+        try
+        {
+            // register this satellite with the SatelliteManager on the server
+            // ---------------------------------------------------------------
+            // ...
+            System.out.println("Server Class Not Yet Implemented");
+            
+            // create server socket
+            // ---------------------------------------------------------------
+            // ...
+            ServerSocket serverSocket = new ServerSocket(satelliteInfo.getPort());
+            
+            // start taking job requests in a server loop
+            // ---------------------------------------------------------------
+            // ...
+            Socket client = null;
+            while (true) 
+            {
+                System.out.println("[GenericServer.run] Waiting for connections on Port #" + satelliteInfo.getPort());
+                client = serverSocket.accept();
+                System.out.println("[GenericServer.run] A connection to a client is established!");
+                SatelliteThread jobHandler = new SatelliteThread(client, this);
+                jobHandler.start();
+            }
+        } catch (IOException ex)
+        {
+            Logger.getLogger(Satellite.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     // inner helper class that is instanciated in above server loop and processes single job requests
