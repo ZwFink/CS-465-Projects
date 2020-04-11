@@ -79,9 +79,9 @@ public class Satellite extends Thread {
             Socket client = null;
             while (true) 
             {
-                System.out.println("[GenericServer.run] Waiting for connections on Port #" + satelliteInfo.getPort());
+                System.out.println("[Satellite.run] Waiting for connections on Port #" + satelliteInfo.getPort());
                 client = serverSocket.accept();
-                System.out.println("[GenericServer.run] A connection to a client is established!");
+                System.out.println("[Satellite.run] A connection to a client is established!");
                 SatelliteThread jobHandler = new SatelliteThread(client, this);
                 jobHandler.start();
             }
