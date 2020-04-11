@@ -34,7 +34,6 @@ public class Satellite extends Thread {
     private ConnectivityInfo satelliteInfo = new ConnectivityInfo();
     private ConnectivityInfo serverInfo = new ConnectivityInfo();
     private HTTPClassLoader classLoader = null;
-    String docRoot = null;
     private Hashtable toolsCache = null;
 
     public Satellite(String satellitePropertiesFile, String classLoaderPropertiesFile, String serverPropertiesFile) {
@@ -84,9 +83,6 @@ public class Satellite extends Thread {
         classLoader = new HTTPClassLoader( classLoaderProperties.getProperty( "HOST" ),
                                            classLoaderPort
         );
-        docRoot = classLoaderProperties.getProperty( "DOC_ROOT" );
-        
-
 
         
         // create tools cache
