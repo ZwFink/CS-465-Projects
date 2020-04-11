@@ -7,9 +7,11 @@ import appserver.comm.Message;
 import static appserver.comm.MessageTypes.JOB_REQUEST;
 import static appserver.comm.MessageTypes.REGISTER_SATELLITE;
 import appserver.job.Tool;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -90,17 +92,86 @@ public class Satellite extends Thread {
 
         @Override
         public void run() {
-            // setting up object streams
-            // ...
+            
+            try
+            {
+                // setting up object streams
+                // ...
+                readFromNet = new ObjectInputStream(jobRequest.getInputStream());
+                writeToNet = new ObjectOutputStream(jobRequest.getOutputStream());
+            } catch (IOException ex)
+            {
+                Logger.getLogger(Satellite.class.getName()).log(Level.SEVERE, null, ex);
+            }
             
             // reading message
             // ...
+            try
+            {
+                message = (Message) readFromNet.readObject();
+            } catch (IOException ex)
+            {
+                Logger.getLogger(Satellite.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex)
+            {
+                Logger.getLogger(Satellite.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            if(message == null)
+            {
+                System.err.println("[Stellite.run] Error occurred, message was NULL");
+                return;
+            }
             
             switch (message.getType()) {
                 case JOB_REQUEST:
                     // processing job request
                     // ...
+                    Object content = message.getContent();
+                    //Get the operation symbol to know what to get
+                    String contStr = content.toString();
+                    String[] contentList = contStr.split(" ");
+                    String opSymbol = contentList[1];
+                    
+                    ///Get Tool for the job using getToolObject()
+                    Tool operator = null;
+                    try
+                    {
+                        operator = getToolObject(opSymbol);
+                    } catch (UnknownToolException ex)
+                    {
+                        Logger.getLogger(Satellite.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (ClassNotFoundException ex)
+                    {
+                        Logger.getLogger(Satellite.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (InstantiationException ex)
+                    {
+                        Logger.getLogger(Satellite.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IllegalAccessException ex)
+                    {
+                        Logger.getLogger(Satellite.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    if(operator == null)
+                    {
+                        System.err.println("[Stellite.run & Stellite.tool] Error occurred, Tool was NULL");
+                        return;
+                    }
+                
+                    //Get the result using the tool
+                    Object result = operator.go(content);
+                    try
+                    {
+                        //return the result
+                        writeToNet.writeObject(result);
+                        writeToNet.flush();
+                    } catch (IOException ex)
+                    {
+                        Logger.getLogger(Satellite.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
                     break;
+
+
 
                 default:
                     System.err.println("[SatelliteThread.run] Warning: Message type not implemented");
