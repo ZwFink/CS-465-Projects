@@ -237,7 +237,7 @@ public class Satellite extends Thread {
     {
 
         Tool toolObject;
-        HTTPClassLoader toolLoader = new HTTPClassLoader("127.0.0.1", 12609); //TODO pass port and host
+        HTTPClassLoader toolLoader = new HTTPClassLoader("127.0.0.1", 12609); //Passes hard coded simple web server host and port
         
         toolObject = (Tool) toolsCache.get(toolClassString);
         
