@@ -213,6 +213,7 @@ public class Satellite extends Thread {
                         //return the result
                         writeToNet.writeObject(result);
                         writeToNet.flush();
+                        jobRequest.close();
                     } catch (IOException ex)
                     {
                         Logger.getLogger(Satellite.class.getName()).log(Level.SEVERE, null, ex);
