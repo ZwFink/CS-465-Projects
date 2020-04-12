@@ -100,7 +100,7 @@ public class Satellite extends Thread {
             // register this satellite with the SatelliteManager on the server
             // ---------------------------------------------------------------
             // ...
-            System.out.println("Server Class Not Yet Implemented");
+            System.out.println("NOTICE: [Satellite.run] Server Class Not Yet Implemented");
             
             // create server socket
             // ---------------------------------------------------------------
@@ -206,7 +206,8 @@ public class Satellite extends Thread {
                     }
                 
                     //Get the result using the tool
-                    Object result = operator.go(content);
+                    Object parameters = job.getParameters();
+                    Object result = operator.go(parameters);
                     try
                     {
                         //return the result
