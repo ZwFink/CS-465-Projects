@@ -178,9 +178,8 @@ public class Satellite extends Thread {
                     // ...
                     Object content = message.getContent();
                     //Get the operation symbol to know what to get
-                    String contStr = content.toString();
-                    String[] contentList = contStr.split(" ");
-                    String opSymbol = contentList[1];
+                    Job job = (Job) content;
+                    String opSymbol = job.getToolName();
                     
                     ///Get Tool for the job using getToolObject()
                     Tool operator = null;
