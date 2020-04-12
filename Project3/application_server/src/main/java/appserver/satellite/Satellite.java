@@ -237,10 +237,12 @@ public class Satellite extends Thread {
 
         Tool toolObject;
         
-        if ((toolObject = toolsCache.get(toolClassString)) == null)
+        toolObject = toolsCache.get(toolClassString);
+        
+        if (toolObject == null)
         {
-            String toolObjectString = configuration.getProperty.getProperty(toolObjectString);
-            System.out.println("\nOperations:" + toolObjectString);
+            String toolObjectString = configuration.getProperty(toolObjectString);
+            System.out.println("\nOperation: " + toolObjectString);
             
             
             // Ensure there is a tool string
@@ -254,15 +256,13 @@ public class Satellite extends Thread {
             toolObject = (Tool) toolClass.newInstance();
             toolsCache.put(toolClassString, toolObject);
             
-            // Tool has been used before
+            // Tool has been used already
             else
             {
                 System.out.println("Operation: " + toolObjectString + " already in cache");
             }
         
-
-        // ...
-        
+        // ...     
         return toolObject;
     }
 
