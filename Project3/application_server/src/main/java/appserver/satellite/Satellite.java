@@ -235,7 +235,31 @@ public class Satellite extends Thread {
      */
     public Tool getToolObject(String toolClassString) throws UnknownToolException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 
-        Tool toolObject = null;
+        Tool toolObject;
+        
+        if ((toolObject = toolsCache.get(toolClassString)) == null)
+        {
+            String toolObjectString = configuration.getProperty.getProperty(toolObjectString);
+            System.out.println("\nOperations:" + toolObjectString);
+            
+            
+            // Ensure there is a tool string
+            if (toolObjectString == null)
+            {
+                throw new UnknownOperationException();
+            }
+            
+            // Get the tool object
+            Class ToolClass = toolLoader.loadClass(toolClassString);
+            toolObject = (Tool) toolClass.newInstance();
+            toolsCache.put(toolClassString, toolObject);
+            
+            // Tool has been used before
+            else
+            {
+                System.out.println("Operation: " + toolObjectString + " already in cache");
+            }
+        
 
         // ...
         
