@@ -237,7 +237,6 @@ public class Satellite extends Thread {
     {
 
         Tool toolObject;
-        HTTPClassLoader toolLoader = new HTTPClassLoader("127.0.0.1", 12609); //Passes hard coded simple web server host and port
         
         toolObject = (Tool) toolsCache.get(toolClassString);
         
@@ -246,7 +245,7 @@ public class Satellite extends Thread {
             System.out.println("\nOperation: " + toolClassString);
             
             // Get the tool object
-            Class toolClass = toolLoader.loadClass(toolClassString);
+            Class toolClass = classLoader.loadClass(toolClassString);
             toolObject = (Tool) toolClass.newInstance();
             toolsCache.put(toolClassString, toolObject);
         }
@@ -261,7 +260,23 @@ public class Satellite extends Thread {
 
     public static void main(String[] args) {
         // start the satellite
-        Satellite satellite = new Satellite(args[0], args[1], args[2]);
+        String satellitePropStr = "";
+        String classLoaderPropStr = "";
+        String serverPropStr = "";
+        if(args.length != 3)
+        {
+            System.err.print("3 Properties files not given using testing defaults\n");
+            satellitePropStr = "../../config/Satellite.Earth.properties";
+            classLoaderPropStr = "../../config/WebServer.properties";
+            serverPropStr = "../../config/Server.properties";
+        }
+        else
+        {
+            satellitePropStr = args[0];
+            classLoaderPropStr = args[1];
+            serverPropStr = args[2];
+        }
+        Satellite satellite = new Satellite(satellitePropStr, classLoaderPropStr, serverPropStr);
         satellite.run();
     }
 }
