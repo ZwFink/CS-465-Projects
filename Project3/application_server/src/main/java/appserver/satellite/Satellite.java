@@ -5,18 +5,13 @@ import appserver.comm.ConnectivityInfo;
 import appserver.job.UnknownToolException;
 import appserver.comm.Message;
 import static appserver.comm.MessageTypes.JOB_REQUEST;
-import static appserver.comm.MessageTypes.REGISTER_SATELLITE;
 import appserver.job.Tool;
-import java.io.DataInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintStream;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,13 +48,13 @@ public class Satellite extends Thread {
         }
         catch( FileNotFoundException e )
         {
-            System.out.println( "ERROR: Configuration file not found." );
+            System.out.println( "[Satellite.init] ERROR: Configuration file not found." );
             e.printStackTrace();
             System.exit( 1 );
         }
         catch( IOException e )
         {
-            System.out.println( "ERROR: An unknown IO exception occurred." );
+            System.out.println( "[Satellite.init] ERROR: An unknown IO exception occurred." );
             e.printStackTrace();
             System.exit( 1 );
         }
@@ -149,7 +144,8 @@ public class Satellite extends Thread {
                 writeToNet = new ObjectOutputStream(jobRequest.getOutputStream());
             } catch (IOException ex)
             {
-                Logger.getLogger(Satellite.class.getName()).log(Level.SEVERE, null, ex);
+                System.err.println("[Satellite.Thread.run] Error occurred: " + ex.toString() );
+                return;
             }
             
             // reading message
@@ -157,12 +153,10 @@ public class Satellite extends Thread {
             try
             {
                 message = (Message) readFromNet.readObject();
-            } catch (IOException ex)
+            } catch (IOException | ClassNotFoundException ex)
             {
-                Logger.getLogger(Satellite.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ClassNotFoundException ex)
-            {
-                Logger.getLogger(Satellite.class.getName()).log(Level.SEVERE, null, ex);
+                System.err.println("[Satellite.Thread.run] Error occurred: " + ex.toString() );
+                        return;
             }
             
             if(message == null)
@@ -185,22 +179,14 @@ public class Satellite extends Thread {
                     try
                     {
                         operator = getToolObject(opSymbol);
-                    } catch (UnknownToolException ex)
+                    } catch (UnknownToolException | ClassNotFoundException | InstantiationException | IllegalAccessException ex)
                     {
-                        Logger.getLogger(Satellite.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (ClassNotFoundException ex)
-                    {
-                        Logger.getLogger(Satellite.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (InstantiationException ex)
-                    {
-                        Logger.getLogger(Satellite.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IllegalAccessException ex)
-                    {
-                        Logger.getLogger(Satellite.class.getName()).log(Level.SEVERE, null, ex);
+                        System.err.println("[Satellite.Thread.run] Error occurred: " + ex.toString() );
+                        return;
                     }
                     if(operator == null)
                     {
-                        System.err.println("[Stellite.run & Stellite.tool] Error occurred, Tool was NULL");
+                        System.err.println("[Satellite.Thread.run] Error occurred, Tool was NULL");
                         return;
                     }
                 
@@ -212,6 +198,7 @@ public class Satellite extends Thread {
                         //return the result
                         writeToNet.writeObject(result);
                         writeToNet.flush();
+                        //Close the job
                         jobRequest.close();
                     } catch (IOException ex)
                     {
@@ -219,6 +206,7 @@ public class Satellite extends Thread {
                     }
                     
                     break;
+
 
 
 
@@ -235,21 +223,31 @@ public class Satellite extends Thread {
      */
     public Tool getToolObject(String toolClassString) throws UnknownToolException, ClassNotFoundException, InstantiationException, IllegalAccessException 
     {
-
+        //Try to get the Tool from the cache
         Tool toolObject;
-        
         toolObject = (Tool) toolsCache.get(toolClassString);
         
+        //The cache will return null if there is no tool to be found
         if (toolObject == null)
         {
             System.out.println("\nOperation: " + toolClassString);
-            
-            // Get the tool object
-            Class toolClass = classLoader.loadClass(toolClassString);
-            toolObject = (Tool) toolClass.newInstance();
+            // Try to get the tool object
+            try
+            {
+                Class toolClass = classLoader.loadClass(toolClassString);
+                toolObject = (Tool) toolClass.newInstance();
+            }
+            catch(ClassNotFoundException e)
+            {
+                System.err.println("[SatelliteThread.getToolObject] Error:" 
+                                    + toolClassString 
+                                    + "Not Found");
+                throw new ClassNotFoundException();
+            }
+            //Place the new found tool in the cache
             toolsCache.put(toolClassString, toolObject);
         }
-        // Tool has been used already
+        // Tool has been used already, thus inform the system
         else
         {
             System.out.println("Operation: " + toolClassString + " already in cache");
@@ -263,8 +261,10 @@ public class Satellite extends Thread {
         String satellitePropStr = "";
         String classLoaderPropStr = "";
         String serverPropStr = "";
+        //To avoid improper argument erros and allow ease of use
         if(args.length != 3)
         {
+            //Forces use of defualt 3 if aguments given is none/not the right amount
             System.err.print("3 Properties files not given using testing defaults\n");
             satellitePropStr = "../../config/Satellite.Earth.properties";
             classLoaderPropStr = "../../config/WebServer.properties";
@@ -272,6 +272,7 @@ public class Satellite extends Thread {
         }
         else
         {
+            //Grabs argument values and assigns them to appropriatly named strings
             satellitePropStr = args[0];
             classLoaderPropStr = args[1];
             serverPropStr = args[2];
