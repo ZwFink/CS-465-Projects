@@ -233,36 +233,29 @@ public class Satellite extends Thread {
      * If the tool has been used before, it is returned immediately out of the cache,
      * otherwise it is loaded dynamically
      */
-    public Tool getToolObject(String toolClassString) throws UnknownToolException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public Tool getToolObject(String toolClassString) throws UnknownToolException, ClassNotFoundException, InstantiationException, IllegalAccessException 
+    {
 
         Tool toolObject;
+        HTTPClassLoader toolLoader = new HTTPClassLoader(); //TODO pass port and host
         
-        toolObject = toolsCache.get(toolClassString);
+        toolObject = (Tool) toolsCache.get(toolClassString);
         
         if (toolObject == null)
         {
-            String toolObjectString = configuration.getProperty(toolObjectString);
-            System.out.println("\nOperation: " + toolObjectString);
-            
-            
-            // Ensure there is a tool string
-            if (toolObjectString == null)
-            {
-                throw new UnknownOperationException();
-            }
+            System.out.println("\nOperation: " + toolClassString);
             
             // Get the tool object
-            Class ToolClass = toolLoader.loadClass(toolClassString);
+            Class toolClass = toolLoader.loadClass(toolClassString);
             toolObject = (Tool) toolClass.newInstance();
             toolsCache.put(toolClassString, toolObject);
-            
-            // Tool has been used already
-            else
-            {
-                System.out.println("Operation: " + toolObjectString + " already in cache");
-            }
+        }
+        // Tool has been used already
+        else
+        {
+            System.out.println("Operation: " + toolClassString + " already in cache");
+        }
         
-        // ...     
         return toolObject;
     }
 
