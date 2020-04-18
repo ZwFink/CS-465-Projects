@@ -5,6 +5,19 @@
  */
 package appserver.job.impl.appserver;
 
+import appserver.comm.Message;
+import appserver.satellite.Satellite;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintStream;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+import web.GenericServer;
+import web.SimpleWebServer;
+
 /**
  * Details from BBLearn:
     * Remember that the application server is just passing through a client's
@@ -39,7 +52,80 @@ package appserver.job.impl.appserver;
     * 
  * @author caleb johnson
  */
-public class AppServer
+public class AppServer extends Thread  
 {
+    ArrayList<Socket> satServers;
+    int nextSat = 0;
     
+    public AppServer(String appPropertiesFile)
+    {
+        //Load in properties
+    }
+    
+    @Override
+    public void run() 
+    {
+        // Wait for clients or sat servers for infinity
+        // Check if its a server
+            //Add it to the list
+            //Go back to waiting
+
+        // Check if its a client
+            //Hand off the client to the current "next sat"
+            //increment "next sat" If at the end of server list reset counter to 0
+    }
+
+    /**
+     * Inner Class [WorkerThread] This thread processes a client (web browser)
+     * request. In the meantime the web server can accept other clients.
+     */
+    class WorkerThread extends Thread 
+    {
+        Socket client = null;
+        int serverID = -1;
+        ObjectInputStream readFromNet = null;
+        ObjectOutputStream writeToNet = null;
+        Message message = null;
+
+        /**
+         * The Constructor
+         */
+        WorkerThread(Socket client, int serverID) 
+        {
+            this.client = client;
+            this.serverID = serverID;
+        }
+        
+        @Override
+        public void run() 
+        {
+            //Take clients request and push it to the assigned server
+            //Get back the reply and push it to the client
+        }
+    }
+    
+    //Method for addeing a satillite to the list
+    public void addServer(Socket server)
+    {
+        this.satServers.add(server);
+    }
+    
+    public static void main(String[] args) {
+        // start the satellite
+        String appPropStr = "";
+        //To avoid improper argument erros and allow ease of use
+        if(args.length != 1)
+        {
+            //Forces use of defualt 3 if aguments given is none/not the right amount
+            System.err.print("Properties files not given using testing defaults\n");
+            appPropStr = "../../config/AppServer.properties";
+        }
+        else
+        {
+            //Grabs argument values and assigns them to appropriatly named strings
+            appPropStr = args[0];
+        }
+        AppServer appServer = new AppServer(appPropStr);
+        appServer.run();
+    }
 }
