@@ -29,7 +29,12 @@ public class Fibonacci implements Tool
     {
         
         helper = new FibonacciAux( (Integer) parameters );
-        return helper.getResult();
+        System.out.println( "[Fibonacci.go] Calculating fibonacci of " 
+        + ((Integer) parameters ).toString() );
+        Integer result = helper.getResult();
+
+        System.out.println( "[Fibonacci.go] Result: " + result.toString() );
+        return result;
     }
     
 }
