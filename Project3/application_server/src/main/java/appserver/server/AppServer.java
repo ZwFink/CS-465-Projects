@@ -211,8 +211,6 @@ public class AppServer extends Thread
                 return;
             }
             tPrint("[AppServer.WorkerThread.run] Making streams for port: " + serConInfo.getPort());
-            readFromSat = null;
-            writeToSat = null;
             try
             {
                 // setting up object streams
@@ -247,7 +245,7 @@ public class AppServer extends Thread
                 tPrint("[AppServer.WorkerThread.run] Error occurred, write to satellite failed");
                 return;
             }
-            catch (Exception ex)
+            catch (Throwable ex)
             {
                 tPrint("[AppServer.WorkerThread.run] Unknown Error occurred: " + ex.toString() );
                 return;
@@ -265,7 +263,7 @@ public class AppServer extends Thread
                 tPrint("[AppServer.WorkerThread.run] Error occurred: " + ex.toString() );
                         return;
             }
-            catch (Exception ex)
+            catch (Throwable ex)
             {
                 tPrint("[AppServer.WorkerThread.run] Unknown Error occurred: " + ex.toString() );
                 return;
@@ -277,7 +275,7 @@ public class AppServer extends Thread
                 return;
             }
             //Write the return back to the client
-            System.out.println("[AppServer.WorkerThread.run] Sending result to client at port: " + client.getPort());
+            tPrint("[AppServer.WorkerThread.run] Sending result to client at port: " + client.getPort());
             try
             {
                 writeToClient.writeObject(resultReturn);
@@ -290,8 +288,8 @@ public class AppServer extends Thread
             }
             
             //END OF RUN
-            System.out.println("[AppServer.WorkerThread.run] END OF JOB");
-            System.out.println("[AppServer.WorkerThread.run] Closing port: " + client.getPort());
+            tPrint("[AppServer.WorkerThread.run] END OF JOB");
+            tPrint("[AppServer.WorkerThread.run] Closing port: " + client.getPort());
             try
             {
                 writeToClient.close();
