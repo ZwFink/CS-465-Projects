@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package appserver.job.impl.appserver;
+package appserver.server;
 
 import appserver.comm.ConnectivityInfo;
 import appserver.comm.Message;
