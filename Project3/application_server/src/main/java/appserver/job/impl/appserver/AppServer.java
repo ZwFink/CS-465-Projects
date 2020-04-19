@@ -5,10 +5,12 @@
  */
 package appserver.job.impl.appserver;
 
+import appserver.comm.ConnectivityInfo;
 import appserver.comm.Message;
 import appserver.satellite.Satellite;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import utils.PropertyHandler;
 import web.GenericServer;
 import web.SimpleWebServer;
 
@@ -57,12 +60,32 @@ import web.SimpleWebServer;
  */
 public class AppServer extends Thread  
 {
-    ArrayList<Socket> satServers;
-    int nextSat = 0;
+    private ConnectivityInfo serverInfo = new ConnectivityInfo();
+    private ArrayList<Socket> satServers;
+    private int nextSat = 0;
     
     public AppServer(String appPropertiesFile)
     {
+        PropertyHandler serverProperties = null;
+        try
+        {
+            serverProperties = new PropertyHandler( appPropertiesFile );
+        }
+        catch( FileNotFoundException e )
+        {
+            System.out.println( "[AppServer.init] ERROR: Configuration file not found." );
+            e.printStackTrace();
+            System.exit( 1 );
+        }
+        catch( IOException e )
+        {
+            System.out.println( "[AppServer.init] ERROR: An unknown IO exception occurred." );
+            e.printStackTrace();
+            System.exit( 1 );
+        }
         //Load in properties
+        serverInfo.setHost( serverProperties.getProperty( "HOST" ) );
+        serverInfo.setPort( Integer.parseInt( serverProperties.getProperty( "PORT" ) ) );
     }
     
     @Override
@@ -198,7 +221,7 @@ public class AppServer extends Thread
         {
             //Forces use of defualt 3 if aguments given is none/not the right amount
             System.err.print("Properties files not given using testing defaults\n");
-            appPropStr = "../../config/AppServer.properties";
+            appPropStr = "../../config/Server.properties";
         }
         else
         {
