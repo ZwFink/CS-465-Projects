@@ -259,6 +259,11 @@ public class Satellite extends Thread {
         
         return toolObject;
     }
+    
+    public ConnectivityInfo getInfo()
+    {
+        return this.satelliteInfo;
+    }
 
     public static void main(String[] args) {
         // start the satellite

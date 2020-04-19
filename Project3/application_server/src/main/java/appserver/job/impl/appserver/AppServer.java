@@ -7,22 +7,19 @@ package appserver.job.impl.appserver;
 
 import appserver.comm.ConnectivityInfo;
 import appserver.comm.Message;
+import static appserver.comm.MessageTypes.JOB_REQUEST;
+import static appserver.comm.MessageTypes.UNREGISTER_SATELLITE;
 import appserver.satellite.Satellite;
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.PropertyHandler;
-import web.GenericServer;
-import web.SimpleWebServer;
 
 /**
  * Details from BBLearn:
@@ -61,7 +58,7 @@ import web.SimpleWebServer;
 public class AppServer extends Thread  
 {
     private ConnectivityInfo serverInfo = new ConnectivityInfo();
-    private ArrayList<Socket> satServers;
+    private ArrayList<Satellite> satServers;
     private int nextSat = 0;
     
     public AppServer(String appPropertiesFile)
@@ -91,15 +88,62 @@ public class AppServer extends Thread
     @Override
     public void run() 
     {
-        // Wait for clients or sat servers for infinity
-        // Check if its a server
-            //Add it to the list
-
-        // Check if its a client
-            //Hand off the client to the current "next sat"
-            //increment "next sat" If at the end of server list reset counter to 0
-        
-        //Go back to waiting at top of loop
+         ServerSocket appSocket = null;
+        try
+        {
+            appSocket = new ServerSocket(serverInfo.getPort());
+            // Wait for clients or sat servers for infinity
+            while(true)
+            {
+                System.out.println("[AppServer.run] Waiting for connections on Port #" + serverInfo.getPort());
+                Socket newCon = appSocket.accept();
+                System.out.println("[AppServer.run] A connection was established!");
+                //Get the given message to tell if its client or satellite
+                ObjectInputStream readFromNet = new ObjectInputStream(newCon.getInputStream());
+                Message message = null;
+                
+                // reading message
+                // ...
+                try
+                {
+                    message = (Message) readFromNet.readObject();
+                } catch (IOException | ClassNotFoundException ex)
+                {
+                    System.err.println("[AppServer.Thread.run] Error occurred: " + ex.toString() );
+                            return;
+                }
+                if(message == null)
+                {
+                    System.err.println("[AppServer.run] Error occurred, message was NULL");
+                    return;
+                }
+                switch (message.getType()) {
+                    // Check if its a client
+                    case JOB_REQUEST:
+                        //Hand off the client to the current "next satellite"
+                        WorkerThread jobHandler = new WorkerThread(newCon, nextSat, message);
+                        jobHandler.start();
+                        //increment "next sat" If at the end of server list reset counter to 0
+                        nextSat++;
+                        if(nextSat >= satServers.size())
+                        {
+                            nextSat = 0;
+                        }
+                        break;
+                    // Check if its a server
+                    case UNREGISTER_SATELLITE:
+                        //Add it to the list
+                        addServer( (Satellite) message.getContent() );
+                        break;
+                }
+                
+                //Go back to waiting at top of loop
+            }
+        } catch (IOException ex)
+        {
+            System.err.println("[AppServer.run] Failed to setup server socket: " + ex.toString() );
+            return;
+        }
     }
 
     /**
@@ -110,7 +154,6 @@ public class AppServer extends Thread
     {
         Socket client = null;
         int serverID = -1;
-        ObjectInputStream readFromClient = null;
         ObjectOutputStream writeToClient = null;
         Message message = null;
         Message messageReturn = null;
@@ -118,55 +161,51 @@ public class AppServer extends Thread
         /**
          * The Constructor
          */
-        WorkerThread(Socket client, int serverID) 
+        WorkerThread(Socket client, int serverID, Message message) 
         {
             this.client = client;
             this.serverID = serverID;
+            this.message = message;
         }
         
         @Override
         public void run() 
         {
             //Setup server connection
-            Socket server = getServer(serverID);
+            Satellite server = getServer(serverID);
+            ConnectivityInfo serConInfo = server.getInfo();
+            Socket servSock = null;
+            try
+            {
+                servSock = new Socket(serConInfo.getHost(), serConInfo.getPort());
+            } catch (IOException ex)
+            {
+                System.err.println("[AppServer.WorkerThread.run] Error occurred, creation of socket to satellite failed");
+                return;
+            }
             ObjectInputStream readFromSat = null;
             ObjectOutputStream writeToSat = null;
             try
             {
                 // setting up object streams
                 //Satillite
-                readFromSat = new ObjectInputStream(server.getInputStream());
-                writeToSat = new ObjectOutputStream(server.getOutputStream());
+                readFromSat = new ObjectInputStream(servSock.getInputStream());
+                writeToSat = new ObjectOutputStream(servSock.getOutputStream());
                 //Client
-                readFromClient = new ObjectInputStream(client.getInputStream());
                 writeToClient = new ObjectOutputStream(client.getOutputStream());
             } catch (IOException ex)
             {
                 System.err.println("[AppServer.WorkerThread.run] Error occurred: " + ex.toString() );
                 return;
             }
-            //Take clients request and push it to the assigned server
-            // reading message
-            try
-            {
-                message = (Message) readFromClient.readObject();
-            } catch (IOException | ClassNotFoundException ex)
-            {
-                System.err.println("[AppServer.WorkerThread.run] Error occurred: " + ex.toString() );
-                        return;
-            }
             
-            if(message == null)
-            {
-                System.err.println("[AppServer.WorkerThread.run] Error occurred, message was NULL");
-                return;
-            }
+            //Write the message to the satellite
             try
             {
                 writeToSat.writeObject(message);
             } catch (IOException ex)
             {
-                System.err.println("[AppServer.WorkerThread.run] Error occurred, write to satillite failed");
+                System.err.println("[AppServer.WorkerThread.run] Error occurred, write to satellite failed");
                 return;
             }
             
@@ -202,13 +241,13 @@ public class AppServer extends Thread
     }
     
     //Method for addeing a satillite to the list
-    public void addServer(Socket server)
+    public void addServer(Satellite server)
     {
         this.satServers.add(server);
     }
     
     //Method for getting a satillite from the list
-    public Socket getServer(int id)
+    public Satellite getServer(int id)
     {
         return satServers.get(id);
     }
