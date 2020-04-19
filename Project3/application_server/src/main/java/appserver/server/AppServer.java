@@ -58,7 +58,7 @@ import utils.PropertyHandler;
 public class AppServer extends Thread  
 {
     private ConnectivityInfo serverInfo = new ConnectivityInfo();
-    private ArrayList<Satellite> satServers;
+    private ArrayList<ConnectivityInfo> satServers;
     private int nextSat = 0;
     
     public AppServer(String appPropertiesFile)
@@ -133,7 +133,7 @@ public class AppServer extends Thread
                     // Check if its a server
                     case UNREGISTER_SATELLITE:
                         //Add it to the list
-                        addServer( (Satellite) message.getContent() );
+                        addServer( (ConnectivityInfo) message.getContent() );
                         break;
                 }
                 
@@ -172,8 +172,7 @@ public class AppServer extends Thread
         public void run() 
         {
             //Setup server connection
-            Satellite server = getServer(serverID);
-            ConnectivityInfo serConInfo = server.getInfo();
+            ConnectivityInfo serConInfo = getServer(serverID);
             Socket servSock = null;
             try
             {
@@ -241,13 +240,13 @@ public class AppServer extends Thread
     }
     
     //Method for addeing a satillite to the list
-    public void addServer(Satellite server)
+    public void addServer(ConnectivityInfo server)
     {
         this.satServers.add(server);
     }
     
     //Method for getting a satillite from the list
-    public Satellite getServer(int id)
+    public ConnectivityInfo getServer(int id)
     {
         return satServers.get(id);
     }

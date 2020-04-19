@@ -96,7 +96,7 @@ public class Satellite extends Thread {
             // register this satellite with the SatelliteManager on the server
             // ---------------------------------------------------------------
             // ...
-            Message message = new Message( UNREGISTER_SATELLITE, this );
+            Message message = new Message( UNREGISTER_SATELLITE, this.satelliteInfo );
             Socket appServer = new Socket(serverInfo.getHost(), serverInfo.getPort());
             ObjectOutputStream writeToServ = new ObjectOutputStream(appServer.getOutputStream());
             writeToServ.writeObject(message);
@@ -258,11 +258,6 @@ public class Satellite extends Thread {
         }
         
         return toolObject;
-    }
-    
-    public ConnectivityInfo getInfo()
-    {
-        return this.satelliteInfo;
     }
 
     public static void main(String[] args) {
