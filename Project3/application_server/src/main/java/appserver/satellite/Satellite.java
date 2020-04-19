@@ -5,6 +5,7 @@ import appserver.comm.ConnectivityInfo;
 import appserver.job.UnknownToolException;
 import appserver.comm.Message;
 import static appserver.comm.MessageTypes.JOB_REQUEST;
+import static appserver.comm.MessageTypes.UNREGISTER_SATELLITE;
 import appserver.job.Tool;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -95,7 +96,10 @@ public class Satellite extends Thread {
             // register this satellite with the SatelliteManager on the server
             // ---------------------------------------------------------------
             // ...
-            System.out.println("NOTICE: [Satellite.run] Server Class Not Yet Implemented");
+            Message message = new Message( UNREGISTER_SATELLITE, this );
+            Socket appServer = new Socket(serverInfo.getHost(), serverInfo.getPort());
+            ObjectOutputStream writeToServ = new ObjectOutputStream(appServer.getOutputStream());
+            writeToServ.writeObject(message);
             
             // create server socket
             // ---------------------------------------------------------------
