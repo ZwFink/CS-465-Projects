@@ -99,8 +99,8 @@ public class AppServer extends Thread
                 Socket newCon = appSocket.accept();
                 System.out.println("[AppServer.run] A connection was established!");
                 //Get the given message to tell if its client or satellite
-                ObjectInputStream readFromNet = new ObjectInputStream(newCon.getInputStream());
                 ObjectOutputStream writeToNet = new ObjectOutputStream(newCon.getOutputStream());
+                ObjectInputStream readFromNet = new ObjectInputStream(newCon.getInputStream());
                 Message message = null;
                 
                 // reading message
@@ -124,7 +124,7 @@ public class AppServer extends Thread
                     case JOB_REQUEST:
                         //Hand off the client to the current "next satellite"
                         ConnectivityInfo sat = this.getServer(nextSat);
-                        WorkerThread jobHandler = new WorkerThread(newCon, sat, message);
+                        WorkerThread jobHandler = new WorkerThread(writeToNet, sat, message);
                         jobHandler.start();
                         //increment "next sat" If at the end of server list reset counter to 0
                         nextSat++;
@@ -185,9 +185,9 @@ public class AppServer extends Thread
         /**
          * The Constructor
          */
-        WorkerThread(Socket client, ConnectivityInfo serConInfo, Message message) 
+        WorkerThread(ObjectOutputStream writeToClient, ConnectivityInfo serConInfo, Message message) 
         {
-            this.client = client;
+            this.writeToClient = writeToClient;
             this.serConInfo = serConInfo;
             this.message = message;
         }
@@ -228,9 +228,6 @@ public class AppServer extends Thread
                 tPrint("[AppServer.WorkerThread.run] Write made for port: " + serConInfo.getPort());
                 readFromSat = new ObjectInputStream(servSock.getInputStream());
                 tPrint("[AppServer.WorkerThread.run] Read made for port: " + serConInfo.getPort());
-                //Client
-                writeToClient = new ObjectOutputStream(client.getOutputStream());
-                tPrint("[AppServer.WorkerThread.run] Write made for CLIENT at port: " + client.getPort());
             } 
             catch (IOException ex)
             {
@@ -285,7 +282,7 @@ public class AppServer extends Thread
                 return;
             }
             //Write the return back to the client
-            tPrint("[AppServer.WorkerThread.run] Sending result to client at port: " + client.getPort());
+            tPrint("[AppServer.WorkerThread.run] Sending result to client");
             try
             {
                 writeToClient.writeObject(resultReturn);
