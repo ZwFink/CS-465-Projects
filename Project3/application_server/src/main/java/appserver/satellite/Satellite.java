@@ -99,8 +99,17 @@ public class Satellite extends Thread {
             Message regMsg = new Message( UNREGISTER_SATELLITE, satelliteInfo );
             Socket appServer = new Socket(serverInfo.getHost(), serverInfo.getPort());
             ObjectOutputStream writeToServ = new ObjectOutputStream(appServer.getOutputStream());
+            ObjectInputStream readFromServ = new ObjectInputStream(appServer.getInputStream());
             writeToServ.writeObject(regMsg);
+            writeToServ.flush();
+            Boolean registered = readFromServ.readBoolean();
             appServer.close();
+            if(!registered)
+            {
+                System.err.println("[Satellite.run] Failed to Register");
+                return;
+            }
+            System.out.println("[Satellite.run] Registered with App Server!");
             
             // create server socket
             // ---------------------------------------------------------------

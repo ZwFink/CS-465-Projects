@@ -99,6 +99,7 @@ public class AppServer extends Thread
                 System.out.println("[AppServer.run] A connection was established!");
                 //Get the given message to tell if its client or satellite
                 ObjectInputStream readFromNet = new ObjectInputStream(newCon.getInputStream());
+                ObjectOutputStream writeToNet = new ObjectOutputStream(newCon.getOutputStream());
                 Message message = null;
                 
                 // reading message
@@ -140,7 +141,17 @@ public class AppServer extends Thread
                         else
                         {
                             System.err.println("[AppServer.run] Message content from satellite was null");
+                            writeToNet.writeBoolean(false);
+                            writeToNet.flush();
+                            newCon.close();
+                            return;
                         }
+                        writeToNet.writeBoolean(true);
+                        writeToNet.flush();
+                        newCon.close();
+                        break;
+                    default:
+                        System.err.println("[AppServer.run] Unknown Message Type");
                         newCon.close();
                         break;
                 }
