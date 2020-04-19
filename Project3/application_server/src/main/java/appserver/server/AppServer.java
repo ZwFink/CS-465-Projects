@@ -59,6 +59,7 @@ public class AppServer extends Thread
     private ConnectivityInfo serverInfo = new ConnectivityInfo();
     private ArrayList<ConnectivityInfo> satServers = new ArrayList();
     private int nextSat = 0;
+    private String log = "";
     
     public AppServer(String appPropertiesFile)
     {
@@ -117,11 +118,13 @@ public class AppServer extends Thread
                     System.err.println("[AppServer.run] Error occurred, message was NULL");
                     return;
                 }
-                switch (message.getType()) {
+                switch (message.getType()) 
+                {
                     // Check if its a client
                     case JOB_REQUEST:
                         //Hand off the client to the current "next satellite"
-                        WorkerThread jobHandler = new WorkerThread(newCon, nextSat, message);
+                        ConnectivityInfo sat = this.getServer(nextSat);
+                        WorkerThread jobHandler = new WorkerThread(newCon, sat, message);
                         jobHandler.start();
                         //increment "next sat" If at the end of server list reset counter to 0
                         nextSat++;
@@ -155,13 +158,12 @@ public class AppServer extends Thread
                         newCon.close();
                         break;
                 }
-                
+                System.out.print(log + "\n");
                 //Go back to waiting at top of loop
             }
         } catch (IOException ex)
         {
             System.err.println("[AppServer.run] Failed to setup server socket: " + ex.toString() );
-            return;
         }
     }
 
@@ -172,7 +174,7 @@ public class AppServer extends Thread
     class WorkerThread extends Thread 
     {
         Socket client = null;
-        int serverID = 0;
+        ConnectivityInfo serConInfo;
         ObjectOutputStream writeToClient = null;
         Message message = null;
         Object resultReturn = null;
@@ -180,10 +182,10 @@ public class AppServer extends Thread
         /**
          * The Constructor
          */
-        WorkerThread(Socket client, int serverID, Message message) 
+        WorkerThread(Socket client, ConnectivityInfo serConInfo, Message message) 
         {
             this.client = client;
-            this.serverID = serverID;
+            this.serConInfo = serConInfo;
             this.message = message;
         }
         
@@ -191,22 +193,22 @@ public class AppServer extends Thread
         public void run() 
         {
             //Setup server connection
-            ConnectivityInfo serConInfo = getServer(serverID);
             Socket servSock = null;
-            System.out.println("[AppServer.WorkerThread.run] Connection to satellite at port: " + serConInfo.getPort());
+            tPrint("[AppServer.WorkerThread.run] Connection to satellite at port: " + serConInfo.getPort());
             try
             {
                 servSock = new Socket(serConInfo.getHost(), serConInfo.getPort());
             } catch (IOException ex)
             {
-                System.err.println("[AppServer.WorkerThread.run] Error occurred, creation of socket to satellite failed");
+                tPrint("[AppServer.WorkerThread.run] Error occurred, creation of socket to satellite failed");
                 return;
             }
             if(servSock == null)
             {
-                System.err.println("[AppServer.WorkerThread.run] Error, sat server socket was null" );
+                tPrint("[AppServer.WorkerThread.run] Error, sat server socket was null" );
                 return;
             }
+            tPrint("[AppServer.WorkerThread.run] Making streams for port: " + serConInfo.getPort());
             ObjectInputStream readFromSat = null;
             ObjectOutputStream writeToSat = null;
             try
@@ -219,38 +221,38 @@ public class AppServer extends Thread
                 writeToClient = new ObjectOutputStream(client.getOutputStream());
             } catch (IOException ex)
             {
-                System.err.println("[AppServer.WorkerThread.run] Error occurred: " + ex.toString() );
+                tPrint("[AppServer.WorkerThread.run] Error occurred: " + ex.toString() );
                 return;
             }
             
             //Write the message to the satellite
-            System.out.println("[AppServer.WorkerThread.run] sending client request to port: " + serConInfo.getPort());
+            tPrint("[AppServer.WorkerThread.run] sending client request to port: " + serConInfo.getPort());
             try
             {
                 writeToSat.writeObject(message);
                 writeToSat.flush();
             } catch (IOException ex)
             {
-                System.err.println("[AppServer.WorkerThread.run] Error occurred, write to satellite failed");
+                tPrint("[AppServer.WorkerThread.run] Error occurred, write to satellite failed");
                 return;
             }
             
             //Get back the reply and push it to the client
             //Take clients request and push it to the assigned server
             // reading message
-            System.out.println("[AppServer.WorkerThread.run] getting return message from port: " + serConInfo.getPort());
+            tPrint("[AppServer.WorkerThread.run] getting return message from port: " + serConInfo.getPort());
             try
             {
                 resultReturn = readFromSat.readObject();
             } catch (IOException | ClassNotFoundException ex)
             {
-                System.err.println("[AppServer.WorkerThread.run] Error occurred: " + ex.toString() );
+                tPrint("[AppServer.WorkerThread.run] Error occurred: " + ex.toString() );
                         return;
             }
             
             if(resultReturn == null)
             {
-                System.err.println("[AppServer.WorkerThread.run] Error occurred, message was NULL");
+                tPrint("[AppServer.WorkerThread.run] Error occurred, message was NULL");
                 return;
             }
             //Write the return back to the client
@@ -262,11 +264,13 @@ public class AppServer extends Thread
                 
             } catch (IOException ex)
             {
-                System.err.println("[AppServer.WorkerThread.run] Error occurred, write to client failed");
+                tPrint("[AppServer.WorkerThread.run] Error occurred, write to client failed");
                 return;
             }
             
             //END OF RUN
+            System.out.println("[AppServer.WorkerThread.run] END OF JOB");
+            System.out.println("[AppServer.WorkerThread.run] Closing port: " + client.getPort());
             try
             {
                 writeToClient.close();
@@ -277,7 +281,7 @@ public class AppServer extends Thread
             } catch (IOException ex)
             {
                 Logger.getLogger(AppServer.class.getName()).log(Level.SEVERE, null, ex);
-                System.err.println("[AppServer.WorkerThread.run] Error occurred, failed to close sockets");
+                tPrint("[AppServer.WorkerThread.run] Error occurred, failed to close sockets");
             }
         }
     }
@@ -297,6 +301,12 @@ public class AppServer extends Thread
     public ConnectivityInfo getServer(int id)
     {
         return satServers.get(id);
+    }
+    
+    //Method for getting a satillite from the list
+    public void tPrint(String out)
+    {
+        log = log + "\n\n" + out;
     }
     
     public static void main(String[] args) {
