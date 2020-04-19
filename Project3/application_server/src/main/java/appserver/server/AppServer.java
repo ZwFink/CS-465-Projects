@@ -164,7 +164,7 @@ public class AppServer extends Thread
         int serverID = 0;
         ObjectOutputStream writeToClient = null;
         Message message = null;
-        Message messageReturn = null;
+        Object resultReturn = null;
 
         /**
          * The Constructor
@@ -182,6 +182,7 @@ public class AppServer extends Thread
             //Setup server connection
             ConnectivityInfo serConInfo = getServer(serverID);
             Socket servSock = null;
+            System.out.println("[AppServer.WorkerThread.run] Connection to satellite at port: " + serConInfo.getPort());
             try
             {
                 servSock = new Socket(serConInfo.getHost(), serConInfo.getPort());
@@ -212,6 +213,7 @@ public class AppServer extends Thread
             }
             
             //Write the message to the satellite
+            System.out.println("[AppServer.WorkerThread.run] sending client request to port: " + serConInfo.getPort());
             try
             {
                 writeToSat.writeObject(message);
@@ -225,24 +227,26 @@ public class AppServer extends Thread
             //Get back the reply and push it to the client
             //Take clients request and push it to the assigned server
             // reading message
+            System.out.println("[AppServer.WorkerThread.run] getting return message from port: " + serConInfo.getPort());
             try
             {
-                messageReturn = (Message) readFromSat.readObject();
+                resultReturn = readFromSat.readObject();
             } catch (IOException | ClassNotFoundException ex)
             {
                 System.err.println("[AppServer.WorkerThread.run] Error occurred: " + ex.toString() );
                         return;
             }
             
-            if(messageReturn == null)
+            if(resultReturn == null)
             {
                 System.err.println("[AppServer.WorkerThread.run] Error occurred, message was NULL");
                 return;
             }
             //Write the return back to the client
+            System.out.println("[AppServer.WorkerThread.run] Sending result to client at port: " + client.getPort());
             try
             {
-                writeToClient.writeObject(messageReturn);
+                writeToClient.writeObject(resultReturn);
                 writeToClient.flush();
                 
             } catch (IOException ex)

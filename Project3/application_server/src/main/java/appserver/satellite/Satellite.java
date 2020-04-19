@@ -100,6 +100,7 @@ public class Satellite extends Thread {
             Socket appServer = new Socket(serverInfo.getHost(), serverInfo.getPort());
             ObjectOutputStream writeToServ = new ObjectOutputStream(appServer.getOutputStream());
             writeToServ.writeObject(regMsg);
+            appServer.close();
             
             // create server socket
             // ---------------------------------------------------------------
