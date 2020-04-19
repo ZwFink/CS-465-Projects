@@ -110,6 +110,12 @@ public class AppServer extends Thread
         this.satServers.add(server);
     }
     
+    //Method for getting a satillite from the list
+    public Socket getServer(int id)
+    {
+        return satServers.get(id);
+    }
+    
     public static void main(String[] args) {
         // start the satellite
         String appPropStr = "";
