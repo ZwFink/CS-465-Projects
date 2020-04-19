@@ -174,10 +174,13 @@ public class AppServer extends Thread
     class WorkerThread extends Thread 
     {
         Socket client = null;
+        Socket servSock = null;
         ConnectivityInfo serConInfo;
         ObjectOutputStream writeToClient = null;
         Message message = null;
         Object resultReturn = null;
+        ObjectInputStream readFromSat = null;
+        ObjectOutputStream writeToSat = null;
 
         /**
          * The Constructor
@@ -193,7 +196,6 @@ public class AppServer extends Thread
         public void run() 
         {
             //Setup server connection
-            Socket servSock = null;
             tPrint("[AppServer.WorkerThread.run] Connection to satellite at port: " + serConInfo.getPort());
             try
             {
@@ -209,21 +211,30 @@ public class AppServer extends Thread
                 return;
             }
             tPrint("[AppServer.WorkerThread.run] Making streams for port: " + serConInfo.getPort());
-            ObjectInputStream readFromSat = null;
-            ObjectOutputStream writeToSat = null;
+            readFromSat = null;
+            writeToSat = null;
             try
             {
                 // setting up object streams
                 //Satillite
                 readFromSat = new ObjectInputStream(servSock.getInputStream());
+                tPrint("[AppServer.WorkerThread.run] Read made for port: " + serConInfo.getPort());
                 writeToSat = new ObjectOutputStream(servSock.getOutputStream());
+                tPrint("[AppServer.WorkerThread.run] Write made for port: " + serConInfo.getPort());
                 //Client
                 writeToClient = new ObjectOutputStream(client.getOutputStream());
+                tPrint("[AppServer.WorkerThread.run] Write made for CLIENT at port: " + client.getPort());
             } catch (IOException ex)
             {
                 tPrint("[AppServer.WorkerThread.run] Error occurred: " + ex.toString() );
                 return;
             }
+            catch (Throwable ex)
+            {
+                tPrint("[AppServer.WorkerThread.run] Unknown Error occurred: " + ex.toString() );
+                return;
+            }
+            
             
             //Write the message to the satellite
             tPrint("[AppServer.WorkerThread.run] sending client request to port: " + serConInfo.getPort());
@@ -234,6 +245,11 @@ public class AppServer extends Thread
             } catch (IOException ex)
             {
                 tPrint("[AppServer.WorkerThread.run] Error occurred, write to satellite failed");
+                return;
+            }
+            catch (Exception ex)
+            {
+                tPrint("[AppServer.WorkerThread.run] Unknown Error occurred: " + ex.toString() );
                 return;
             }
             
@@ -248,6 +264,11 @@ public class AppServer extends Thread
             {
                 tPrint("[AppServer.WorkerThread.run] Error occurred: " + ex.toString() );
                         return;
+            }
+            catch (Exception ex)
+            {
+                tPrint("[AppServer.WorkerThread.run] Unknown Error occurred: " + ex.toString() );
+                return;
             }
             
             if(resultReturn == null)
