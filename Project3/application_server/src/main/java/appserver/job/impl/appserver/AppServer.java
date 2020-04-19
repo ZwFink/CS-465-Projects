@@ -9,6 +9,7 @@ import appserver.comm.Message;
 import appserver.satellite.Satellite;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
@@ -68,11 +69,12 @@ public class AppServer extends Thread
         // Wait for clients or sat servers for infinity
         // Check if its a server
             //Add it to the list
-            //Go back to waiting
 
         // Check if its a client
             //Hand off the client to the current "next sat"
             //increment "next sat" If at the end of server list reset counter to 0
+        
+        //Go back to waiting at top of loop
     }
 
     /**
@@ -83,8 +85,8 @@ public class AppServer extends Thread
     {
         Socket client = null;
         int serverID = -1;
-        ObjectInputStream readFromNet = null;
-        ObjectOutputStream writeToNet = null;
+        ObjectInputStream readFromClient = null;
+        ObjectOutputStream writeToClient = null;
         Message message = null;
 
         /**
@@ -99,8 +101,28 @@ public class AppServer extends Thread
         @Override
         public void run() 
         {
+            //Setup server connection
+            Socket server = getServer(serverID);
+            ObjectInputStream readFromSat = null;
+            ObjectOutputStream writeToSat = null;
+            try
+            {
+                // setting up object streams
+                //Satillite
+                readFromSat = new ObjectInputStream(server.getInputStream());
+                writeToSat = new ObjectOutputStream(server.getOutputStream());
+                //Client
+                readFromClient = new ObjectInputStream(client.getInputStream());
+                writeToClient = new ObjectOutputStream(client.getOutputStream());;
+            } catch (IOException ex)
+            {
+                System.err.println("[AppServer.WorkerThread.run] Error occurred: " + ex.toString() );
+                return;
+            }
             //Take clients request and push it to the assigned server
+                //TODO
             //Get back the reply and push it to the client
+                //TODO
         }
     }
     
