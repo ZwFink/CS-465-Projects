@@ -296,7 +296,6 @@ public class AppServer extends Thread
             
             //END OF RUN
             tPrint("[AppServer.WorkerThread.run] END OF JOB");
-            tPrint("[AppServer.WorkerThread.run] Closing port: " + client.getPort());
             try
             {
                 writeToClient.close();
