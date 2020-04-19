@@ -170,7 +170,7 @@ public class Satellite extends Thread {
             } catch (IOException | ClassNotFoundException ex)
             {
                 System.err.println("[Satellite.Thread.run] Error occurred: " + ex.toString() );
-                        return;
+                return;
             }
             
             if(message == null)
