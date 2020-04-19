@@ -96,10 +96,10 @@ public class Satellite extends Thread {
             // register this satellite with the SatelliteManager on the server
             // ---------------------------------------------------------------
             // ...
-            Message message = new Message( UNREGISTER_SATELLITE, this.satelliteInfo );
+            Message regMsg = new Message( UNREGISTER_SATELLITE, this.satelliteInfo );
             Socket appServer = new Socket(serverInfo.getHost(), serverInfo.getPort());
             ObjectOutputStream writeToServ = new ObjectOutputStream(appServer.getOutputStream());
-            writeToServ.writeObject(message);
+            writeToServ.writeObject(regMsg);
             
             // create server socket
             // ---------------------------------------------------------------

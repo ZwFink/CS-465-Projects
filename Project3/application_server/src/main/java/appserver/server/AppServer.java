@@ -133,7 +133,15 @@ public class AppServer extends Thread
                     // Check if its a server
                     case UNREGISTER_SATELLITE:
                         //Add it to the list
-                        addServer( (ConnectivityInfo) message.getContent() );
+                        if(message.getContent() != null)
+                        {
+                            ConnectivityInfo newSat = (ConnectivityInfo) message.getContent();
+                            this.addServer(newSat);
+                        }
+                        else
+                        {
+                            System.err.println("[AppServer.run] Message content from satellite was null");
+                        }
                         break;
                 }
                 
@@ -267,6 +275,6 @@ public class AppServer extends Thread
             appPropStr = args[0];
         }
         AppServer appServer = new AppServer(appPropStr);
-        appServer.run();
+        appServer.start();
     }
 }
