@@ -16,6 +16,8 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import utils.PropertyHandler;
 
 /**
@@ -139,6 +141,7 @@ public class AppServer extends Thread
                         {
                             System.err.println("[AppServer.run] Message content from satellite was null");
                         }
+                        newCon.close();
                         break;
                 }
                 
@@ -158,7 +161,7 @@ public class AppServer extends Thread
     class WorkerThread extends Thread 
     {
         Socket client = null;
-        int serverID = -1;
+        int serverID = 0;
         ObjectOutputStream writeToClient = null;
         Message message = null;
         Message messageReturn = null;
@@ -187,6 +190,11 @@ public class AppServer extends Thread
                 System.err.println("[AppServer.WorkerThread.run] Error occurred, creation of socket to satellite failed");
                 return;
             }
+            if(servSock == null)
+            {
+                System.err.println("[AppServer.WorkerThread.run] Error, sat server socket was null" );
+                return;
+            }
             ObjectInputStream readFromSat = null;
             ObjectOutputStream writeToSat = null;
             try
@@ -207,12 +215,12 @@ public class AppServer extends Thread
             try
             {
                 writeToSat.writeObject(message);
+                writeToSat.flush();
             } catch (IOException ex)
             {
                 System.err.println("[AppServer.WorkerThread.run] Error occurred, write to satellite failed");
                 return;
             }
-            
             
             //Get back the reply and push it to the client
             //Take clients request and push it to the assigned server
@@ -231,9 +239,12 @@ public class AppServer extends Thread
                 System.err.println("[AppServer.WorkerThread.run] Error occurred, message was NULL");
                 return;
             }
+            //Write the return back to the client
             try
             {
                 writeToClient.writeObject(messageReturn);
+                writeToClient.flush();
+                
             } catch (IOException ex)
             {
                 System.err.println("[AppServer.WorkerThread.run] Error occurred, write to client failed");
@@ -241,6 +252,18 @@ public class AppServer extends Thread
             }
             
             //END OF RUN
+            try
+            {
+                writeToClient.close();
+                readFromSat.close();
+                writeToSat.close();
+                servSock.close();
+                client.close();
+            } catch (IOException ex)
+            {
+                Logger.getLogger(AppServer.class.getName()).log(Level.SEVERE, null, ex);
+                System.err.println("[AppServer.WorkerThread.run] Error occurred, failed to close sockets");
+            }
         }
     }
     
