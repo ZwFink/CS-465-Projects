@@ -16,6 +16,8 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import web.GenericServer;
 import web.SimpleWebServer;
 
@@ -88,6 +90,7 @@ public class AppServer extends Thread
         ObjectInputStream readFromClient = null;
         ObjectOutputStream writeToClient = null;
         Message message = null;
+        Message messageReturn = null;
 
         /**
          * The Constructor
@@ -113,16 +116,65 @@ public class AppServer extends Thread
                 writeToSat = new ObjectOutputStream(server.getOutputStream());
                 //Client
                 readFromClient = new ObjectInputStream(client.getInputStream());
-                writeToClient = new ObjectOutputStream(client.getOutputStream());;
+                writeToClient = new ObjectOutputStream(client.getOutputStream());
             } catch (IOException ex)
             {
                 System.err.println("[AppServer.WorkerThread.run] Error occurred: " + ex.toString() );
                 return;
             }
             //Take clients request and push it to the assigned server
-                //TODO
+            // reading message
+            try
+            {
+                message = (Message) readFromClient.readObject();
+            } catch (IOException | ClassNotFoundException ex)
+            {
+                System.err.println("[AppServer.WorkerThread.run] Error occurred: " + ex.toString() );
+                        return;
+            }
+            
+            if(message == null)
+            {
+                System.err.println("[AppServer.WorkerThread.run] Error occurred, message was NULL");
+                return;
+            }
+            try
+            {
+                writeToSat.writeObject(message);
+            } catch (IOException ex)
+            {
+                System.err.println("[AppServer.WorkerThread.run] Error occurred, write to satillite failed");
+                return;
+            }
+            
+            
             //Get back the reply and push it to the client
-                //TODO
+            //Take clients request and push it to the assigned server
+            // reading message
+            try
+            {
+                messageReturn = (Message) readFromSat.readObject();
+            } catch (IOException | ClassNotFoundException ex)
+            {
+                System.err.println("[AppServer.WorkerThread.run] Error occurred: " + ex.toString() );
+                        return;
+            }
+            
+            if(messageReturn == null)
+            {
+                System.err.println("[AppServer.WorkerThread.run] Error occurred, message was NULL");
+                return;
+            }
+            try
+            {
+                writeToClient.writeObject(messageReturn);
+            } catch (IOException ex)
+            {
+                System.err.println("[AppServer.WorkerThread.run] Error occurred, write to client failed");
+                return;
+            }
+            
+            //END OF RUN
         }
     }
     
