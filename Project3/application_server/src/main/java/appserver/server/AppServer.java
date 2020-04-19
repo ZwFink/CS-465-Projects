@@ -9,7 +9,6 @@ import appserver.comm.ConnectivityInfo;
 import appserver.comm.Message;
 import static appserver.comm.MessageTypes.JOB_REQUEST;
 import static appserver.comm.MessageTypes.UNREGISTER_SATELLITE;
-import appserver.satellite.Satellite;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -17,8 +16,6 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import utils.PropertyHandler;
 
 /**
@@ -58,7 +55,7 @@ import utils.PropertyHandler;
 public class AppServer extends Thread  
 {
     private ConnectivityInfo serverInfo = new ConnectivityInfo();
-    private ArrayList<ConnectivityInfo> satServers;
+    private ArrayList<ConnectivityInfo> satServers = new ArrayList();
     private int nextSat = 0;
     
     public AppServer(String appPropertiesFile)
@@ -250,6 +247,11 @@ public class AppServer extends Thread
     //Method for addeing a satillite to the list
     public void addServer(ConnectivityInfo server)
     {
+        if(server == null)
+        {
+            System.err.println("[AppServer.addServer] Error: A null info was given");
+            return;
+        }
         this.satServers.add(server);
     }
     
