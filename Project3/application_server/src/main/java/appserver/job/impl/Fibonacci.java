@@ -33,7 +33,8 @@ public class Fibonacci implements Tool
         + ((Integer) parameters ).toString() );
         Integer result = helper.getResult();
 
-        System.out.println( "[Fibonacci.go] Result: " + result.toString() );
+        System.out.println( "[Fibonacci.go] fib(" 
+            + ((Integer) parameters ).toString() + ") Result: " + result.toString() );
         return result;
     }
     
