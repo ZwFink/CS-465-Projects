@@ -36,10 +36,7 @@ public class FibonacciClient implements MessageTypes, Runnable
             
             host = properties.getProperty( "HOST" );
             host = "127.0.0.1";
-            System.out.println( "[FibonacciClient.FibonacciClient] Host: " + host );
-
             port = Integer.parseInt( properties.getProperty( "PORT" ) );
-            System.out.println( "[FibonacciClient.FibonacciClient] Port: " + port );
 
         }
         catch( Exception ex )
@@ -96,6 +93,15 @@ public class FibonacciClient implements MessageTypes, Runnable
             threads[ idx ] = 
             ( new Thread( new FibonacciClient( propertiesFilePath, i ) ) );
             threads[ idx ].start();
+
+            try
+            {
+                Thread.sleep( 1000 );
+            }
+            catch( InterruptedException e )
+            {
+
+            }
         }
 
         for( int i = 46; i > 0; i-- )
