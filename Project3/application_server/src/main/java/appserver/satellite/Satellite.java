@@ -4,8 +4,7 @@ import appserver.job.Job;
 import appserver.comm.ConnectivityInfo;
 import appserver.job.UnknownToolException;
 import appserver.comm.Message;
-import static appserver.comm.MessageTypes.JOB_REQUEST;
-import static appserver.comm.MessageTypes.UNREGISTER_SATELLITE;
+import appserver.comm.MessageTypes;
 import appserver.job.Tool;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -96,7 +95,7 @@ public class Satellite extends Thread {
             // register this satellite with the SatelliteManager on the server
             // ---------------------------------------------------------------
             // ...
-            Message regMsg = new Message( UNREGISTER_SATELLITE, satelliteInfo );
+            Message regMsg = new Message( MessageTypes.REGISTER_SATELLITE, satelliteInfo );
             Socket appServer = new Socket(serverInfo.getHost(), serverInfo.getPort());
             ObjectOutputStream writeToServ = new ObjectOutputStream(appServer.getOutputStream());
             ObjectInputStream readFromServ = new ObjectInputStream(appServer.getInputStream());
@@ -180,7 +179,7 @@ public class Satellite extends Thread {
             }
             
             switch (message.getType()) {
-                case JOB_REQUEST:
+                case MessageTypes.JOB_REQUEST:
                     // processing job request
                     // ...
                     Object content = message.getContent();
@@ -290,6 +289,11 @@ public class Satellite extends Thread {
             satellitePropStr = args[0];
             classLoaderPropStr = args[1];
             serverPropStr = args[2];
+
+            System.out.println( "[Satellite.main] Starting with: "
+            + "Satellite properties: " + satellitePropStr
+            + " Class Loader Properties: " + classLoaderPropStr 
+            + " Server properties: " + serverPropStr );
         }
         Satellite satellite = new Satellite(satellitePropStr, classLoaderPropStr, serverPropStr);
         satellite.run();
