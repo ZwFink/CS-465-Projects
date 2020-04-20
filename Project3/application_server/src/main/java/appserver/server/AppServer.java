@@ -8,6 +8,8 @@ package appserver.server;
 import appserver.comm.ConnectivityInfo;
 import appserver.comm.Message;
 import appserver.comm.MessageTypes;
+import appserver.server.loadbalancing.LoadBalancingManager;
+import appserver.server.loadbalancing.RoundRobinLoadBalancing;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -57,6 +59,7 @@ public class AppServer extends Thread
 {
     private ConnectivityInfo serverInfo = new ConnectivityInfo();
     private SatelliteManager satManager;
+    private LoadBalancingManager loadBalancer;
     private int nextSat = 0;
     private String log = "";
     
@@ -83,6 +86,10 @@ public class AppServer extends Thread
         serverInfo.setHost( serverProperties.getProperty( "HOST" ) );
         serverInfo.setPort( Integer.parseInt( serverProperties.getProperty( "PORT" ) ) );
         satManager = new SatelliteManager();
+
+        loadBalancer = new LoadBalancingManager( satManager, 
+                                                 new RoundRobinLoadBalancing() 
+                                               );
     }
     
     @Override
@@ -123,13 +130,9 @@ public class AppServer extends Thread
                     // Check if its a client
                     case MessageTypes.JOB_REQUEST:
                         //Hand off the client to the current "next satellite"
-                        ConnectivityInfo sat = this.satManager.getSatellites().get( nextSat );
+                        ConnectivityInfo sat = this.loadBalancer.nextSatellite();
                         WorkerThread jobHandler = new WorkerThread(writeToNet, sat, message);
                         jobHandler.start();
-                        //increment "next sat" If at the end of server list reset counter to 0
-                        nextSat++;
-                        nextSat %= this.satManager.getSatellites().size();
-;
                         break;
                     // Check if its a server
                     case MessageTypes.REGISTER_SATELLITE:
