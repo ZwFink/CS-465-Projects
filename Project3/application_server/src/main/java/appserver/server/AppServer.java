@@ -7,8 +7,7 @@ package appserver.server;
 
 import appserver.comm.ConnectivityInfo;
 import appserver.comm.Message;
-import static appserver.comm.MessageTypes.JOB_REQUEST;
-import static appserver.comm.MessageTypes.UNREGISTER_SATELLITE;
+import appserver.comm.MessageTypes;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -57,7 +56,7 @@ import utils.PropertyHandler;
 public class AppServer extends Thread  
 {
     private ConnectivityInfo serverInfo = new ConnectivityInfo();
-    private ArrayList<ConnectivityInfo> satServers = new ArrayList();
+    private SatelliteManager satManager;
     private int nextSat = 0;
     private String log = "";
     
@@ -83,6 +82,7 @@ public class AppServer extends Thread
         //Load in properties
         serverInfo.setHost( serverProperties.getProperty( "HOST" ) );
         serverInfo.setPort( Integer.parseInt( serverProperties.getProperty( "PORT" ) ) );
+        satManager = new SatelliteManager();
     }
     
     @Override
@@ -121,25 +121,25 @@ public class AppServer extends Thread
                 switch (message.getType()) 
                 {
                     // Check if its a client
-                    case JOB_REQUEST:
+                    case MessageTypes.JOB_REQUEST:
                         //Hand off the client to the current "next satellite"
-                        ConnectivityInfo sat = this.getServer(nextSat);
+                        ConnectivityInfo sat = this.satManager.getSatellites().get( nextSat );
                         WorkerThread jobHandler = new WorkerThread(writeToNet, sat, message);
                         jobHandler.start();
                         //increment "next sat" If at the end of server list reset counter to 0
                         nextSat++;
-                        if(nextSat >= satServers.size())
-                        {
-                            nextSat = 0;
-                        }
+                        nextSat %= this.satManager.getSatellites().size();
+;
                         break;
                     // Check if its a server
-                    case UNREGISTER_SATELLITE:
+                    case MessageTypes.REGISTER_SATELLITE:
                         //Add it to the list
                         if(message.getContent() != null)
                         {
                             ConnectivityInfo newSat = (ConnectivityInfo) message.getContent();
-                            this.addServer(newSat);
+                            // NOTE: The load balancer is also aware of this 
+                            // new satellite because they share a pointer to satmanager
+                            this.satManager.addSatellite( newSat );
                         }
                         else
                         {
@@ -302,31 +302,12 @@ public class AppServer extends Thread
                 readFromSat.close();
                 writeToSat.close();
                 servSock.close();
-                client.close();
             } catch (IOException ex)
             {
                 Logger.getLogger(AppServer.class.getName()).log(Level.SEVERE, null, ex);
                 tPrint("[AppServer.WorkerThread.run] Error occurred, failed to close sockets");
             }
         }
-    }
-    
-    //Method for addeing a satillite to the list
-    public void addServer(ConnectivityInfo server)
-    {
-        if(server == null)
-        {
-            System.err.println("[AppServer.addServer] Error: A null info was given");
-            tPrint("[AppServer.addServer] Error: A null info was given");
-            return;
-        }
-        this.satServers.add(server);
-    }
-    
-    //Method for getting a satillite from the list
-    public ConnectivityInfo getServer(int id)
-    {
-        return satServers.get(id);
     }
     
     //Method for getting a satillite from the list
