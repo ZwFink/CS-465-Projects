@@ -93,15 +93,6 @@ public class FibonacciClient implements MessageTypes, Runnable
             threads[ idx ] = 
             ( new Thread( new FibonacciClient( propertiesFilePath, i ) ) );
             threads[ idx ].start();
-
-            try
-            {
-                Thread.sleep( 1000 );
-            }
-            catch( InterruptedException e )
-            {
-
-            }
         }
 
         for( int i = 46; i > 0; i-- )
